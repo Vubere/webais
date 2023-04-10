@@ -39,8 +39,7 @@ export default function Login({ title, src }: { title: string, src: string }) {
         const res = await fetch(base+'/authenticate', {
           method: 'POST',
           headers: {
-            'Content-Type': 'application/json',
-            'origin': '*'
+            'Content-Type': 'application/json'
           },
           body: JSON.stringify({
             ...form,
