@@ -1,0 +1,32 @@
+@import url("https://fonts.googleapis.com/css2?family=EB+Garamond&display=swap");
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+* {
+  margin: 0;
+  padding: 0;
+  box-size: border-box;
+  text-decoration: none;
+  list-style-type: none;
+  scrollbar-width: none;
+  overflow: -moz-scrollbars-none;
+}
+
+*::-webkit-scrollbar {
+  display: none;
+}
+*
+body {
+  background-color: #f5f5f5;
+}
+.App {
+  font-family: "EB Garamond", serif;
+  background-color: #f5f5f5;
+  width: 100vw;
+  height: 100vh;
+  overflow-x: hidden;
+  border: 1px solid #003;
+}
+
+/* #346837 */

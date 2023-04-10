@@ -1,0 +1,16 @@
+{
+    "name": "vendor/webais",
+    "description": "An academic web based information system",
+    "autoload": {
+        "psr-4": {
+            "Vendor\\Webais\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Victor Ubere",
+            "email": "victorubere@gmail.com"
+        }
+    ],
+    "require": {}
+}
