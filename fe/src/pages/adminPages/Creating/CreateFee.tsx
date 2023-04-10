@@ -3,6 +3,7 @@ import { useState, useEffect, useContext } from "react"
 import { Fee } from "../FeesManagement"
 import useFacultiesAndDepartments from "../../../hooks/useFacultiesAndDepartments"
 import { SessionContext } from "../../../layouts/DashboardLayout"
+import { base } from "../../../App"
 
 
 export default function CreateFee() {
@@ -78,7 +79,7 @@ export default function CreateFee() {
   const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     if (validate()) {
-      fetch('http://localhost/webais/api/fee', {
+      fetch(base+'/fee', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'

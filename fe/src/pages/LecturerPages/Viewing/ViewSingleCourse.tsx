@@ -1,6 +1,6 @@
 import { useContext, useEffect, useState } from "react"
 import { Link, useParams } from "react-router-dom"
-import { UserContext } from "../../../App"
+import { base, UserContext } from "../../../App"
 import useFacultiesAndDepartments from "../../../hooks/useFacultiesAndDepartments"
 import { SessionContext } from "../../../layouts/DashboardLayout"
 
@@ -30,7 +30,7 @@ export default function ViewSingleCourse() {
   useEffect(() => {
     if (session && id) {
       const sess = session.session.session
-      fetch('http://localhost/webais/api/grading?id=' + id + '&session=' + sess)
+      fetch(base+'/grading?id=' + id + '&session=' + sess)
         .then((res) => res.json())
         .then(res => setGrading(!!res?.data?.grading_open))
     }
@@ -41,7 +41,7 @@ export default function ViewSingleCourse() {
 
     if (user) {
       setLoading(true)
-      fetch('http://localhost/webais/api/courses?id=' + id)
+      fetch(base+'/courses?id=' + id)
         .then(res => res.json())
         .then(res => {
           console.log(res)
@@ -65,7 +65,7 @@ export default function ViewSingleCourse() {
   }, [id, user])
   useEffect(() => {
     if (session && course) {
-      fetch('http://localhost/webais/api/course_students?course_id=' + course.id + '&session=' + session.session.session)
+      fetch(base+'/course_students?course_id=' + course.id + '&session=' + session.session.session)
         .then(res => res.json())
         .then(res => {
           if (res?.ok) {

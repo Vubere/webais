@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react"
 import { useNavigate, useParams } from "react-router-dom"
+import { base } from "../../../App"
 import { formatDateToYMD } from "../../../helpers/formatDate"
 
 
@@ -21,7 +22,7 @@ export default function UpdateAdmin() {
   const navigate = useNavigate()
   const fetchAdmin = async () => {
     try {
-      let url = `http://localhost:80/webais/api/admins?id=${id}`
+      let url = base+`/admins?id=${id}`
       const res = await fetch(url);
       const data = await res.json()
       if (data?.admin) {
@@ -42,7 +43,7 @@ export default function UpdateAdmin() {
   }
   const updateAdmin = async () => {
     try {
-      let url = `http://localhost:80/webais/api/admins?id=${id}`
+      let url = base+`/admins?id=${id}`
       const res = await fetch(url, {
         method: 'PUT',
         headers: {
@@ -59,7 +60,7 @@ export default function UpdateAdmin() {
   const delete_admin = () => {
     const reply = prompt('are you sure you want to delete this Administrator? Type yes to confirm')
     if (reply?.toLowerCase() !== 'yes') return
-    fetch('http://localhost/webais/api/admins?id=' + id, {
+    fetch(base+'/admins?id=' + id, {
       method: 'DELETE',
       headers: {
         'Content-Type': 'application/json'

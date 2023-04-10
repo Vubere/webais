@@ -1,5 +1,6 @@
 import { useEffect, useLayoutEffect, useState } from "react"
 import { Link } from "react-router-dom"
+import { base } from "../../../App"
 
 
 export default function ViewLectures() {
@@ -8,7 +9,7 @@ export default function ViewLectures() {
 
 
   useLayoutEffect(() => {
-    fetch("http://localhost/webais/api/exam")
+    fetch(base+"/exam")
       .then((res) => res.json())
       .then((data) => {
         if (data.ok) {

@@ -1,5 +1,6 @@
 import { useState } from "react"
 import { useNavigate } from "react-router-dom"
+import { base } from "../../../App"
 
 
 export default function CreateFaculty(){
@@ -31,7 +32,7 @@ export default function CreateFaculty(){
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     if (validate()) {
-      fetch('http://localhost/webais/api/faculty', {
+      fetch(base+'/faculty', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

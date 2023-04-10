@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react"
 import { useNavigate, useParams } from "react-router-dom"
+import { base } from "../../../App"
 
 
 
@@ -21,7 +22,7 @@ export default function UpdateLecturer() {
   const navigate = useNavigate()
   const fetchLecturer = async () => {
     try {
-      let url = `http://localhost:80/webais/api/lecturers?id=${id}`
+      let url = base+`/lecturers?id=${id}`
       const res = await fetch(url);
       const data = await res.json()
       if (data.lecturer.length) {
@@ -42,7 +43,7 @@ export default function UpdateLecturer() {
   }
   const updateLecturer = async () => {
     try {
-      let url = `http://localhost:80/webais/api/lecturers?id=${id}`
+      let url = base+`/lecturers?id=${id}`
       const res = await fetch(url, {
         method: 'PUT',
         headers: {

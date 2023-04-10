@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react"
 import { useParams } from "react-router-dom"
+import { base } from "../../../App"
 import { Announcement } from "./ViewAnnouncements"
 
 
@@ -12,7 +13,7 @@ export default function ViewAnnouncement(){
 
   useEffect(()=>{
     setLoading(true)
-    fetch(`http://localhost/webais/api/announcements?id=${id}`)
+    fetch(base+`/announcements?id=${id}`)
     .then(res=>res.json())
     .then(res=>{
       if(res?.status=='success'){

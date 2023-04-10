@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react"
 import { useNavigate, useParams } from "react-router-dom"
+import { base } from "../../../App"
 
 import { formatDateToYMD } from "../../../helpers/formatDate"
 
@@ -25,7 +26,7 @@ export default function UpdateAdmin() {
 
   const fetchStudent = async () => {
     try {
-      let url = `http://localhost:80/webais/api/students?id=${id}`
+      let url = base+`/students?id=${id}`
       const res = await fetch(url);
       const data = await res.json()
       if (data.length) {

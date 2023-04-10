@@ -1,6 +1,6 @@
 import { useContext, useEffect, useState } from "react"
 import { Link } from "react-router-dom";
-import { UserContext } from "../../App"
+import { base, UserContext } from "../../App"
 import { SessionContext } from "../../layouts/DashboardLayout";
 
 import { Course } from "./AvailableCourses";
@@ -17,7 +17,7 @@ export default function RegisteredCourses() {
       const userSes = session.session == '' ? Session.session.session : session.session
       const userSem = session.semester == '' ? Session.session.semester : session.semester
     
-      fetch('http://localhost/webais/api/registered_courses?student_id=' + user.id + '&semester=' + userSem + '&session=' + userSes)
+      fetch(base+'/registered_courses?student_id=' + user.id + '&semester=' + userSem + '&session=' + userSes)
         .then(res => res.json())
         .then(res => {
         
@@ -32,7 +32,7 @@ export default function RegisteredCourses() {
 
   const unregisterCourse = (course: Course) => {
     if (Session && user) {
-      fetch('http://localhost/webais/api/course_registration', {
+      fetch(base+'/course_registration', {
         method: 'DELETE',
         headers: {
           'Content-Type': 'application/json'

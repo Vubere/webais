@@ -1,6 +1,6 @@
 import { useContext, useState, useEffect } from "react";
 
-import { UserContext } from "../../App";
+import { base, UserContext } from "../../App";
 import { SessionContext } from "../../layouts/DashboardLayout";
 
 import { Course } from "./AvailableCourses";
@@ -22,7 +22,7 @@ export default function Grades() {
       const userSes = session.session == '' ? Session.session.session : session.session
       const userSem = session.semester == '' ? Session.session.semester : session.semester
 
-      fetch('http://localhost/webais/api/registered_courses?student_id=' + user.id + '&semester=' + userSem + '&session=' + userSes)
+      fetch(base+'/registered_courses?student_id=' + user.id + '&semester=' + userSem + '&session=' + userSes)
         .then(res => res.json())
         .then(res => {
 

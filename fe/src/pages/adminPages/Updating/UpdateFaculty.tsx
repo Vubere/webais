@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react"
 import { Link, useParams } from "react-router-dom"
+import { base } from "../../../App"
 
 
 export default function UpdateFaculty() {
@@ -12,14 +13,14 @@ export default function UpdateFaculty() {
   const { id } = useParams()
 
   useEffect(() => {
-    fetch(`http://localhost/webais/api/faculty?id=${id}`)
+    fetch(base+`/faculty?id=${id}`)
       .then(res => res.json())
       .then(res => setFaculty(res.data.data[0]))
    
   }, [id])
   useEffect(() => {
     if (faculty.name !== '') {
-      fetch(`http://localhost/webais/api/department?faculty=${faculty.name}`)
+      fetch(base+`/department?faculty=${faculty.name}`)
         .then(res => res.json())
         .then(res => {
              setFacultyDepartments(res.data.data)
@@ -37,7 +38,7 @@ export default function UpdateFaculty() {
   }
   const submitNameChange = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-    fetch(`http://localhost/webais/api/faculty`, {
+    fetch(base+`/faculty`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json'
@@ -52,7 +53,7 @@ export default function UpdateFaculty() {
   }
   const addDepartment = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-    fetch(`http://localhost/webais/api/department`, {
+    fetch(base+`/department`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'

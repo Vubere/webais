@@ -4,6 +4,7 @@ import { Link } from "react-router-dom"
 import { User } from "./ViewAdmin"
 
 import * as routes from '../../../constants/routes'
+import { base } from "../../../App"
 
 export default function ViewStudents() {
   const [search, setSearch] = useState('')
@@ -11,7 +12,7 @@ export default function ViewStudents() {
 
   async function fetchStudents() {
     try {
-      let url = 'http://localhost:80/webais/api/students'
+      let url = base+'/students'
 
       const res = await fetch(url);
       const data = await res.json()

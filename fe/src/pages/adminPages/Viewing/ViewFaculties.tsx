@@ -1,5 +1,6 @@
 import { useLayoutEffect, useMemo, useState } from "react"
 import { Link } from "react-router-dom"
+import { base } from "../../../App"
 
 
 
@@ -7,7 +8,7 @@ export default function Faculties() {
   const [faculties, setFaculties] = useState<any[]>([])
 
   useLayoutEffect(() => {
-    fetch('http://localhost/webais/api/faculty')
+    fetch(base+'/faculty')
       .then(res => res.json())
       .then(res => setFaculties(res.data.data))
   }, [])

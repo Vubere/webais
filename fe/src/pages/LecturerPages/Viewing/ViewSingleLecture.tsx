@@ -1,7 +1,7 @@
 
 import { useContext, useEffect, useState } from "react"
 import { Link, useParams } from "react-router-dom"
-import { UserContext } from "../../../App"
+import { base, UserContext } from "../../../App"
 import { formatDateToYMD } from "../../../helpers/formatDate"
 import { Lecture } from "../../adminPages/Viewing/ViewLectures"
 import { students } from "../../adminPages/Viewing/ViewStudents"
@@ -17,7 +17,7 @@ export default function ViewLectures() {
 
   useEffect(() => {
     if (id) {
-      fetch('http://localhost/webais/api/lectures?lecture_id=' + id)
+      fetch(base+'/lectures?lecture_id=' + id)
         .then(res => res.json())
         .then(result => setLectureDetails(result.lectures[0]))
 

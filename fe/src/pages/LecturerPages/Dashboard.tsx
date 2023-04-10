@@ -1,5 +1,5 @@
 import { useContext, useEffect, useState } from "react"
-import { UserContext } from "../../App"
+import { base, UserContext } from "../../App"
 
 
 export default function DashboardPage() {
@@ -25,7 +25,7 @@ export default function DashboardPage() {
   useEffect(() => {
 
     if (u) {
-      fetch(`http://localhost/webais/api/lectures?id=${u.id}`)
+      fetch(base+`/lectures?id=${u.id}`)
         .then(res => res.json())
         .then(data => setLectures(data.lectures))
     }

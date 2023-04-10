@@ -1,5 +1,5 @@
 import { useState, useEffect, useContext } from "react"
-import { UserContext } from "../../App"
+import { base, UserContext } from "../../App"
 import { formatDateToYMD } from "../../helpers/formatDate"
 import useFacultiesAndDepartments from "../../hooks/useFacultiesAndDepartments"
 
@@ -54,7 +54,7 @@ export default function PersonalInformation() {
   const updateStudent = async () => {
     try {
       
-      let url = `http://localhost:80/webais/api/students?id=${u.id}`
+      let url = base+`/students?id=${u.id}`
       const res = await fetch(url, {
         method: 'PUT',
         headers: {
@@ -119,10 +119,9 @@ export default function PersonalInformation() {
 
     if (u?.firstName) {
 
-      fetch('http://localhost/webais/api/students?id=' + u.id)
+      fetch(base+'/students?id=' + u.id)
         .then((res) => res.json())
         .then((res) => {
-
           if (res.length) {
             setForm({ ...form, ...res[0] })
           }

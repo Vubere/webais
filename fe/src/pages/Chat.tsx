@@ -1,6 +1,6 @@
 import { useContext, useEffect, useRef, useState } from "react"
 import { useParams } from "react-router-dom"
-import { UserContext } from "../App"
+import { base, UserContext } from "../App"
 
 import image_icon from '../assets/image.png'
 import Icon from "../components/Icon"
@@ -39,7 +39,7 @@ export default function Message() {
     if (id && user) {
       try {
 
-        const req = await fetch('http://localhost/webais/api/messages?user_id=' + user.id + '&receiver_id=' + id +'&limit='+limit)
+        const req = await fetch(base+'/messages?user_id=' + user.id + '&receiver_id=' + id +'&limit='+limit)
         const res = await req.json()
         if (res.ok) {
           const m = res.messages.length
@@ -96,7 +96,7 @@ export default function Message() {
 
       if (image)
         data.append('image', image)
-      fetch('http://localhost/webais/api/send_message', {
+      fetch(base+'/send_message', {
         method: 'POST',
         headers: {
           ContentType: 'multipart/form-data'

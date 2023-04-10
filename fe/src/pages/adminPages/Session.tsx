@@ -1,4 +1,5 @@
 import { useContext, useEffect, useState } from "react";
+import { base } from "../../App";
 
 import { session, SessionContext } from "../../layouts/DashboardLayout";
 
@@ -46,7 +47,7 @@ export default function Session() {
 
     if (validate()) {
       console.log(session)
-      fetch('http://localhost/webais/api/session', {
+      fetch(base+'/session', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'

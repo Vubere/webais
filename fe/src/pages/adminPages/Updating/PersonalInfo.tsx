@@ -1,5 +1,5 @@
 import { useContext, useEffect, useState } from "react";
-import { UserContext } from "../../../App"
+import { base, UserContext } from "../../../App"
 
 
 import { formatDateToYMD } from "../../../helpers/formatDate";
@@ -44,7 +44,7 @@ export default function UpdatePersonalInfoAdmin() {
 
   const update_profile = async () => {
     try {
-      let url = `http://localhost:80/webais/api/admins`
+      let url = base+ `/admins`
       const res = await fetch(url, {
         method: 'PUT',
         headers: {

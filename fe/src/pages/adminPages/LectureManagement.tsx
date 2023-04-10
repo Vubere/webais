@@ -4,6 +4,7 @@ import Icon from "../../components/Icon"
 
 import searchImg from '../../assets/search.png'
 import * as routes from "../../constants/routes"
+import { base } from "../../App"
 
 
 export default function LectureManagement() {
@@ -19,7 +20,7 @@ export default function LectureManagement() {
   
 
   useLayoutEffect(() => {
-    fetch("http://localhost/webais/api/lectures")
+    fetch(base+"/lectures")
       .then((res) => res.json())
       .then((data) => {
           console.log(data)

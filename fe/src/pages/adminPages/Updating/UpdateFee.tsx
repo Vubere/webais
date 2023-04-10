@@ -3,6 +3,7 @@ import { useNavigate, useParams } from "react-router-dom"
 
 import { Fee } from "../FeesManagement"
 import useFacultiesAndDepartments from "../../../hooks/useFacultiesAndDepartments"
+import { base } from "../../../App"
 
 
 
@@ -36,7 +37,7 @@ export default function UpdateFee() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    fetch('http://localhost/webais/api/fee?id=' + id)
+    fetch(base+'/fee?id=' + id)
       .then(res => res.json())
       .then(data => {
         if (data?.ok) {
@@ -84,7 +85,7 @@ export default function UpdateFee() {
   const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     if (validate()) {
-      fetch('http://localhost/webais/api/fee', {
+      fetch(base+'/fee', {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json'
@@ -126,7 +127,7 @@ export default function UpdateFee() {
   const delete_fee = () => {
     const reply = prompt('are you sure you want to delete this fee? Type yes to confirm')
     if(reply?.toLowerCase() !== 'yes') return
-    fetch('http://localhost/webais/api/fee?id=' + id, {
+    fetch(base+'/fee?id=' + id, {
       method: 'DELETE',
       headers: {
         'Content-Type': 'application/json'

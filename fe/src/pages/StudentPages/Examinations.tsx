@@ -1,6 +1,6 @@
 import { useContext, useEffect, useState } from "react"
 import { Link } from "react-router-dom";
-import { UserContext } from "../../App"
+import { base, UserContext } from "../../App"
 import { SessionContext } from "../../layouts/DashboardLayout";
 
 import { Course } from "./AvailableCourses";
@@ -19,7 +19,7 @@ export default function Examination () {
       const userSes = Session.session.session 
       const userSem = Session.session.semester 
 
-      fetch('http://localhost/webais/api/registered_courses?student_id=' + user.id + '&semester=' + userSem + '&session=' + userSes)
+      fetch(base+'/registered_courses?student_id=' + user.id + '&semester=' + userSem + '&session=' + userSes)
         .then(res => res.json())
         .then(res => {
           if (res.status == 200) {
@@ -49,7 +49,7 @@ export default function Examination () {
   useEffect(() => {
    
      
-        fetch('http://localhost/webais/api/exam' )
+        fetch(base+'/exam' )
           .then(res => res.json())
           .then(res => {
             console.log(res)

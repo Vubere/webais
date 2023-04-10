@@ -1,6 +1,6 @@
 import { useContext, useEffect, useState } from "react"
 import { Link } from "react-router-dom";
-import { UserContext } from "../../App";
+import { base, UserContext } from "../../App";
 import { session } from "../../constants/routes";
 import { SessionContext } from "../../layouts/DashboardLayout";
 
@@ -18,7 +18,7 @@ export default function AvailableCourses() {
     
     if (Session && user) {
 
-      fetch(`http://localhost/webais/api/available_course?student_id=${user.id}&session=${Session.session.session}&semester=${Session.session.semester}&level=${user.level}&department=${user.department}&faculty=${user.faculty}`)
+      fetch(base+`/available_course?student_id=${user.id}&session=${Session.session.session}&semester=${Session.session.semester}&level=${user.level}&department=${user.department}&faculty=${user.faculty}`)
         .then(res => res.json())
         .then(res => {
             console.log(res)
@@ -42,7 +42,7 @@ export default function AvailableCourses() {
   
     if(Session && user){
 
-      fetch('http://localhost/webais/api/course_registration', {
+      fetch(base+'/course_registration', {
         method: 'POST',
         headers: {
         'Content-Type': 'application/json'
@@ -99,7 +99,7 @@ const Available_course = ({course, session, RegisterCourse}:any) => {
   useEffect(() => {
     if (session && course.id) {
     
-      fetch('http://localhost/webais/api/grading?id=' + course.id + '&session=' + session)
+      fetch(base+'/grading?id=' + course.id + '&session=' + session)
         .then((res) => res.json())
         .then(res => setRegistration(!!res?.data?.registration_open))
     }

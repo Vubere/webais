@@ -1,5 +1,6 @@
 import { useLayoutEffect, useState } from "react"
 import { useNavigate, useParams } from "react-router-dom"
+import { base } from "../../../App"
 
 import { formatDateToYMD } from "../../../helpers/formatDate"
 
@@ -79,7 +80,7 @@ export default function UpdateLectures() {
     e.preventDefault()
     if (validate()) {
       try {
-        const res = await fetch("http://localhost/webais/api/lectures", {
+        const res = await fetch(base+"/lectures", {
           method: "PUT",
           headers: {
             "Content-Type": "application/json",
@@ -100,7 +101,7 @@ export default function UpdateLectures() {
   }
 
   useLayoutEffect(() => {
-    fetch("http://localhost/webais/api/lectures?id=" + id)
+    fetch(base+"/lectures?id=" + id)
       .then((res) => res.json())
       .then((data) => {
 
@@ -121,7 +122,7 @@ export default function UpdateLectures() {
   const delete_lecture = () => {
     const confirm = window.confirm('Are you sure you want to delete this lecture?')
     if (!confirm) return
-    fetch("http://localhost/webais/api/lectures", {
+    fetch(base+"/lectures", {
       method: "DELETE",
       headers: {
         "Content-Type": "application/json",

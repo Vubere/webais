@@ -1,6 +1,6 @@
 import { useContext, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { UserContext } from "../../App";
+import { base, UserContext } from "../../App";
 import { SessionContext } from "../../layouts/DashboardLayout";
 import { Lecture } from "../adminPages/Viewing/ViewLectures";
 
@@ -14,7 +14,7 @@ export default function Lectures(){
 
   useEffect(() => {
     if(user&&Session){
-      fetch('http://localhost/webais/api/student_lectures?student_id='+user?.id+'&session='+Session.session.session+'&semester='+Session.session.semester)
+      fetch(base+'/student_lectures?student_id='+user?.id+'&session='+Session.session.session+'&semester='+Session.session.semester)
       .then(res => res.json())
       .then(result => {
       

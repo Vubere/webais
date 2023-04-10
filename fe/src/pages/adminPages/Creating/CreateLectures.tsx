@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from "react"
+import { base } from "../../../App"
 import { Course } from "../../StudentPages/AvailableCourses"
 
 export default function CreateLectures() {
@@ -27,14 +28,14 @@ export default function CreateLectures() {
   const [lecturers, setLecturers] = useState<any[]>([])
   useEffect(() => {
 
-    fetch('http://localhost/webais/api/courses')
+    fetch(base+'/courses')
       .then(res => res.json())
       .then(data => setCourses(data.data))
       .catch(err => console.log(err))
   }, [])
   useEffect(() => {
 
-    fetch('http://localhost/webais/api/lecturers')
+    fetch(base+'/lecturers')
       .then(res => res.json())
       .then(data => setLecturers(data.lecturer))
       .catch(err => console.log(err))
@@ -97,7 +98,7 @@ export default function CreateLectures() {
   const onSubmit = (e: any) => {
     e.preventDefault()
     if (validate()) {
-      fetch('http://localhost/webais/api/create_lecture', {
+      fetch(base+'/create_lecture', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'

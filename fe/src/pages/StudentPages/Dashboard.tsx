@@ -1,5 +1,5 @@
 import { useContext, useEffect, useState } from "react"
-import { UserContext } from "../../App"
+import { base, UserContext } from "../../App"
 import { SessionContext } from "../../layouts/DashboardLayout"
 import { Lecture } from "../adminPages/LectureManagement"
 
@@ -28,7 +28,8 @@ export default function Dashboard() {
 
   useEffect(() => {
     if (user&&Session?.session.session&&Session?.session.semester) {
-      fetch('http://localhost/webais/api/student_lectures?student_id=' + user?.id + '&session=' + Session.session.session + '&semester=' + Session.session.semester)
+      console.log(base)
+      fetch(base+'/student_lectures?student_id=' + user?.id + '&session=' + Session.session.session + '&semester=' + Session.session.semester)
         .then(res => res.json())
         .then(data => setLectures(data.lectures))
         .catch(err => console.log(err))
@@ -49,9 +50,10 @@ export default function Dashboard() {
         if (user_type == 'admin') return
         user_id = user?.id
       }
-      fetch('http://localhost/webais/api/unread_messages?user_id=' + user_id)
+      fetch(base+'/unread_messages?user_id=' + user_id)
         .then((res) => res.json())
         .then(result => {
+          console.log(result)
           if (result?.ok) {
             let unread_messages = result?.messages
             let chats = unread_messages?.length

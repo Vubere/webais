@@ -1,6 +1,6 @@
 import { useContext, useEffect, useState } from "react"
 import { Link } from "react-router-dom"
-import { UserContext } from "../../App"
+import { base, UserContext } from "../../App"
 import * as routes from "../../constants/routes"
 
 
@@ -18,7 +18,7 @@ export default function ViewPayments() {
   }, [user])
   const getPayments = async () => {
     try {
-      const res = await fetch('http://localhost/webais/api/student_payments')
+      const res = await fetch(base+'/student_payments')
       const data = await res.json()
       if (data?.ok) {
         setPayments(data.data)

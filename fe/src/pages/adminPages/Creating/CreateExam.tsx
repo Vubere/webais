@@ -1,4 +1,5 @@
 import { useState } from "react"
+import { base } from "../../../App"
 
 export default function CreateLectures() {
   const [exam, setExams] = useState({
@@ -64,7 +65,7 @@ export default function CreateLectures() {
   const onSubmit = (e: any) => {
     e.preventDefault()
     if (validate()) {
-      fetch('http://localhost/webais/api/create_exam', {
+      fetch(base+'/create_exam', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'

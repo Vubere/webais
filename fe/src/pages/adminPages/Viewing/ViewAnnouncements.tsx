@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react"
 import { Link } from "react-router-dom"
+import { base } from "../../../App"
 
 
 
@@ -16,7 +17,7 @@ export default function ViewAnnouncements() {
   const getAnnouncements = async () => {
     setLoading(true)
     try {
-      const res = await fetch(`http://localhost/webais/api/announcements?search=${search}&searchBy=${searchBy}`)
+      const res = await fetch(base+`/announcements?search=${search}&searchBy=${searchBy}`)
       const data = await res.json()
       setAnnouncements(data.annoucements)
 

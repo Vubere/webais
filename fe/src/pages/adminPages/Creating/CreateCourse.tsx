@@ -4,6 +4,7 @@ import useFacultiesAndDepartments from "../../../hooks/useFacultiesAndDepartment
 
 /* components */
 import { MultiSelect, Option } from "react-multi-select-component"
+import { base } from "../../../App";
 
 export default function CreateCourse() {
   const { departments, faculties, error, loading } = useFacultiesAndDepartments();
@@ -35,7 +36,7 @@ export default function CreateCourse() {
     lecturers: '',
   })
   useLayoutEffect(() => {
-    fetch('http://localhost:80/webais/api/lecturers')
+    fetch(base+'/lecturers')
 
       .then(res => res.json())
       .then(data => {
@@ -57,7 +58,7 @@ export default function CreateCourse() {
     e.preventDefault()
     if (validate()) {
       try {
-        const res = await fetch('http://localhost:80/webais/api/create_course', {
+        const res = await fetch(base+'/create_course', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json'

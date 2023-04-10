@@ -1,6 +1,6 @@
 import { useContext, useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
-import { UserContext } from "../App";
+import { base, UserContext } from "../App";
 
 
 export default function Messages() {
@@ -18,7 +18,7 @@ export default function Messages() {
       }else{
         chat_url.current = user?.id&&user?.id[0].toLowerCase()=='s'?'/dashboard-student':'/dashboard-lecturer'
       }
-      fetch('http://localhost/webais/api/retrieve_messages?user_id=' + user.id)
+      fetch(base+'/retrieve_messages?user_id=' + user.id)
         .then(res => res.json())
         .then(result => {
          

@@ -1,6 +1,6 @@
 import { useContext, useEffect, useState } from "react"
 import { Link } from "react-router-dom"
-import { UserContext } from "../../../App"
+import { base, UserContext } from "../../../App"
 
 
 /* constants */
@@ -15,7 +15,7 @@ export default function ViewAdmin() {
 
   async function fetchAdmins() {
     try {
-      let url = 'http://localhost:80/webais/api/admins'
+      let url = base+'/admins'
 
       const res = await fetch(url);
       const data = await res.json()

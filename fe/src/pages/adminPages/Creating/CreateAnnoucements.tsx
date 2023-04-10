@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react"
+import { base } from "../../../App"
 
 
 
@@ -22,7 +23,7 @@ export default function Annoucements() {
   const [announcements, setAnnouncements] = useState<any>([])
 
   useEffect(() => {
-    fetch('http://localhost/webais/api/announcements')
+    fetch(base+'/announcements')
 
       .then(res => res.json())
       .then(res => {
@@ -86,7 +87,7 @@ export default function Annoucements() {
   const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     if (validate()) {
-      fetch(`http://localhost/webais/api/announcements`, {
+      fetch(base+`/announcements`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'

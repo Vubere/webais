@@ -1,6 +1,6 @@
 import { useContext, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { UserContext } from "../../App";
+import { base, UserContext } from "../../App";
 
 import * as routes from "../../constants/routes"
 import { Fee } from "../adminPages/FeesManagement";
@@ -77,7 +77,7 @@ const FeeRow = ({ fee }: { fee: Fee }) => {
 
 
   useEffect(() => {
-    fetch('http://localhost/webais/api/department?id=' + fee.department_id)
+    fetch(base+'/department?id=' + fee.department_id)
       .then(res => res.json())
       .then(data => {
 

@@ -1,6 +1,6 @@
 import { useContext, useState } from "react"
 import { useNavigate } from "react-router-dom"
-import { UserContext } from "../../../App"
+import { base, UserContext } from "../../../App"
 import useFacultiesAndDepartments from "../../../hooks/useFacultiesAndDepartments"
 
 export default function CreateUser() {
@@ -117,7 +117,7 @@ export default function CreateUser() {
     e.preventDefault()
     if (validate()) {
       try {
-        const authAdmin = await fetch('http://localhost/webais/api/authenticate', {
+        const authAdmin = await fetch(base+'/authenticate', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json'

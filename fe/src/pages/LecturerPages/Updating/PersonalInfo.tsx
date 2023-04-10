@@ -1,5 +1,5 @@
 import { FormEvent, useContext, useEffect, useState } from "react"
-import { UserContext } from "../../../App"
+import { base, UserContext } from "../../../App"
 import { formatDateToYMD } from "../../../helpers/formatDate";
 import visible from '../../../assets/visible.png'
 import invisible from '../../../assets/invisible.png'
@@ -85,7 +85,7 @@ export default function PersonalInfo() {
     e.preventDefault()
     if (validate()) {
       try {
-        let url = `http://localhost:80/webais/api/lecturers`
+        let url = base+`/lecturers`
         const res = await fetch(url, {
           method: 'PUT',
           headers: {

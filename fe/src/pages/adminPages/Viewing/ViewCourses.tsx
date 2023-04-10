@@ -5,6 +5,7 @@ import { course } from '../Creating/CreateCourse'
 import * as routes from '../../../constants/routes'
 import { SessionContext } from '../../../layouts/DashboardLayout'
 import useFacultiesAndDepartments from '../../../hooks/useFacultiesAndDepartments'
+import { base } from '../../../App'
 
 export default function ViewCourse() {
   const [courses, setCourses] = useState<course[]>([])
@@ -18,7 +19,7 @@ export default function ViewCourse() {
   const searchedCourses = courses.filter(course => course.title.toLowerCase().includes(search.toLowerCase()))
 
   useEffect(() => {
-    fetch('http://localhost:80/webais/api/courses')
+    fetch(base+'/courses')
       .then(res => res.json())
       .then(data => {
         setCourses(data.data)
@@ -36,7 +37,7 @@ export default function ViewCourse() {
       try {
         //course_id, session, semester, all:boolean,
         const { session, semester } = Session.session
-        const req = await fetch('http://localhost:80/webais/api/session_result', {
+        const req = await fetch(base+'/session_result', {
 
           method: 'POST',
           headers: {
@@ -93,7 +94,7 @@ export default function ViewCourse() {
       try {
         //course_id, session, semester, all:boolean,
         const { session, semester } = Session.session
-        const req = await fetch('http://localhost:80/webais/api/registration', {
+        const req = await fetch(base+'/registration', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json'

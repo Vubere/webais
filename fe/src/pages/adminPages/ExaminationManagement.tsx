@@ -1,5 +1,6 @@
 import { useEffect, useLayoutEffect, useState } from "react"
 import { Link } from "react-router-dom"
+import { base } from "../../App"
 import * as routes from '../../constants/routes'
 
 
@@ -9,7 +10,7 @@ export default function ExaminationManagement() {
 
 
   useLayoutEffect(() => {
-    fetch("http://localhost/webais/api/exam")
+    fetch(base+"/exam")
       .then((res) => res.json())
       .then((data) => {
         if (data.ok) {

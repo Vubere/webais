@@ -1,6 +1,6 @@
 import { useContext, useEffect, useState } from "react"
 import { useNavigate, useParams } from "react-router-dom"
-import { UserContext } from "../../App"
+import { base, UserContext } from "../../App"
 import { SessionContext } from "../../layouts/DashboardLayout"
 
 import { invoice_details } from "./GenerateInvoice"
@@ -19,7 +19,7 @@ export default function ConfirmPayment() {
 
   useEffect(() => {
     if (user && id) {
-      fetch(`http://localhost:80/webais/api/invoice?student_id=${user?.id}&fee_id=${id}`)
+      fetch(base+`/invoice?student_id=${user?.id}&fee_id=${id}`)
         .then(res => res.json())
         .then(data => {
           if (data?.ok) {
@@ -80,7 +80,7 @@ export default function ConfirmPayment() {
     if (invoice && user) {
       
       try {
-        let url = `http://localhost:80/webais/api/payments`
+        let url = base+`/payments`
         const res = await fetch(url, {
           method: 'POST',
           headers: {

@@ -1,6 +1,6 @@
 import { useContext, useEffect, useRef, useState } from "react"
 import { useParams } from "react-router-dom"
-import { UserContext } from "../../../App"
+import { base, UserContext } from "../../../App"
 import { SessionContext } from "../../../layouts/DashboardLayout"
 
 
@@ -18,7 +18,7 @@ export default function ResultSheet() {
   useEffect(() => {
     if (session && id) {
       const sess = session.session.session
-      fetch('http://localhost/webais/api/grading?id=' + id + '&session=' + sess)
+      fetch(base+'/grading?id=' + id + '&session=' + sess)
         .then((res) => res.json())
         .then(res => setGrading(!!res?.data?.grading_open))
     }
@@ -28,7 +28,7 @@ export default function ResultSheet() {
     if (session && id) {
       const sess = session.session.session
       
-      fetch('http://localhost/webais/api/grades?session=' + sess + '&course_id=' + id)
+      fetch(base+'/grades?session=' + sess + '&course_id=' + id)
         .then(res => res.json())
         .then(res => {
           if (res.fetch == 'success') {
@@ -131,7 +131,7 @@ const Result_row = ({ row, session, course_id,grading }: { row: Result, session:
     e.preventDefault();
     if(session&&course_id){
       console.log(session, course_id)
-      const res = await fetch('http://localhost/webais/api/grades',{
+      const res = await fetch(base+'/grades',{
         method: 'POST',
         headers:{
           'Content-Type': 'applicasion/json'

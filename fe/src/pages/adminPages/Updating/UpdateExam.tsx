@@ -1,5 +1,6 @@
 import { useLayoutEffect, useState } from "react"
 import { useParams } from "react-router-dom"
+import { base } from "../../../App"
 
 export default function UpdateLectures() {
   const [exam, setExam] = useState({
@@ -103,7 +104,7 @@ export default function UpdateLectures() {
     return `${year}-${addZero(month)}-${addZero(day)}`
   }
   useLayoutEffect(() => {
-    fetch("http://localhost/webais/api/exam?id=" + id)
+    fetch(base+"/exam?id=" + id)
       .then((res) => res.json())
       .then((data) => {
         console.log(data)

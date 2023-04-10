@@ -19,7 +19,9 @@ import Login from './pages/Login'
 import DashboardLayout from '../../fe/src/layouts/DashboardLayout'
 
 
+export const base:string = import.meta.env.VITE_API
 
+console.log(base)
 
 /* lazy imported components */
 const LandingPage = lazy(() => import('./pages/LandingPage'))

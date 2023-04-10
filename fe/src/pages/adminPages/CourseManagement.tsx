@@ -6,6 +6,7 @@ import * as routes from '../../constants/routes'
 import { SessionContext } from '../../layouts/DashboardLayout'
 import Icon from '../../components/Icon'
 import searchImg from '../../assets/search.png'
+import { base } from '../../App'
 
 export default function CourseManagement() {
   const [courses, setCourses] = useState<course[]>([])
@@ -19,7 +20,7 @@ export default function CourseManagement() {
   const searchedCourses = courses.filter(course => course.title.toLowerCase().includes(search.toLowerCase())||course.code.toLowerCase().includes(search.toLowerCase()))
 
   useEffect(() => {
-    fetch('http://localhost:80/webais/api/courses')
+    fetch(base+'/courses')
       .then(res => res.json())
       .then(data => {
         setCourses(data.data)

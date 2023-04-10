@@ -3,7 +3,7 @@ import { Link, useParams } from "react-router-dom"
 import { course } from "../adminPages/Creating/CreateCourse"
 import * as routes from "../../constants/routes"
 import { SessionContext } from "../../layouts/DashboardLayout"
-import { UserContext } from "../../App"
+import { base, UserContext } from "../../App"
 import useFacultiesAndDepartments from "../../hooks/useFacultiesAndDepartments"
 
 
@@ -22,7 +22,7 @@ export default function ViewSingleCourse() {
 
   useEffect(() => {
     setLoading(true)
-    fetch('http://localhost:80/webais/api/courses?id=' + id)
+    fetch(base+'/courses?id=' + id)
       .then((res) => res.json())
       .then(result => {
         if (result.ok == 1) {

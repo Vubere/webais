@@ -4,7 +4,7 @@ import { useParams } from "react-router-dom"
 import { Fee } from "../adminPages/FeesManagement"
 
 import school_green from '../../assets/school_green.png'
-import { UserContext } from "../../App"
+import { base, UserContext } from "../../App"
 import { SessionContext } from "../../layouts/DashboardLayout"
 
 
@@ -51,7 +51,7 @@ export default function GenerateInvoice() {
   useEffect(() => {
     /* get invoice if exist*/
     if (user && id) {
-      fetch(`http://localhost/webais/api/invoice?student_id=${user?.id}&fee_id=${id}`)
+      fetch(base+`/invoice?student_id=${user?.id}&fee_id=${id}`)
         .then(res => res.json())
         .then(data => {
           if (data?.ok) {
@@ -73,7 +73,7 @@ export default function GenerateInvoice() {
   useEffect(() => {
 
     if (id) {
-      fetch(`http://localhost/webais/api/fee?id=${id}`)
+      fetch(base+`/fee?id=${id}`)
         .then(res => res.json())
         .then(data => {
           console.log(data)
@@ -87,7 +87,7 @@ export default function GenerateInvoice() {
 
   const post_invoice = async () => {
     try {
-      const res = await fetch('http://localhost/webais/api/invoice', {
+      const res = await fetch(base+'invoice', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'

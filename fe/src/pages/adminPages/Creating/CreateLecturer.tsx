@@ -1,5 +1,6 @@
 import { useState } from "react"
 import { useNavigate } from "react-router-dom"
+import { base } from "../../../App"
 
 export default function CreateLecturer() {
   const [user, setUser] = useState({
@@ -99,7 +100,7 @@ export default function CreateLecturer() {
     if (validate()) {
       try {
 
-        const res = await fetch('http://localhost:80/webais/api/lecturers', {
+        const res = await fetch(base+'/lecturers', {
           method: 'POST',
           headers: {
             "Content-Type": "application/json"

@@ -5,6 +5,7 @@ import { payment } from "./Payments"
 
 
 import school_green from '../../assets/school_green.png'
+import { base } from "../../App"
 
 
 
@@ -21,7 +22,7 @@ export default function GenerateReceipt() {
   }, [id])
   const getReceipt = async () => {
     try {
-      const res = await fetch(`http://localhost/webais/api/student_payments?id=${id}`)
+      const res = await fetch(base+`/student_payments?id=${id}`)
       const data = await res.json()
 
       if (data?.ok) {

@@ -6,6 +6,7 @@ import * as routes from '../../../constants/routes'
 import { MultiSelect, Option } from 'react-multi-select-component'
 import { departments, faculties } from '../../../helpers/schoolStructure'
 import useFacultiesAndDepartments from '../../../hooks/useFacultiesAndDepartments'
+import { base } from '../../../App'
 
 
 export default function UpdateCourse() {
@@ -43,7 +44,7 @@ export default function UpdateCourse() {
 
   useEffect(() => {
 
-    fetch('http://localhost/webais/api/lecturers')
+    fetch(base+'/lecturers')
       .then(res => res.json())
       .then(data => setLecturers(data.lecturer))
       .catch(err => console.log(err))

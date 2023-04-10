@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import { base } from "../../App";
 
 import * as routes from "../../constants/routes";
 
@@ -11,7 +12,7 @@ export default function FeeManagement() {
   const [search, setSearch] = useState('')
 
   useEffect(() => {
-    fetch('http://localhost/webais/api/fee')
+    fetch(base+'/fee')
       .then(res => res.json())
       .then(data => {
         console.log(data)

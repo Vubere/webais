@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react"
 import { useParams } from "react-router-dom"
+import { base } from "../../../App"
 
 export default function UpdateDepartment() {
   const { id } = useParams()
@@ -48,7 +49,7 @@ export default function UpdateDepartment() {
   }
   const fetchFaculties = async () => {
     try {
-      const res = await fetch('http://localhost/webais/api/faculty')
+      const res = await fetch(base+'/faculty')
       const result = await res.json()
       setFaculties(result.data.data)
     } catch (error: any) {
@@ -57,7 +58,7 @@ export default function UpdateDepartment() {
   }
   const fetchDepartment = async () => {
     try {
-      const res = await fetch(`http://localhost/webais/api/department?id=${id}`)
+      const res = await fetch(base+`/department?id=${id}`)
       const result = await res.json()
       setDepartment(result.data.data[0])
 
@@ -76,7 +77,7 @@ export default function UpdateDepartment() {
     e.preventDefault()
     if (validate()) {
       try {
-        const res = await fetch(`http://localhost/webais/api/department`, {
+        const res = await fetch(base+`/department`, {
           method: 'PUT',
           headers: {
             'Content-Type': 'application/json',

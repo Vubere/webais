@@ -8,7 +8,7 @@ import * as routes from '../constants/routes'
 import arrow_back from '../assets/arrow_back.png'
 
 /* user context */
-import { UserContext } from "../App"
+import { base, UserContext } from "../App"
 
 
 
@@ -36,7 +36,7 @@ export default function Login({ title, src }: { title: string, src: string }) {
       setLoading(true)
    
       try {
-        const res = await fetch('http://localhost:80/webais/api/authenticate', {
+        const res = await fetch(base+'/authenticate', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',

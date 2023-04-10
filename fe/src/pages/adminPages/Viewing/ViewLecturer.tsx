@@ -4,6 +4,7 @@ import { Link } from "react-router-dom"
 import { User } from "./ViewAdmin"
 
 import * as routes from '../../../constants/routes'
+import { base } from "../../../App"
 
 export default function ViewLecturers() {
   const [search, setSearch] = useState('')
@@ -11,7 +12,7 @@ export default function ViewLecturers() {
 
   async function fetchLecturers() {
     try {
-      let url = 'http://localhost:80/webais/api/lecturers'
+      let url = base+'/lecturers'
      
       
       const res = await fetch(url);

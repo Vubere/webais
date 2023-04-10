@@ -4,6 +4,7 @@ import { course } from "../Creating/CreateCourse"
 import * as routes from "../../../constants/routes"
 import { SessionContext } from "../../../layouts/DashboardLayout"
 import useFacultiesAndDepartments from "../../../hooks/useFacultiesAndDepartments"
+import { base } from "../../../App"
 
 
 export default function ViewSingleCourse() {
@@ -19,7 +20,7 @@ export default function ViewSingleCourse() {
 
   useEffect(() => {
     setLoading(true)
-    fetch('http://localhost:80/webais/api/courses?id=' + id)
+    fetch(base+'/courses?id=' + id)
       .then((res) => res.json())
       .then(result => {
         setCourseDetails(result.data[0])

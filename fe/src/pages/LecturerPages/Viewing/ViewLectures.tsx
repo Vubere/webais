@@ -1,6 +1,6 @@
 import { useContext, useEffect, useState } from "react"
 import { Link } from "react-router-dom"
-import { UserContext } from "../../../App"
+import { base, UserContext } from "../../../App"
 
 import { Lecture } from "../../adminPages/Viewing/ViewLectures"
 
@@ -11,7 +11,7 @@ export default function ViewLectures() {
   useEffect(() => {
 
     if (user) {
-      fetch(`http://localhost/webais/api/lectures?lecturer_id=${user.id}`)
+      fetch(base+`/lectures?lecturer_id=${user.id}`)
         .then(res => res.json())
         .then(data => {
      

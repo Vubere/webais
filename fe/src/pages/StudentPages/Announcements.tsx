@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react"
 import { Link } from "react-router-dom"
+import { base } from "../../App"
 
 
 
@@ -15,7 +16,7 @@ export default function Announcements() {
   const getAnnouncements = async () => {
     setLoading(true)
     try {
-      const res = await fetch(`http://localhost/webais/api/announcements`)
+      const res = await fetch(base+`/announcements`)
       const data = await res.json()
       setAnnouncements(data.annoucements.filter((item: any) => item.target == 'students' || item.target == 'all'))
 

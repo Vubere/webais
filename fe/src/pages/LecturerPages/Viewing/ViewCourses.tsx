@@ -1,6 +1,6 @@
 import { useContext, useEffect, useState } from "react"
 import { Link } from "react-router-dom";
-import { UserContext } from "../../../App";
+import { base, UserContext } from "../../../App";
 import { SessionContext } from "../../../layouts/DashboardLayout";
 import { Course } from "../../StudentPages/AvailableCourses";
 
@@ -55,7 +55,7 @@ const CourseRow = ({ id, session }: { id: number, session: any }) => {
   const [grading, setGrading] = useState<boolean>()
 
   useEffect(() => {
-    fetch('http://localhost/webais/api/courses?id=' + id)
+    fetch(base+'/courses?id=' + id)
       .then(res => res.json())
       .then(res => setCourse(res.data[0]))
       .catch(err => console.log(err))
@@ -64,7 +64,7 @@ const CourseRow = ({ id, session }: { id: number, session: any }) => {
   useEffect(() => {
     if (session&&id) {
       const sess = session.session.session
-      fetch('http://localhost/webais/api/grading?id='+id+'&session='+sess)
+      fetch(base+'/grading?id='+id+'&session='+sess)
       .then((res)=>res.json())
       .then(res=>setGrading(!!res?.data?.grading_open))
     }
