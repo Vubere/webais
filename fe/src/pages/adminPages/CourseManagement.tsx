@@ -38,17 +38,15 @@ export default function CourseManagement() {
       try {
         //course_id, session, semester, all:boolean,
         const { session, semester } = Session.session
+        const f = new FormData()
+        f.append('session', session)
+        f.append('semester', semester)
+        f.append('all', 'true')
+
         const req = await fetch('http://localhost:80/webais/api/session_result', {
 
           method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({
-            session: session,
-            semester: semester,
-            all: true
-          })
+          body: f
         })
         const res = await req.json();
         if (res.status === 'success') {
@@ -67,16 +65,14 @@ export default function CourseManagement() {
       try {
         //course_id, session, semester, all:boolean, 
         const { session, semester } = Session.session
+        const f = new FormData()
+        f.append('session', session)
+        f.append('all', 'true')
+        f.append('bool', bool.toString())
+
         const req = await fetch('http://localhost/webais/api/grading', {
           method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({
-            session: session,
-            all: true,
-            bool: bool
-          })
+          body: f
         })
         const res = await req.json();
         if (res.status === 'success') {
@@ -95,17 +91,15 @@ export default function CourseManagement() {
       try {
         //course_id, session, semester, all:boolean,
         const { session, semester } = Session.session
+        const f = new FormData()
+        f.append('session', session)
+        f.append('semester', semester)
+        f.append('all', 'true')
+        f.append('bool', bool.toString())
+
         const req = await fetch('http://localhost:80/webais/api/registration', {
           method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({
-            session: session,
-            semester: semester,
-            all: true,
-            bool: bool
-          })
+          body: f
         })
         const res = await req.json();
         if (res.status === 'success') {

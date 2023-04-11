@@ -39,17 +39,15 @@ export default function ViewSingleCourse() {
       try {
         //course_id, session, semester, all:boolean,
         const { session, semester } = Session.session
+        const f = new FormData()
+        f.append('session', session)
+        f.append('semester', semester)
+        f.append('all', 'true')
+        f.append('course_id', id as string)
+
         const req = await fetch('http://localhost:80/webais/api/session_result', {
           method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({
-            session: session,
-            semester: semester,
-            all: false,
-            course_id: id
-          })
+          body: f
         })
         const res = await req.json();
         if (res.status === 'success') {
@@ -68,17 +66,15 @@ export default function ViewSingleCourse() {
       try {
         //course_id, session, semester, all:boolean, 
         const { session, semester } = Session.session
+        const f = new FormData()
+        f.append('session', session)
+        f.append('all', 'false')
+        f.append('bool', bool ? 'true' : 'false')
+        f.append('course_id', id as string)
+
         const req = await fetch('http://localhost/webais/api/grading', {
           method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({
-            session: session,
-            all: false,
-            bool: bool,
-            course_id: id
-          })
+          body: f
         })
         const res = await req.json();
         if (res.status === 'success') {
@@ -97,18 +93,16 @@ export default function ViewSingleCourse() {
       try {
         //course_id, session, semester, all:boolean,
         const { session, semester } = Session.session
+        const f = new FormData()
+        f.append('session', session)
+        f.append('semester', semester)
+        f.append('all', 'false')
+        f.append('bool', bool ? 'true' : 'false')
+        f.append('course_id', id as string)
+
         const req = await fetch('http://localhost:80/webais/api/registration', {
           method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({
-            session: session,
-            semester: semester,
-            all: false,
-            bool: bool,
-            course_id: id
-          })
+          body: f
         })
         const res = await req.json();
         console.log(res)

@@ -55,12 +55,19 @@ export default function PersonalInformation() {
     try {
       
       let url = base+`/students?id=${u.id}`
+      const f = new FormData()
+      f.append('firstName', form.firstName)
+      f.append('lastName', form.lastName)
+      f.append('otherNames', form.otherNames)
+      f.append('email', form.email)
+      f.append('phone', form.phone)
+      f.append('dob', form.dob)
+      f.append('gender', form.gender)
+
+
       const res = await fetch(url, {
         method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(form)
+        body: f
       })
       const data = await res.json()
       if(data.ok==1){

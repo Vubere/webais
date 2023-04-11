@@ -1,4 +1,4 @@
-import { useContext, useState } from "react"
+import { useContext, useEffect, useState } from "react"
 import { Link, useNavigate } from "react-router-dom"
 import Icon from "../components/Icon"
 
@@ -34,21 +34,19 @@ export default function Login({ title, src }: { title: string, src: string }) {
     e.preventDefault()
     if (validate()) {
       setLoading(true)
+      const f = new FormData()
+      f.append('id',form.id)
+      f.append('password', form.password)
+      f.append('type', title.toLowerCase())
    
       try {
         const res = await fetch(base+'/authenticate', {
           method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({
-            ...form,
-            type: title.toLowerCase()
-          }),
+          body: f,
 
         })
         const data = await res.json()
-
+    
 
         if (data?.authenticated) {
           console.log(data)

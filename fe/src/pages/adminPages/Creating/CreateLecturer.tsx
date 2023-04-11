@@ -99,13 +99,19 @@ export default function CreateLecturer() {
     e.preventDefault()
     if (validate()) {
       try {
-
+        const f = new FormData()
+        f.append('firstName', user.firstName)
+        f.append('lastName', user.lastName)
+        f.append('otherNames', user.otherNames)
+        f.append('email', user.email)
+        f.append('phone', user.phone)
+        f.append('dob', user.dob)
+        f.append('gender', user.gender)
+        f.append('discipline', user.discipline)
+        f.append('degreeAcquired', user.degreeAcquired)
         const res = await fetch(base+'/lecturers', {
           method: 'POST',
-          headers: {
-            "Content-Type": "application/json"
-          },
-          body: JSON.stringify(user),
+          body: f
         });
         const data = await res.json();
         if(data?.status==200){

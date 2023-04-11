@@ -36,9 +36,6 @@ export default function CreateFee() {
   })
   const {error:dept_error, faculties, departments } = useFacultiesAndDepartments()
 
-
-  
-
   useEffect(() => {
     if(sess){
       setFee({...fee, session: sess.session.session})
@@ -48,7 +45,6 @@ export default function CreateFee() {
   const onChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     setFee({ ...fee, [e.target.name]: e.target.value })
   }
-
 
   const validate = () => {
     let temp_err = { ...error }
@@ -79,12 +75,22 @@ export default function CreateFee() {
   const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     if (validate()) {
+      const f = new FormData()
+      f.append('name', fee.name)
+      f.append('amount', fee.amount.toString())
+      f.append('department', fee.department)
+      f.append('session', fee.session)
+      f.append('semester', fee.semester.toString())
+      f.append('level', fee.level)
+      f.append('status', fee.status)
+      f.append('created', fee.created)
+      f.append('last_updated', fee.last_updated)
+      f.append('id', fee.id.toString())
+      
+
       fetch(base+'/fee', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(fee)
+        body: f
       })
       .then(res => res.json())
       .then(data => {

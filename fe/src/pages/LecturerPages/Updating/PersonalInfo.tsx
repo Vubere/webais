@@ -86,12 +86,21 @@ export default function PersonalInfo() {
     if (validate()) {
       try {
         let url = base+`/lecturers`
+        const f = new FormData()
+        f.append('firstName', lecturer.firstName)
+        f.append('lastName', lecturer.lastName)
+        f.append('otherNames', lecturer.otherNames)
+        f.append('email', lecturer.email)
+        f.append('phone', lecturer.phone)
+        f.append('gender', lecturer.gender)
+        f.append('dob', lecturer.dob)
+        f.append('faculty', lecturer.faculty)
+        f.append('department', lecturer.department)
+        f.append('id', lecturer.id)
+
         const res = await fetch(url, {
           method: 'PUT',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify(lecturer)
+          body: f
         })
         const data = await res.json()
         if(data?.ok){

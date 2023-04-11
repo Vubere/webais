@@ -45,12 +45,20 @@ export default function UpdatePersonalInfoAdmin() {
   const update_profile = async () => {
     try {
       let url = base+ `/admins`
+      const f = new FormData()
+      f.append('firstName', user.firstName)
+      f.append('lastName', user.lastName)
+      f.append('otherNames', user.otherNames)
+      f.append('email', user.email)
+      f.append('phone', user.phone)
+      f.append('dob', user.dob)
+      f.append('gender', user.gender)
+      f.append('password', user.password)
+      f.append('id', user.id)
+
       const res = await fetch(url, {
         method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(user)
+        body: f
       })
       const data = await res.json()
 

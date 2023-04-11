@@ -87,12 +87,17 @@ export default function Annoucements() {
   const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     if (validate()) {
+      const f = new FormData()
+      f.append('title', form.title)
+      f.append('type', form.type)
+      f.append('content', form.content)
+      f.append('date', form.date)
+      f.append('time', form.time)
+      f.append('targets', form.targets)
+
       fetch(base+`/announcements`, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(form)
+        body: f
       }).then(res => res.json())
         .then(data => {
           console.log(data)

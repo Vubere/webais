@@ -46,13 +46,11 @@ export default function Session() {
     e.preventDefault();
 
     if (validate()) {
-      console.log(session)
+      const f = new FormData()
+
       fetch(base+'/session', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(session)
+        body: f
       })
         .then((res) => res.json())
         .then((result) => {

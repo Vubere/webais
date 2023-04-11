@@ -44,12 +44,20 @@ export default function UpdateAdmin() {
   const updateAdmin = async () => {
     try {
       let url = base+`/admins?id=${id}`
+      const f = new FormData()
+      f.append('firstName', form.firstName)
+      f.append('lastName', form.lastName)
+      f.append('otherNames', form.otherNames)
+      f.append('email', form.email)
+      f.append('phone', form.phone)
+      f.append('dob', form.dob)
+      f.append('gender', form.gender)
+      f.append('password', form.password)
+      f.append('id', form.id)
+
       const res = await fetch(url, {
         method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(form)
+        body: f
       })
       const data = await res.json()
     } catch (err) {

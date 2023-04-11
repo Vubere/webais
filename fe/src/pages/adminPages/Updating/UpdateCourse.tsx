@@ -90,12 +90,21 @@ export default function UpdateCourse() {
    
     if (validate()) {
       try {
+        const f = new FormData()
+        f.append('id', course.id?.toString() as string)
+        f.append('code', course.code)
+        f.append('title', course.title)
+        f.append('unit', course.unit)
+        f.append('level', course.level)
+        f.append('description', course.description)
+        f.append('semester', course.semester.toString())
+        f.append('departments', JSON.stringify(course.departments))
+        f.append('faculties', JSON.stringify(course.faculties))
+        f.append('lecturers', JSON.stringify(course.lecturers))
+
         const res = await fetch('http://localhost:80/webais/api/courses', {
           method: 'PUT',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify(course),
+          body: f
         })
         
         const data = await res.json()

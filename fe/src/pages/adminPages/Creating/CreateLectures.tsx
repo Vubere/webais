@@ -7,12 +7,11 @@ export default function CreateLectures() {
     time: '',
     day: '',
     duration: '',
-
     course_id: '',
     lecturer_id: '',
     venue: '',
   })
-  console.log(lectures)
+  
   const [search, setSearch] = useState('')
   const [searchLect, setSearchLect] = useState('')
   const [errors, setErrors] = useState({
@@ -98,12 +97,17 @@ export default function CreateLectures() {
   const onSubmit = (e: any) => {
     e.preventDefault()
     if (validate()) {
+      const f = new FormData()
+      f.append('time', lectures.time)
+      f.append('day', lectures.day)
+      f.append('duration', lectures.duration)
+      f.append('course_id', lectures.course_id)
+      f.append('lecturer_id', lectures.lecturer_id)
+      f.append('venue', lectures.venue)
+
       fetch(base+'/create_lecture', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(lectures)
+        body: f
       }).then(res => res.json())
         .then(data => {
           console.log(data)

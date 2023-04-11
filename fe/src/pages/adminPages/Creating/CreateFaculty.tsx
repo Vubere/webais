@@ -32,12 +32,12 @@ export default function CreateFaculty(){
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     if (validate()) {
+      const f = new FormData()
+      f.append('name', faculty.name)
+
       fetch(base+'/faculty', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(faculty),
+        body: f
       }).then((res)=>res.json())
       .then((data)=>{
         if(data?.status === 'success'){

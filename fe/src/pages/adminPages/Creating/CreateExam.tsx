@@ -64,13 +64,18 @@ export default function CreateLectures() {
 
   const onSubmit = (e: any) => {
     e.preventDefault()
+    const f = new FormData()
+    f.append('time', exam.time)
+    f.append('date', exam.date)
+    f.append('duration', exam.duration)
+    f.append('course_code', exam.course_code)
+    f.append('lecturer_id', exam.lecturer_id)
+    f.append('venue', exam.venue)
+
     if (validate()) {
       fetch(base+'/create_exam', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(exam)
+        body: f
       }).then(res => res.json())
         .then(data => {
           console.log(data)

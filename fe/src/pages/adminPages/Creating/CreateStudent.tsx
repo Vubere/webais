@@ -117,25 +117,33 @@ export default function CreateUser() {
     e.preventDefault()
     if (validate()) {
       try {
+        const f = new FormData()
+        f.append('type', 'admin')
+        f.append('id', admin?.id)
+        f.append('password', password)
         const authAdmin = await fetch(base+'/authenticate', {
           method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({
-            type: 'admin',
-            id: admin?.id,
-            password: password
-          })
+          body: f
         })
         const auth = await authAdmin.json()
         if (auth.authenticated) {
+          const f = new FormData()
+          f.append('type', 'student')
+          f.append('firstName', user.firstName)
+          f.append('lastName', user.lastName)
+          f.append('otherNames', user.otherNames)
+          f.append('email', user.email)
+          f.append('phone', user.phone)
+          f.append('dob', user.dob)
+          f.append('gender', user.gender)
+          f.append('faculty', user.faculty)
+          f.append('department', user.department)
+          f.append('level', user.level)
+          f.append('studentId', user.studentId)
+
           const res = await fetch('http://localhost:80/webais/api/students', {
             method: 'POST',
-            headers: {
-              "Content-Type": "application/json"
-            },
-            body: JSON.stringify(user),
+            body: f
           });
           const data = await res.json();
           if(data?.status==200){

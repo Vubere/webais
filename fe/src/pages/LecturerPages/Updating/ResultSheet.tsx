@@ -130,21 +130,19 @@ const Result_row = ({ row, session, course_id,grading }: { row: Result, session:
   const update_form = async (e:any) => {
     e.preventDefault();
     if(session&&course_id){
-      console.log(session, course_id)
+    
+      const f = new FormData()
+      f.append('attendance', form.attendance.toString())
+      f.append('ca', form.ca.toString())
+      f.append('exam', form.exam.toString())
+      f.append('grade', form.grade)
+      f.append('session', session)
+      f.append('course_id', course_id.toString())
+      f.append('student_id', row.student_id)
+
       const res = await fetch(base+'/grades',{
         method: 'POST',
-        headers:{
-          'Content-Type': 'applicasion/json'
-        },
-        body: JSON.stringify({
-          attendance: form.attendance,
-          ca: form.ca,
-          exam: form.exam,
-          grade: form.grade,
-          session: session,
-          course_id: course_id,
-          student_id: row.student_id
-        })
+        body: f
       })
       const result = await res.json();
       if(result?.status==200){

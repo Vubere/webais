@@ -77,12 +77,18 @@ export default function UpdateLectures() {
     e.preventDefault()
     if (validate()) {
       try {
+        const f = new FormData()
+        f.append('id', id?.toString() as string)
+        f.append('time', exam.time)
+        f.append('date', exam.date)
+        f.append('duration', exam.duration)
+        f.append('course_code', exam.course_code)
+        f.append('lecturer_id', exam.lecturer_id)
+        f.append('venue', exam.venue)
+
         const res = await fetch("http://localhost/webais/api/exam", {
           method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ id, ...exam }),
+          body: f
         })
         const data = await res.json()
         if (data.ok) {

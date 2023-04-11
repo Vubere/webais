@@ -83,13 +83,19 @@ export default function CreateAdmin() {
     e.preventDefault()
     if (validate()) {
       try {
+        const f = new FormData()
+        f.append('firstName', user.firstName)
+        f.append('lastName', user.lastName)
+        f.append('otherNames', user.otherNames)
+        f.append('email', user.email)
+        f.append('phone', user.phone)
+        f.append('dob', user.dob)
+        f.append('gender', user.gender)
+        f.append('adminId', user.adminId)
         
         const res = await fetch(base+'/admins', {
           method: 'POST',
-          headers: {
-            "Content-Type": "application/json"
-          },
-          body: JSON.stringify(user),
+          body: f,
         });
         const data = await res.json();
         if(data?.message=='successful'){

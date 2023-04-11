@@ -78,25 +78,22 @@ export default function ConfirmPayment() {
 
   const post_payment = async () => {
     if (invoice && user) {
-      
+      const f = new FormData()
+      f.append('invoice_no', invoice?.invoice_no)
+      f.append('confirmation_number', form.confirmation_number)
+      f.append('receipt_number', form.receipt_number)
+      f.append('student_id', user?.id)
+      f.append('fee_id', id?.toString() as string)
+
       try {
         let url = base+`/payments`
         const res = await fetch(url, {
           method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({
-            invoice_no: invoice?.invoice_no,
-            confirmation_number: form.confirmation_number,
-            receipt_number: form.receipt_number,
-            student_id: user?.id,
-            fee_id: id,
-          })
+          body: f
         })
      
         const data = await res.json()
-        console.log(data)
+    
         if (data.ok == 1) {
           alert('Payment Confirmed')
           navigate(-1)

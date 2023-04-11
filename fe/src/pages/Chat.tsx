@@ -96,11 +96,9 @@ export default function Message() {
 
       if (image)
         data.append('image', image)
+        
       fetch(base+'/send_message', {
         method: 'POST',
-        headers: {
-          ContentType: 'multipart/form-data'
-        },
         body: data
       })
         .then(res => res.json())

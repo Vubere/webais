@@ -80,20 +80,26 @@ export default function UpdateLectures() {
     e.preventDefault()
     if (validate()) {
       try {
+        const f = new FormData()
+        f.append('id', id?.toString() as string)
+        f.append('time', lectures.time)
+        f.append('day', lectures.day)
+        f.append('duration', lectures.duration)
+        f.append('code', lectures.code)
+        f.append('lecturer_id', lectures.lecturer_id)
+        f.append('venue', lectures.venue)
+
         const res = await fetch(base+"/lectures", {
           method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ id, ...lectures }),
+          body: f
         })
-        const data = await res.text()
+        const data = await res.json()
         console.log(data)
-      /*   if (data.ok) {
+        if (data.ok) {
           alert('Lecture Updated Successfully')
         } else {
           throw new Error(data?.status || 'something went wrong')
-        } */
+        } 
       } catch (err) {
         console.log(err)
       }

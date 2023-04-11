@@ -77,12 +77,14 @@ export default function UpdateDepartment() {
     e.preventDefault()
     if (validate()) {
       try {
+        const f = new FormData()
+        f.append('name', department.name)
+        f.append('faculty_id', department.faculty_id)
+        f.append('id', department.id)
+
         const res = await fetch(base+`/department`, {
           method: 'PUT',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(department),
+          body: f
         })
         const result = await res.json()
 

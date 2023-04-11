@@ -85,12 +85,19 @@ export default function UpdateFee() {
   const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     if (validate()) {
+      const f = new FormData()
+      f.append('id', id as string)
+      f.append('name', fee.name)
+      f.append('amount', fee.amount.toString() as string)
+      f.append('department', fee.department)
+      f.append('session', fee.session)
+      f.append('semester', fee.semester.toString() as string)
+      f.append('level', fee.level)
+      f.append('status', fee.status)
+
       fetch(base+'/fee', {
         method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(fee)
+        body: f
       })
         .then(res => res.json())
         .then(data => {

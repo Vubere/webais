@@ -58,12 +58,20 @@ export default function CreateCourse() {
     e.preventDefault()
     if (validate()) {
       try {
+        const f = new FormData()
+        f.append('code', course.code)
+        f.append('title', course.title)
+        f.append('unit', course.unit)
+        f.append('description', course.description)
+        f.append('level', course.level)
+        f.append('semester', course.semester.toString())
+        f.append('departments', JSON.stringify(course.departments))
+        f.append('faculties', JSON.stringify(course.faculties))
+        f.append('lecturers', JSON.stringify(course.lecturers))
+
         const res = await fetch(base+'/create_course', {
           method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify(course),
+          body: f
         })
         const data = await res.json()
         console.log(data)

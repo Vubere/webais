@@ -38,12 +38,13 @@ export default function UpdateFaculty() {
   }
   const submitNameChange = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
+    const f = new FormData()
+    f.append('name', faculty.name)
+    f.append('id', faculty.id)
+    
     fetch(base+`/faculty`, {
       method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(faculty)
+      body: f
     }).then(res => res.json())
       .then(data => {
         console.log(data)
@@ -53,17 +54,18 @@ export default function UpdateFaculty() {
   }
   const addDepartment = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
+    const f = new FormData()
+    f.append('name', department)
+    f.append('faculty_id', faculty.id)
+
     fetch(base+`/department`, {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        name: department,
-        faculty_id: faculty.id
-      })
+      body: f
     }).then(res => res.json())
       .then(data => {
+        if(data.ok){
+          alert('Department added successfully')
+        }
       })
       .catch(err => {
         console.log(err)

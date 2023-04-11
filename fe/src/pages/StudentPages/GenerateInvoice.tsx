@@ -87,18 +87,16 @@ export default function GenerateInvoice() {
 
   const post_invoice = async () => {
     try {
+      const f = new FormData()
+      f.append('student_id', user?.id)
+      f.append('fee_id', fee?.id.toString() as string)
+      f.append('invoice_no', invoice)
+      f.append('status', 'pending')
+      f.append('date', cur_date)
+
       const res = await fetch(base+'invoice', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          student_id: user?.id,
-          fee_id: fee?.id,
-          invoice_no: invoice,
-          status: 'pending',
-          date: cur_date
-        })
+        body: f
       })
       const data = await res.json()
     

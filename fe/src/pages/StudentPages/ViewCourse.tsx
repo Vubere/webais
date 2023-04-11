@@ -70,18 +70,15 @@ export default function ViewSingleCourse() {
   }
   const RegisterCourse = (course: course) => {
     if (Session && user) {
+      const f = new FormData()
+      f.append('course_id', course.id?.toString() as string)
+      f.append('student_id', user.id)
+      f.append('semester', Session.session.semester)
+      f.append('session', Session.session.session)
 
       fetch('http://localhost/webais/api/course_registration', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          course_id: course.id,
-          student_id: user.id,
-          semester: Session.session.semester,
-          session: Session.session.session
-        })
+        body: f
       }).then(res => res.json())
         .then(data => {
 
