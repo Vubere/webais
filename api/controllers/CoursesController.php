@@ -43,7 +43,7 @@ class CoursesController
 
     if ($method == 'POST') {
       try {
-        $post = json_decode(file_get_contents("php://input"), true);
+        $post = $_POST;
 
         $sql = "INSERT INTO courses(
         code,
@@ -146,7 +146,7 @@ class CoursesController
       }
     } elseif ($method == 'PUT') {
       try {
-        $put = json_decode(file_get_contents("php://input"), true);
+        $put = $_POST;
         $postedLecturers = $put['lecturers'];
         $id = $put['id'];
         $lecturers = $this->compareLecturers($put['id']);
@@ -224,7 +224,7 @@ class CoursesController
       }
     }elseif($method=='DELETE'){
       try {
-        $del = json_decode(file_get_contents("php://input"), true);
+        $del = $_POST;
         $sql = "DELETE FROM courses WHERE id = '" . $del['id'] . "'";
         $res = $this->conn->query($sql);
         if ($res) {
@@ -326,8 +326,8 @@ class CoursesController
     $method = $_SERVER['REQUEST_METHOD'];
 
     if ($method == 'POST') {
-      $post = json_decode(file_get_contents('php://input'));
-      $sql = "SELECT * FROM course_registrations WHERE student_id = '" . $post->student_id . "' AND course_id = '" . $post->course_id . "' AND semester = '" . $post->semester . "' AND session = '" . $post->session . "'";
+      $post = $_POST;
+      $sql = "SELECT * FROM course_registrations WHERE student_id = '" . $post['student_id'] . "' AND course_id = '" . $post['course_id'] . "' AND semester = '" . $post['semester'] . "' AND session = '" . $post['session'] . "'";
       $res = $this->conn->query($sql);
       if ($res) {
         $row = $res->fetch_assoc();
@@ -336,7 +336,7 @@ class CoursesController
           echo json_encode(array('status' => 400, 'message' => 'You have already registered for this course', 'ok' => 0));
         } else {
           $this->insert_student_into_result_table($post);
-          $sql = "INSERT INTO course_registrations (student_id, course_id, semester, session) VALUES ('" . $post->student_id . "', '" . $post->course_id . "', '" . $post->semester . "', '" . $post->session . "')";
+          $sql = "INSERT INTO course_registrations (student_id, course_id, semester, session) VALUES ('" . $post['student_id'] . "', '" . $post['course_id'] . "', '" . $post['semester'] . "', '" . $post['session'] . "')";
           $res = $this->conn->query($sql);
           if ($res) {
             $this->getHeaders();
@@ -371,9 +371,9 @@ class CoursesController
         echo json_encode(array('status' => 400, 'message' => 'failed', 'ok' => 0));
       }
     } elseif ($method == 'DELETE') {
-      $delete = json_decode(file_get_contents('php://input'));
+      $delete = $_POST;
       $this->remove_student_from_result_table($delete);
-      $sql = "DELETE FROM course_registrations WHERE student_id = '" . $delete->student_id . "' AND course_id = '" . $delete->course_id . "' AND semester = '" . $delete->semester . "' AND session = '" . $delete->session . "'";
+      $sql = "DELETE FROM course_registrations WHERE student_id = '" . $delete['student_id'] . "' AND course_id = '" . $delete['course_id'] . "' AND semester = '" . $delete['semester'] . "' AND session = '" . $delete['session'] . "'";
       $res = $this->conn->query($sql);
       if ($res) {
         $this->getHeaders();
@@ -391,10 +391,10 @@ class CoursesController
   private function insert_student_into_result_table($post = null)
   {
     if ($post != null) {
-      $session = $post->session;
-      $semester = $post->semester;
-      $course_id = $post->course_id;
-      $student_id = $post->student_id;
+      $session = $post['session'];
+      $semester = $post['semester'];
+      $course_id = $post['course_id'];
+      $student_id = $post['student_id'];
       $session_start = explode('/', $session)[0];
       $session_end = explode('/', $session)[1];
 
@@ -426,10 +426,10 @@ class CoursesController
   private function remove_student_from_result_table($post = null)
   {
     if ($post) {
-      $session = $post->session;
-      $semester = $post->semester;
-      $course_id = $post->course_id;
-      $student_id = $post->student_id;
+      $session = $post['session'];
+      $semester = $post['semester'];
+      $course_id = $post['course_id'];
+      $student_id = $post['student_id'];
       $session_start = explode('/', $session)[0];
       $session_end = explode('/', $session)[1];
 
@@ -464,11 +464,11 @@ class CoursesController
     $method = $_SERVER['REQUEST_METHOD'];
 
     if ($method == 'POST') {
-      $post = json_decode(file_get_contents('php://input'));
+      $post = $_POST;
 
-      $session = $post->session;
-      $bool = $post->bool;
-      if ($post->all == true) {
+      $session = $post['session'];
+      $bool = $post['bool'];
+      if ($post['all'] == true) {
         $sql = 'UPDATE course_gradings SET grading_open = "' . $bool . '" WHERE session = "' . $session . '"';
         $stmt = $this->conn->prepare($sql);
         $res = $stmt->execute();
@@ -481,7 +481,7 @@ class CoursesController
           echo json_encode(array('status' => 400, 'message' => 'failed', 'ok' => 0));
         }
       } else {
-        $course_id = $post->course_id;
+        $course_id = $post['course_id'];
         $sql = 'UPDATE course_gradings SET grading_open = "' . $bool . '" WHERE course_id = "' . $course_id . '" AND session = "' . $session . '"';
         $stmt = $this->conn->prepare($sql);
         $res = $stmt->execute();
@@ -544,11 +544,11 @@ class CoursesController
   {
     $method = $_SERVER['REQUEST_METHOD'];
     if ($method == 'POST') {
-      $post = json_decode(file_get_contents('php://input'));
-      $session = $post->session;
-      $bool = $post->bool;
+      $post = $_POST;
+      $session = $post['session'];
+      $bool = $post['bool'];
 
-      if ($post->all == true) {
+      if ($post['all'] == true) {
         $sql = 'UPDATE course_gradings SET registration_open = "' . $bool . '" WHERE session = "' . $session . '"';
         $stmt = $this->conn->prepare($sql);
         $res = $stmt->execute();
@@ -560,7 +560,7 @@ class CoursesController
           echo json_encode(array('status' => 400, 'message' => 'failed', 'ok' => 0));
         }
       } else {
-        $course_id = $post->course_id;
+        $course_id = $post['course_id'];
         $sql = 'UPDATE course_gradings SET registration_open = "' . $bool . '" WHERE course_id = "' . $course_id . '" AND session = "' . $session . '"';
         $stmt = $this->conn->prepare($sql);
         $res = $stmt->execute();
@@ -588,8 +588,8 @@ class CoursesController
       try {
         $sql = "SELECT * FROM courses";
         $res = $this->conn->query($sql);
-        $semester = $post->semester;
-        $session = $post->session;
+        $semester = $post['semester'];
+        $session = $post['session'];
         $res2 = null;
         if ($res) {
           while ($row = $res->fetch_assoc()) {
@@ -636,9 +636,8 @@ class CoursesController
     if ($post) {
       try {
 
-        $course_id = $post->course_id;
-        $session = $post->session;
-        $semester = $post->semester;
+        $course_id = $post['course_id'];
+        $session = $post['session'];        $semester = $post['semester'];
         $session_start = explode('/', $session)[0];
         $session_end = explode('/', $session)[1];
         $table_name = 'results_' . $session_start . '_' . $session_end . '_' . $semester . '_' . $course_id;
@@ -691,11 +690,11 @@ class CoursesController
     $method = $_SERVER['REQUEST_METHOD'];
     if ($method == 'POST') {
 
-      $post = json_decode(file_get_contents('php://input'));
-      if ($post->all == 'true') {
+      $post = $_POST;
+      if ($post['all'] == 'true') {
         $this->create_table_for_all_courses($post);
       } else {
-        $sql = "SELECT * FROM course_gradings WHERE course_id = '" . $post->course_id . "' AND session = '" . $post->session . "'";
+        $sql = "SELECT * FROM course_gradings WHERE course_id = '" . $post['course_id'] . "' AND session = '" . $post['session'] . "'";
         $res = $this->conn->query($sql);
         if ($res) {
           $row = $res->fetch_assoc();

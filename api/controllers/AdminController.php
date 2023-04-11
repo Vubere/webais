@@ -73,7 +73,7 @@ class AdminController{
       }
     } elseif ($_SERVER['REQUEST_METHOD'] == 'PUT') {
     
-      $post = json_decode(file_get_contents("php://input"), true);
+      $post = $_POST;
 
       $id = $post['id'];
       $sql = "UPDATE administrators SET 
@@ -109,7 +109,7 @@ class AdminController{
       }
     } elseif ($_SERVER['REQUEST_METHOD']=="POST") {
        try {
-        $post = json_decode(file_get_contents("php://input"), true);
+        $post = $_POST;
 
         $sql = "INSERT INTO administrators (
           id,
@@ -154,7 +154,7 @@ class AdminController{
     }elseif($_SERVER['REQUEST_METHOD']=='DELETE'){
       
       try{
-        $post = json_decode(file_get_contents("php://input"), true);
+        $post = $_POST;
         $id = $post['id'];
         $sql = "DELETE FROM administrators WHERE id = '$id'";
         $res = $this->conn->prepare($sql);

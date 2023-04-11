@@ -81,7 +81,7 @@ class StructureController
     $method = $_SERVER['REQUEST_METHOD'];
     if ($method == 'POST') {
       try {
-        $post = json_decode(file_get_contents("php://input"), true);
+        $post = $_POST;
         $sql = "INSERT INTO departments(
           name,
           faculty_id
@@ -113,7 +113,7 @@ class StructureController
   }
   private function updateDepartment()
   {
-    $post = json_decode(file_get_contents('php://input'), true);
+    $post = $_POST;
     $id = $post['id'];
     $name = $post['name'];
     $faculty = $post['faculty_id'];
@@ -137,7 +137,7 @@ class StructureController
   }
   private function deleteDepartment()
   {
-    $post = json_decode(file_get_contents('php://input'), true);
+    $post = $_POST;
     $id = $post['id'];
     $sql = "DELETE FROM departments WHERE id = ?";
     try {
@@ -230,7 +230,7 @@ class StructureController
   }
   private function createFaculty()
   {
-    $post = json_decode(file_get_contents('php://input'), true);
+    $post = $_POST;
     $name = $post['name'];
 
     $sql = "INSERT INTO faculties (name) VALUES (?)";
@@ -263,7 +263,7 @@ class StructureController
   }
   private function updateFaculty()
   {
-    $post = json_decode(file_get_contents('php://input'), true);
+    $post = $_POST;
     $id = $post['id'];
     $name = $post['name'];
     $sql = "UPDATE faculties SET name = ? WHERE id = ?";
@@ -289,7 +289,7 @@ class StructureController
   }
   private function deleteFaculty()
   {
-    $post = json_decode(file_get_contents('php://input'), true);
+    $post = $_POST;
     $id = $post['id'];
     $sql = "DELETE FROM faculties WHERE id = ?";
     $stmt = $this->conn->prepare($sql);

@@ -45,7 +45,7 @@ class EventsController
 
     if ($method == 'POST') {
       try {
-        $post = json_decode(file_get_contents("php://input"), true);
+        $post = $_POST;
      
         $sql = "INSERT INTO lectures(
           time,
@@ -138,7 +138,7 @@ class EventsController
         echo json_encode(array('status' => $e->getMessage()));
       }
     } elseif ($method == 'PUT') {
-      $put = json_decode(file_get_contents("php://input"), true);
+      $put = $_POST;
       $sql = "UPDATE lectures SET time=?,day=?,duration=?,course_id=?,lecturer_id=?,venue=? WHERE id='" . $put['id'] . "'";
       $time = $put['time'];
       $day = $put['day'];
@@ -159,7 +159,7 @@ class EventsController
       echo json_encode(array('status' => 'success', 'ok' => 1));
     }elseif($method=="DELETE"){
       try{
-        $delete = json_decode(file_get_contents("php://input"), true);
+        $delete = $_POST;
         $sql = "DELETE FROM lectures WHERE id = '".$delete['id']."'";
         $res = $this->conn->query($sql);
         if(!$res){
@@ -183,7 +183,7 @@ class EventsController
 
     if ($method == 'POST') {
       try {
-        $post = json_decode(file_get_contents("php://input"), true);
+        $post = $_POST;
         $id = $this->checkIfCourseExist($post['course_code']);
         if(!$id){
           throw new Exception("Course does not exist", 1);
@@ -274,7 +274,7 @@ class EventsController
         echo json_encode(array('status' => $e->getMessage()));
       }
     } elseif ($method == 'PUT') {
-      $put = json_decode(file_get_contents("php://input"), true);
+      $put = $_POST;
       if(!isset($put['id'])){
         throw new Exception("Error Processing Request", 1);
       }
@@ -330,7 +330,7 @@ class EventsController
         echo json_encode(array('status' => $e->getMessage()));
       }
     } elseif ($method == 'PUT') {
-      $put = json_decode(file_get_contents("php://input"), true);
+      $put = $_POST;
       $type = $put['type'];
       $title = $put['title'];
       $content = $put['content'];
@@ -349,7 +349,7 @@ class EventsController
       echo json_encode(array('status' => 'success', 'ok' => 1));
     } elseif ($method == 'POST') {
       try {
-        $post = json_decode(file_get_contents("php://input"), true);
+        $post = $_POST;
         $sql = "INSERT INTO annoucements(
           type,
           title,
@@ -390,7 +390,7 @@ class EventsController
         echo json_encode(array('status' => $e->getMessage(), 'ok' => 0));
       }
     } elseif ($method == 'DELETE') {
-      $delete = json_decode(file_get_contents("php://input"), true);
+      $delete = $_POST;
       $sql = "DELETE FROM annoucements WHERE id='" . $delete['id'] . "'";
       $res = $this->conn->query($sql);
       if (!$res) {

@@ -44,7 +44,7 @@ class SessionController
       }
     } elseif ($method == 'POST') {
       try {
-        $post = json_decode(file_get_contents("php://input"), true);
+        $post = $_POST;
         $endPrevSessions = "UPDATE session SET current = '0' WHERE current = '1'";
         $stmt = $this->conn->query($endPrevSessions);
         

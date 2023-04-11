@@ -91,7 +91,7 @@ class FeeController
       }
     } elseif ($method == 'POST') {
       try {
-        $post = json_decode(file_get_contents("php://input"), true);
+        $post = $_POST;
         $sql = "INSERT INTO fees (name, amount, department_id, session, level, semester, fee_status) VALUES (?, ?, ?, ?, ?, ?, ?)";
         $name = $post['name'];
         $amount = $post['amount'];
@@ -122,7 +122,7 @@ class FeeController
       }
     }elseif($method =='PUT'){
       try {
-        $post = json_decode(file_get_contents("php://input"), true);
+        $post = $_POST;
         $sql = "UPDATE fees SET name = ?, amount = ?, department_id = ?, session = ?, level = ?, semester = ?, fee_status = ?, updated_at = ? WHERE id = ?";
         $name = $post['name'];
         $amount = $post['amount'];
@@ -151,7 +151,7 @@ class FeeController
       }
     }elseif($method=='DELETE') {
       try {
-        $post = json_decode(file_get_contents("php://input"), true);
+        $post = $_POST;
         
         $sql = "DELETE FROM fees WHERE id = ?";
      
@@ -218,7 +218,7 @@ class FeeController
       }
     } elseif ($method == 'POST') {
       try {
-        $post = json_decode(file_get_contents("php://input"), true);
+        $post = $_POST;
         $sql = "INSERT INTO fees_paid (student_id, fee_id, receipt_number, confirmation_number, invoice_no) VALUES (?, ?, ?, ?, ?)";
         if(!isset($post['student_id']) || !isset($post['fee_id']) || !isset($post['receipt_number']) || !isset($post['confirmation_number']) || !isset($post['invoice_no'])){
           $this->getHeaders();
@@ -231,7 +231,7 @@ class FeeController
         $confirmation_number = $post['confirmation_number'];
         $invoice_no = $post['invoice_no'];
      
-        if($this->check_if_payment_exist()){
+        if($this->check_if_payment_exist($student_id, $fee_id, $invoice_no)){
           $this->getHeaders();
           echo json_encode(array('ok'=>0,'message' => 'Payment already exist'));
           return;
@@ -305,7 +305,7 @@ class FeeController
       echo json_encode(array('message' => 'Invalid request method','ok'=>0));
     }
   }
-  private function check_if_payment_exist(){
+  private function check_if_payment_exist($student_id, $fee_id, $invoice_no){
     $sql = "SELECT * FROM fees_paid WHERE student_id = ? AND fee_id = ? AND invoice_no = ?";
     $stmt = $this->conn->prepare($sql);
     $stmt->bind_param('iis', $student_id, $fee_id, $invoice_no);
@@ -364,7 +364,7 @@ class FeeController
       }
     }elseif($method=='POST' ){
       try {
-        $post = json_decode(file_get_contents("php://input"), true);
+        $post = $_POST;
         $sql = "INSERT INTO invoices (student_id, fee_id, invoice_no, status, date) VALUES (?, ?, ?, ?, ?)";
         $student_id = $post['student_id'];
         $fee_id = $post['fee_id'];

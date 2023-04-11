@@ -119,7 +119,7 @@ class GradingController
       }
 
     } elseif ($_SERVER['REQUEST_METHOD'] == 'POST') {
-      $post = json_decode(file_get_contents("php://input"), true);
+      $post = $_POST;
 
       $student_id = $post['student_id'];
       $course_id = $post['course_id'];

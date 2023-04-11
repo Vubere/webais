@@ -1,13 +1,9 @@
 <?php
 namespace Api\controllers;
 
-error_reporting(E_ALL);
-ini_set('display_errors', '1');
-
 
 use Exception;
 use services\DB;
-use services\CS;
 
 
 class AuthController
@@ -37,22 +33,17 @@ class AuthController
 
   public function authenticate()
   {
-
-    $this->conn;
     $method = $_SERVER['REQUEST_METHOD'];
-
-    
-
     if ($method == 'POST') {
       try {
-        $post = json_decode(file_get_contents("php://input"), true);
+        $post = $_POST;
         $type = '';
 
-        if ($post['type'] == 'admin') {
+        if (isset($post['type'])&&$post['type'] == 'admin') {
           $type = 'administrators';
-        } elseif ($post['type'] == 'student') {
+        } elseif (isset($post['type']) &&$post['type'] == 'student') {
           $type = 'students';
-        } elseif ($post['type'] == 'lecturer') {
+        } elseif (isset($post['type']) &&$post['type'] == 'lecturer') {
           $type = 'lecturers';
         } else {
           $this->getHeaders();
@@ -60,7 +51,7 @@ class AuthController
             array(
               'authenticated' => false,
               'ok' => 0,
-              'message' => 'Invalid type'
+              'message' => 'Invalid user type'
             )
           );
           return;
@@ -84,6 +75,7 @@ class AuthController
                   'user' => $user
                 )
               );
+              return;
             } else {
               $this->getHeaders();
               echo json_encode(

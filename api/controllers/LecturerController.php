@@ -34,7 +34,7 @@ class LecturerController
 
     if ($method == 'POST') {
       try {
-        $post = json_decode(file_get_contents("php://input"), true);
+        $post = $_POST;
         $sql = "INSERT INTO lecturers (
           id,
           firstName,
@@ -125,7 +125,7 @@ class LecturerController
       }
     } elseif ($_SERVER['REQUEST_METHOD'] == 'PUT') {
 
-      $post = json_decode(file_get_contents("php://input"), true);
+      $post = $_POST;
       $id = $post['id'];
       $sql = "UPDATE lecturers SET
           firstName=?,
@@ -163,7 +163,7 @@ class LecturerController
       }
     }elseif($method=='DELETE'){
       try{
-        $post = json_decode(file_get_contents("php://input"), true);
+        $post = $_POST;
         $id = $post['id'];
         $sql = "DELETE FROM lecturers WHERE id = '$id'";
         $res = $this->conn->prepare($sql);
