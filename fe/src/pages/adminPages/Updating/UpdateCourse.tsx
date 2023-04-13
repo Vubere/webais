@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 
-import { useParams } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 import { course } from '../Creating/CreateCourse'
 import * as routes from '../../../constants/routes'
 import { MultiSelect, Option } from 'react-multi-select-component'
@@ -41,13 +41,22 @@ export default function UpdateCourse() {
     lecturers: '',
   })
   const { faculties, departments } = useFacultiesAndDepartments()
+  const navigate = useNavigate()
 
   useEffect(() => {
 
     fetch(base+'/lecturers')
       .then(res => res.json())
-      .then(data => setLecturers(data.lecturer))
-      .catch(err => console.log(err))
+      .then(data => {
+        if(data.status=='success'){
+          setLecturers(data.lecturer)
+        }else{
+          throw new Error('something went wrong')
+        }
+      })
+      .catch(err =>{
+        alert(err?.message||'something went wrong')
+      })
   }, [])
 
   const [selectedFaculties, setSelectedFaculties] = useState<any[]>([])
@@ -55,10 +64,14 @@ export default function UpdateCourse() {
 
 
   useEffect(() => {
-    fetch(`http://localhost:80/webais/api/courses?id=${id}`)
+    if(id&&departments&&faculties)
+    fetch(base+`/courses?id=${id}`)
       .then(res => res.json())
       .then(data => {
+        if(data?.data.length==0){
+          throw new Error('course not found')
 
+        }
         setCourse(data.data[0])
         if (departments.length && faculties.length) {
 
@@ -83,6 +96,10 @@ export default function UpdateCourse() {
           setSelectedFaculties(fclty)
         }
       })
+      .catch(err => {
+        alert(err?.message || 'something went wrong')
+        navigate(-1)
+      })
   }, [id, departments, faculties])
 
   const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -102,7 +119,7 @@ export default function UpdateCourse() {
         f.append('faculties', JSON.stringify(course.faculties))
         f.append('lecturers', JSON.stringify(course.lecturers))
 
-        const res = await fetch('http://localhost:80/webais/api/courses', {
+        const res = await fetch(base+'/courses', {
           method: 'PUT',
           body: f
         })
@@ -288,7 +305,7 @@ export default function UpdateCourse() {
         <div className="w-full">
           <label htmlFor="id">Course Code *</label>
           {errors.code && <span className="text-red-500 text-[12px]">{errors.code}</span>}
-          <input type="text" name="code" id="code" value={course.code} onChange={onChange} className="w-full h-[40px] rounded-[5px] bg-transparent border border-[#347836] flex items-center focus:outline-none px-2" />
+          <input type="text" name="code" id="code" value={course?.code} onChange={onChange} className="w-full h-[40px] rounded-[5px] bg-transparent border border-[#347836] flex items-center focus:outline-none px-2" />
         </div>
         <div className="w-full">
           <label htmlFor="title">Title *</label>

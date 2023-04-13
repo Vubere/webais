@@ -13,10 +13,10 @@ export default function Dashboard() {
   useEffect(() => {
     if (u) {
       setUser(u)
-      console.log(population[0])
+      
       student_number.current = population?.reduce((acc:any,cur:any)=>acc+cur.number_of_students,0)    
     }
-  }, [u])
+  }, [u, departments, faculties, population])
 
   return (
     <section>

@@ -64,7 +64,7 @@ export default function ViewLecturers() {
 
       {filteredLecturers?.length ?
         (
-          <>
+          <div className="w-full overflow-auto">
             <table className="shadow-lg bg-white border-separate max-w-[100vw] overflow-auto ">
               <thead>
                 <tr >
@@ -97,7 +97,7 @@ export default function ViewLecturers() {
               </tbody>
 
             </table>
-          </>
+          </div>
         ) : <p className="text-center text-[18px]">No Lecturers Found</p>}
     </div>
   )

@@ -19,7 +19,7 @@ export default function UsersManagement() {
           <div className="flex flex-col justify-center gap-4">
             <div className="flex flex-col items-center gap-2">
               <Icon src={student} className="w-[100px] h-[100px] rounded-[50%] bg-[#346837] flex items-center justify-center bg-transparent" />
-              <div className="flex gap-2">
+              <div className="flex justify-center gap-2">
 
                 <Link to={routes.create_student}
                   className="text-[#fff] bg-[#346837] p-1 rounded text-[16px] font-[400]"
@@ -30,7 +30,7 @@ export default function UsersManagement() {
             </div>
             <div className="flex flex-col items-center gap-2">
               <Icon src={lecturer} className="w-[100px] h-[100px] rounded-[50%] bg-[#346837] flex items-center justify-center bg-transparent" />
-              <div className="flex gap-2">
+              <div className="flex justify-center gap-2">
 
                 <Link to={routes.create_lecturer} className="text-[#fff] bg-[#346837] p-1 rounded text-[16px] font-[400]">Create Lecturer</Link>
                 <Link to={routes.view_lecturer} className="text-[#fff] bg-[#346837] p-1 rounded text-[16px] font-[400]">View Lecturers</Link>
@@ -39,7 +39,7 @@ export default function UsersManagement() {
             </div>
             <div className="flex flex-col items-center gap-2">
               <Icon src={admin} className="w-[100px] h-[100px] rounded-[50%] bg-[#346837] flex items-center justify-center bg-transparent" />
-              <div className="flex gap-2 flex-wrap">
+              <div className="flex justify-center gap-2 flex-wrap">
 
                 <Link to={routes.create_admin} className="text-[#fff] bg-[#346837] p-1 rounded text-[16px] font-[400]">Create Administrator</Link>
                 <Link to={routes.view_admin} className="text-[#fff] bg-[#346837] p-1 rounded text-[16px] font-[400]">View Administrator</Link>

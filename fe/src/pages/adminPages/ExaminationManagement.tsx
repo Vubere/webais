@@ -45,7 +45,7 @@ export default function ExaminationManagement() {
         <Link to={routes.create_exam} className='bg-[#347836] text-[#fff] p-1 rounded px-2'>Add Examination</Link>
       </div>
       <h3 className="font-[600] text-[#347836] text-[28px] text-center leading-[40px]">Examination Management</h3>
-      <section>
+      <section className="w-full overflow-x-auto">
         <table className="shadow-lg bg-white border-separate max-w-[100vw] overflow-auto ">
           <thead>
             <tr >

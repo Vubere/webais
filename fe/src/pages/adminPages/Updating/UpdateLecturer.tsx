@@ -15,6 +15,8 @@ export default function UpdateLecturer() {
     email: '',
     phone: '',
     dob: '',
+    degreeAcquired: '',
+    discipline: '',
     gender: '',
     id: '',
     password: '',
@@ -28,10 +30,11 @@ export default function UpdateLecturer() {
       if (data.lecturer.length) {
         setForm(data.lecturer[0])
       } else {
-        console.log(data)
+        throw new Error('Lecturer not found')
       }
-    } catch (err) {
-      console.log(err)
+    } catch (err:any) {
+      alert(err?.message||'something went wrong')
+      navigate(-1)
     }
   }
   useEffect(() => {
@@ -61,8 +64,8 @@ export default function UpdateLecturer() {
       })
       const data = await res.json()
       console.log(data)
-    } catch (err) {
-      console.log(err)
+    } catch (err:any) {
+      alert(err?.message||'something went wrong')
     }
   }
   const delete_lecturer = () => {
@@ -90,17 +93,27 @@ export default function UpdateLecturer() {
   }
 
   return (
-    <div className="p-4 flex flex-col w-full items-center">
+    <div className="p-4 flex flex-col w-full items-center h-[90vh] overflow-y-auto">
       <h1>{form.id}</h1>
       <form onSubmit={onSubmit} className="flex flex-col w-[80vw] max-w-[400px] gap-2 p-4">
-        <input type="text" name="email" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} className="text-[#346237] h-[40px] bg-transparent border border-[#346837] rounded-[5px] px-2" />
-        <input type="text" name="firstName" value={form.firstName} onChange={(e) => setForm({ ...form, firstName: e.target.value })} className="text-[#346237] h-[40px] bg-transparent border border-[#346837] rounded-[5px] px-2" />
-        <input type="text" name="name" value={form.lastName} onChange={(e) => setForm({ ...form, lastName: e.target.value })} className="text-[#346237] h-[40px] bg-transparent border border-[#346837] rounded-[5px] px-2" />
-        <input type="text" name="name" value={form.otherNames} onChange={(e) => setForm({ ...form, otherNames: e.target.value })} className="text-[#346237] h-[40px] bg-transparent border border-[#346837] rounded-[5px] px-2" />
+        <label htmlFor="email">Email</label>
+        <input type="text" name="email" id="label" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} className="text-[#346237] h-[40px] bg-transparent border border-[#346837] rounded-[5px] px-2" />
+        <label htmlFor="fN">First Name</label>
+        <input type="text" name="firstName"  id='fN' value={form.firstName} onChange={(e) => setForm({ ...form, firstName: e.target.value })} className="text-[#346237] h-[40px] bg-transparent border border-[#346837] rounded-[5px] px-2" />
+        <label htmlFor="lN">Last Name</label>
+        <input type="text" id="lN" name="name" value={form.lastName} onChange={(e) => setForm({ ...form, lastName: e.target.value })} className="text-[#346237] h-[40px] bg-transparent border border-[#346837] rounded-[5px] px-2" />
+        <label htmlFor="oN">Other Names</label>
+        <input type="text" id="oN" name="name" value={form.otherNames} onChange={(e) => setForm({ ...form, otherNames: e.target.value })} className="text-[#346237] h-[40px] bg-transparent border border-[#346837] rounded-[5px] px-2" />
         <label htmlFor="">Phone</label>
         <input type="text" name="name" value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })} className="text-[#346237] h-[40px] bg-transparent border border-[#346837] rounded-[5px] px-2" />
-        <input type="text" name="name" value={form.dob} onChange={(e) => setForm({ ...form, dob: e.target.value })} className="text-[#346237] h-[40px] bg-transparent border border-[#346837] rounded-[5px] px-2" />
-        <input type="text" name="password" value={form.password} onChange={(e) => setForm({ ...form, password: e.target.value })} className="text-[#346237] h-[40px] bg-transparent border border-[#346837] rounded-[5px] px-2" />
+        <label htmlFor="discipline">Discipline</label>
+        <input type="text" id="discipline" name="discipline" value={form.discipline} onChange={(e) => setForm({ ...form, discipline: e.target.value })} className="text-[#346237] h-[40px] bg-transparent border border-[#346837] rounded-[5px] px-2" />
+        <label htmlFor="dA">Degree Acquired</label>
+        <input type="text" id="dA" name="degree" value={form.degreeAcquired} onChange={(e) => setForm({ ...form, degreeAcquired: e.target.value })} className="text-[#346237] h-[40px] bg-transparent border border-[#346837] rounded-[5px] px-2" />
+        <label htmlFor="dob">Date of Birth</label>
+        <input type="text" id="dob" name="dob" value={form.dob} onChange={(e) => setForm({ ...form, dob: e.target.value })} className="text-[#346237] h-[40px] bg-transparent border border-[#346837] rounded-[5px] px-2" />
+        <label htmlFor="pwd">Password</label>
+        <input type="text" id="Pwd" name="password" value={form.password} onChange={(e) => setForm({ ...form, password: e.target.value })} className="text-[#346237] h-[40px] bg-transparent border border-[#346837] rounded-[5px] px-2" />
         <button className="bg-[#346837] py-2 mt-4 rounded-[4px] text-[#fff]">
           Update
         </button>

@@ -271,7 +271,7 @@ class FeeController
     $method = $_SERVER['REQUEST_METHOD'];
     if($method=='GET'){
       try{
-        $sql = "SELECT f.name, f.session, f.level, f.semester, f.amount, fp.id, fp.receipt_number, fp.confirmation_number, fp.invoice_no, fp.student_id FROM fees AS f INNER JOIN fees_paid AS fp ON f.id=fp.fee_id WHERE 1=1";
+        $sql = "SELECT f.name, f.session, f.level, f.semester, f.amount, fp.id, fp.receipt_number, fp.confirmation_number, fp.invoice_no, fp.student_id, CONCAT(s.firstName,' ', lastName) as fullName, s.department, s.faculty, d.name as department, fac.name as faculty FROM fees AS f INNER JOIN fees_paid AS fp ON f.id=fp.fee_id INNER JOIN students AS s ON s.id = fp.student_id INNER JOIN departments as d ON d.id = s.department INNER JOIN faculties as fac ON fac.id = s.faculty WHERE 1=1";
         if(isset($_GET['student_id'])){
           $student_id = $_GET['student_id'];
           $sql .= " AND fp.student_id = $student_id";

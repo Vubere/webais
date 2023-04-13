@@ -74,7 +74,7 @@ export default function Session() {
 
 
   return (
-    <div className="w-full h-[90vh] content-box overflow-auto pb-[30px]">
+    <div className="w-full h-[90vh] content-box overflow-auto pb-[30px] p-3">
       <h2 className="text-center font-[600] text-[22px] text-[#346837]"> Change Session/Semester</h2>
       <p className="text-center font-[400] text-[12px] text-[#643]">Warning, this affects every operation for the current semester/session, make changes with caution.</p>
       <form onSubmit={onSubmit} className="flex flex-col items-center gap-2 mx-auto w-80vw max-w-[400px] mt-3">

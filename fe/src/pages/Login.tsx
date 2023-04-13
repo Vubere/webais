@@ -62,7 +62,7 @@ export default function Login({ title, src }: { title: string, src: string }) {
           }
         } else {
           console.log(data)
-          throw new Error(data?.message)
+          throw new Error(data?.message||'something went wrong')
         }
       } catch (err: any) {
         setPostError(err?.message);

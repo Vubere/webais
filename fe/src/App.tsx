@@ -57,6 +57,7 @@ const ViewFaculties = lazy(() => import('./pages/adminPages/Viewing/ViewFacultie
 const ViewAnnouncements = lazy(() => import('./pages/adminPages/Viewing/ViewAnnouncements'))
 const ViewSingleAnnouncement = lazy(() => import('./pages/adminPages/Viewing/ViewSingleAnnouncement'))
 const ViewSingleCourse = lazy(()=>import('./pages/adminPages/Viewing/ViewSingleCourse'))
+const ViewFeePayments = lazy(()=>import('./pages/adminPages/Viewing/ViewFeePayments'))
 
 const UpdateAdmin = lazy(() => import('./pages/adminPages/Updating/UpdateAdmin'));
 const UpdateStudent = lazy(() => import('./pages/adminPages/Updating/UpdateStudent'));
@@ -162,6 +163,7 @@ function App() {
                 <Route path={routes.view_announcement} element={<ViewAnnouncements />} />
                 <Route path={`${routes.view_announcement}/:id`} element={<ViewSingleAnnouncement />} />
                 <Route path={routes.view_faculty} element={<ViewFaculties />} />
+                <Route path={routes.fee_payments} element={<ViewFeePayments/>}/>
                 
 
                 {/* update */}

@@ -14,16 +14,16 @@ export default function LectureManagement() {
 
   const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
 
-  const searchedLectures = lectures.filter(lect => lect.title.toLowerCase().includes(search.toLowerCase()) || lect.code.toLowerCase().includes(search.toLowerCase())).sort((a,b)=>days.indexOf(b.day)-days.indexOf(a.day))
+  const searchedLectures = lectures.filter(lect => lect.title.toLowerCase().includes(search.toLowerCase()) || lect.code.toLowerCase().includes(search.toLowerCase())).sort((a, b) => days.indexOf(b.day) - days.indexOf(a.day))
 
 
-  
+
 
   useLayoutEffect(() => {
-    fetch(base+"/lectures")
+    fetch(base + "/lectures")
       .then((res) => res.json())
       .then((data) => {
-          console.log(data)
+        console.log(data)
         if (data.ok) {
           setLectures(data.lectures)
           console.log(data.lectures)
@@ -54,36 +54,39 @@ export default function LectureManagement() {
             <Icon src={searchImg} className='w-[20px] h-[20px] block ' />
           </button>
         </label>
-        {errors==''?<table className="shadow-lg bg-white border-separate max-w-[100vw] overflow-auto ">
-          <thead>
-            <tr >
-              <th className="bg-[#34783644]  border text-left px-4 py-2">Time</th>
-              <th className="bg-[#34783644] border text-left px-4 py-2">Day</th>
-              <th className="bg-[#34783644] border text-left px-4 py-2">Duration</th>
-              <th className="bg-[#34783644] border text-left px-4 py-2">Course Code</th>
-              <th className="bg-[#34783644] border text-left px-4 py-2">Lecturer ID</th>
-              <th className="bg-[#34783644] border text-left px-4 py-2">Venue</th>
-              <th className="bg-[#34783644] border text-left px-4 py-2">Action</th>
-            </tr>
-          </thead>
-          <tbody>
-            {searchedLectures.map((lecture) => (
-              <tr key={lecture.id}>
-                <td className="border px-4 py-2">{lecture.time}</td>
-                <td className="border px-4 py-2">{lecture.day}</td>
-                <td className="border px-4 py-2">{lecture.duration}</td>
-                <td className="border px-4 py-2">{lecture.code.toUpperCase()}</td>
-                <td className="border px-4 py-2">{lecture.lecturer_id}</td>
-                <td className="border px-4 py-2">{lecture.venue}</td>
-                <td className="border px-4 py-2">
-                  <Link to={
-                    `/dashboard-admin/update-lecture/${lecture.id}`
-                  } className="bg-[#347836] text-white px-4 py-2 rounded-md">Edit</Link>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>:<p className="w-full ">{errors}</p>}
+        {errors == '' ?
+          <div className="w-full overflow-y-auto">
+            <table className="shadow-lg bg-white border-separate max-w-[100vw] overflow-auto ">
+              <thead>
+                <tr >
+                  <th className="bg-[#34783644]  border text-left px-4 py-2">Time</th>
+                  <th className="bg-[#34783644] border text-left px-4 py-2">Day</th>
+                  <th className="bg-[#34783644] border text-left px-4 py-2">Duration</th>
+                  <th className="bg-[#34783644] border text-left px-4 py-2">Course Code</th>
+                  <th className="bg-[#34783644] border text-left px-4 py-2">Lecturer ID</th>
+                  <th className="bg-[#34783644] border text-left px-4 py-2">Venue</th>
+                  <th className="bg-[#34783644] border text-left px-4 py-2">Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                {searchedLectures.map((lecture) => (
+                  <tr key={lecture.id}>
+                    <td className="border px-4 py-2">{lecture.time}</td>
+                    <td className="border px-4 py-2">{lecture.day}</td>
+                    <td className="border px-4 py-2">{lecture.duration}</td>
+                    <td className="border px-4 py-2">{lecture.code.toUpperCase()}</td>
+                    <td className="border px-4 py-2">{lecture.lecturer_id}</td>
+                    <td className="border px-4 py-2">{lecture.venue}</td>
+                    <td className="border px-4 py-2">
+                      <Link to={
+                        `/dashboard-admin/update-lecture/${lecture.id}`
+                      } className="bg-[#347836] text-white px-4 py-2 rounded-md">Edit</Link>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div> : <p className="w-full ">{errors}</p>}
       </section>
     </div>
   )

@@ -77,15 +77,15 @@ class StudentController
         //mysqli_close($this->conn);
       }
     } elseif ($_SERVER['REQUEST_METHOD'] == 'GET') {
-      $sql = 'SELECT * FROM students WHERE 1 = 1';
+      $sql = 'SELECT d.name as department_name, f.name as faculty_name, s.firstName, s.lastName, s.otherNames, s.level, s.password, s.phone, s.email, s.gender, s.faculty, s.department, s.id, s.dob FROM students as s INNER JOIN departments AS d ON s.department = d.id INNER JOIN faculties as f ON f.id = s.faculty WHERE 1=1';
       if (isset($_GET['id'])) {
-        $sql .= ' AND id="' . $_GET['id'] . '"';
+        $sql .= ' AND s.id="' . $_GET['id'] . '"';
       }
       if (isset($_GET['email'])) {
-        $sql .= ' AND email="' . $_GET['email'] . '"';
+        $sql .= ' AND s.email="' . $_GET['email'] . '"';
       }
       if (isset($_GET['firstName'])) {
-        $sql .= ' AND firstName="' . $_GET['firstName'] . '"';
+        $sql .= ' AND s.firstName="' . $_GET['firstName'] . '"';
       }
 
       try {

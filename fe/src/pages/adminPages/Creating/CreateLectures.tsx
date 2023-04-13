@@ -30,7 +30,7 @@ export default function CreateLectures() {
     fetch(base+'/courses')
       .then(res => res.json())
       .then(data => setCourses(data.data))
-      .catch(err => console.log(err))
+      .catch((err:any) => alert(err?.message||'something went wrong'))
   }, [])
   useEffect(() => {
 

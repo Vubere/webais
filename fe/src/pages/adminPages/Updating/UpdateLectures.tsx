@@ -1,25 +1,44 @@
-import { useLayoutEffect, useState } from "react"
+import { useEffect, useLayoutEffect, useMemo, useState } from "react"
 import { useNavigate, useParams } from "react-router-dom"
 import { base } from "../../../App"
+import { Course } from "../../StudentPages/AvailableCourses"
 
-import { formatDateToYMD } from "../../../helpers/formatDate"
+
 
 export default function UpdateLectures() {
   const [lectures, setLectures] = useState({
     time: '',
     day: '',
     duration: '',
-    code: '',
+    course_id: '',
     lecturer_id: '',
     venue: '',
   })
-  console.log(lectures)
+  const [courses, setCourses] = useState<Course[]>([])
+  const [lecturers, setLecturers] = useState<any[]>([])
+  const [search, setSearch] = useState('')
+  const [searchLect, setSearchLect] = useState('')
+  useEffect(() => {
+
+    fetch(base + '/courses')
+      .then(res => res.json())
+      .then(data => setCourses(data.data))
+      .catch((err: any) => alert(err?.message || 'something went wrong'))
+  }, [])
+  useEffect(() => {
+
+    fetch(base + '/lecturers')
+      .then(res => res.json())
+      .then(data => setLecturers(data.lecturer))
+      .catch(err => console.log(err))
+  }, [])
+ 
   const { id } = useParams()
   const [errors, setErrors] = useState({
     time: '',
     day: '',
     duration: '',
-    code: '',
+    course_id: '',
     lecturer_id: '',
     venue: '',
   })
@@ -40,9 +59,9 @@ export default function UpdateLectures() {
       tempERR.duration = 'Duration is required'
       isValid = false
     }
-    if (lectures.code === '') {
+    if (lectures.course_id === '') {
 
-      tempERR.code = 'Course code is required'
+      tempERR.course_id = 'Course is required'
       isValid = false
     }
     if (lectures.lecturer_id === '') {
@@ -60,7 +79,7 @@ export default function UpdateLectures() {
           time: '',
           day: '',
           duration: '',
-          code: '',
+          course_id: '',
           lecturer_id: '',
           venue: '',
         })
@@ -85,7 +104,7 @@ export default function UpdateLectures() {
         f.append('time', lectures.time)
         f.append('day', lectures.day)
         f.append('duration', lectures.duration)
-        f.append('code', lectures.code)
+        f.append('course_id', lectures.course_id)
         f.append('lecturer_id', lectures.lecturer_id)
         f.append('venue', lectures.venue)
 
@@ -107,12 +126,15 @@ export default function UpdateLectures() {
   }
 
   useLayoutEffect(() => {
+    if(courses.length&&lecturers.length) 
     fetch(base+"/lectures?id=" + id)
       .then((res) => res.json())
       .then((data) => {
 
         if (data.ok) {
           const l = data.lectures[0]
+          l.course_id = courses.find((c) => c.code === l.code)?.id || ''
+          console.log(l.course_id, courses,l)
           l.day = l.day?.toLowerCase();
           setLectures(l)
         } else {
@@ -123,7 +145,7 @@ export default function UpdateLectures() {
         alert(err?.message || 'something went wrong')
         setFetchError('something went wrong')
       })
-  }, [])
+  }, [courses])
 
   const delete_lecture = () => {
     const confirm = window.confirm('Are you sure you want to delete this lecture?')
@@ -148,6 +170,15 @@ export default function UpdateLectures() {
         alert(err?.message || 'something went wrong')
       })
   }
+  const filteredLecturers = useMemo(() => {
+    return lecturers.filter(i => (i.firstName + ' ' + i.lastName).toLowerCase().includes(searchLect.toLowerCase()) || i.email.toLowerCase().includes(searchLect.toLowerCase() || i.id.toLowerCase().includes(searchLect.toLowerCase())) || i.discipline.toLowerCase().includes(searchLect.toLowerCase()))
+  }, [searchLect, lecturers])
+
+  const filteredCourses = useMemo(() => {
+    return courses.filter(
+      (course: any) => course.code.toLowerCase().includes(search.toLowerCase()) || course.title.toLowerCase().includes(search.toLowerCase())
+    )
+  }, [search, courses])
 
 
   return (
@@ -193,12 +224,43 @@ export default function UpdateLectures() {
           </select>
         </div>
         <div className="w-full">
-          <label htmlFor="code">Course Code</label>
-          <input type="text" name="code" id="code" value={lectures.code} onChange={handleChange} className="w-full h-[40px] rounded-[5px] bg-transparent border border-[#347836] xs:p-2 stbt:p-4 xs:text-[14px] stbt:text-[18px] flex items-center focus:outline-none px-2" />
+          <label htmlFor="course_id">Course </label>
+          {errors.course_id && <span className="text-red-500 text-xs">{errors.course_id}</span>}
+          {/* search courses */}
+          <div className="flex">
+            <label htmlFor="course_code" className="w-[25%] font-[400] text-[14px]"></label>
+            <input type="text" name="course_code" id="course_code" value={search} onChange={({ target }) => setSearch(target.value)} className="w-[55%] h-[30px] rounded-[5px] bg-transparent border border-[#347836]  flex items-center focus:outline-none px-2 mb-2" placeholder="search for a course..." />
+          </div>
+          <select name="course_id" id="course_id" value={lectures.course_id} onChange={handleChange} className="w-full h-[40px] rounded-[5px] bg-transparent border border-[#347836]  flex items-center focus:outline-none px-2">
+            <option value="">Select Course </option>
+            {filteredCourses.length ? filteredCourses.map((course: any) => {
+              return (
+                <option value={course.id}>{course.code}({course.title})</option>
+              )
+            }) : <option value="" className="text-[#a22]">No Course</option>
+            }
+          </select>
         </div>
         <div className="w-full">
-          <label htmlFor="lecturer_id">Lecturer ID</label>
-          <input type="text" name="lecturer_id" id="lecturer_id" value={lectures.lecturer_id} onChange={handleChange} className="w-full h-[40px] rounded-[5px] bg-transparent border border-[#347836] flex items-center focus:outline-none px-2" />
+          <label htmlFor="lecturer_id">Lecturer </label>
+          {errors.lecturer_id && <span className="text-red-500 text-xs">{errors.lecturer_id}</span>}
+          {/* search lecturers */}
+          <div className="flex">
+            <label htmlFor="lecturer_id" className="w-[25%] font-[400] text-[14px]"></label>
+            <input type="text" name="lecturer_id" id="lecturer_id" value={searchLect} onChange={({ target }) => setSearchLect(target.value)} className="w-[55%] h-[30px] rounded-[5px] bg-transparent border border-[#347836]  flex items-center focus:outline-none px-2 mb-2" placeholder="search for a lecturer..." />
+          </div>
+
+          <select name="lecturer_id" id="lecturer_id" value={lectures.lecturer_id} onChange={handleChange} className="w-full h-[40px] rounded-[5px] bg-transparent border border-[#347836]  flex items-center focus:outline-none px-2">
+            <option value="">Select Lecturer</option>
+            {filteredLecturers.length ?
+              filteredLecturers
+                .map((lecturer: any) => {
+                  return (
+                    <option value={lecturer.id}>{lecturer.firstName} {lecturer.lastName}({lecturer.discipline})
+                    </option>
+                  )
+                }) : <option value="" className="text-[#a22]">No Lecturer</option>}
+          </select>
         </div>
         <div className="w-full">
           <label htmlFor="venue">Venue</label>

@@ -137,17 +137,17 @@ export default function CreateAdmin() {
               onChange={handleChange} />
           </div>
           <div>
-            <label htmlFor="name">Last Name</label>
+            <label htmlFor="lname">Last Name</label>
             {errors.lastName && <p className="text-red-500 text-[12px]">{errors.lastName}</p>}
-            <input type="text" name="lastName" id="name" className="w-full h-[40px] rounded-[5px] bg-transparent border border-[#347836] xs:p-2 stbt:p-4 xs:text-[14px] stbt:text-[18px] flex items-center focus:outline-none px-2"
+            <input type="text" name="lastName" id="lname" className="w-full h-[40px] rounded-[5px] bg-transparent border border-[#347836] xs:p-2 stbt:p-4 xs:text-[14px] stbt:text-[18px] flex items-center focus:outline-none px-2"
               value={user.lastName}
               onChange={handleChange} />
           </div>
         </div>
         <div className="flex flex-col">
-          <label htmlFor="name">Other Names</label>
+          <label htmlFor="oname">Other Names</label>
           {errors.otherNames && <p className="text-red-500 text-[12px]">{errors.otherNames}</p>}
-          <input type="text" name="otherNames" id="name" className="max-w-[400px] w-[80vw] h-[40px] rounded-[5px] bg-transparent border border-[#347836] xs:p-2 stbt:p-4 xs:text-[14px] stbt:text-[18px] px-2"
+          <input type="text" name="otherNames" id="oname" className="max-w-[400px] w-[80vw] h-[40px] rounded-[5px] bg-transparent border border-[#347836] xs:p-2 stbt:p-4 xs:text-[14px] stbt:text-[18px] px-2"
             value={user.otherNames}
             onChange={handleChange} />
         </div>

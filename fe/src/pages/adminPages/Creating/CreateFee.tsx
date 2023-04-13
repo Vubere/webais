@@ -125,7 +125,7 @@ export default function CreateFee() {
 
 
   return (
-    <section className="w-full h-[90vh] content-box overflow-auto pb-[30px]">
+    <section className="w-full h-[90vh] content-box overflow-auto pb-[30px] p-2">
       <h3 className="text-center text-[22px] text-[#346837]">Create Fee</h3>
       <form onSubmit={onSubmit} className="flex flex-col items-center gap-2 max-w-[400px] mx-auto">
         <div className="w-full flex flex-col gap-1">

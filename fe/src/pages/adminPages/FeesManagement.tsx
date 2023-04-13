@@ -6,10 +6,11 @@ import * as routes from "../../constants/routes";
 
 
 export default function FeeManagement() {
-
+  
   const [fees, setFees] = useState<Fee[]>([])
   const [errors, setErrors] = useState('')
   const [search, setSearch] = useState('')
+  console.log(fees)
 
   useEffect(() => {
     fetch(base+'/fee')
@@ -40,19 +41,14 @@ export default function FeeManagement() {
       <h3 className="font-[600] text-[#347836] text-[28px] text-center leading-[40px] p-3">Fee Management</h3>
       <div className="w-full flex flex-col items-center">
         <div className="w-full flex justify-center">
-          <Link to='' className="bg-[#347836] text-[#fff] p-1 rounded px-2 block w-[160px] text-center m-2">
+          <Link to='/dashboard-admin/fee-payments' className="bg-[#347836] text-[#fff] p-1 rounded px-2 block w-[160px] text-center m-2">
             View Fee Payments
           </Link>
         </div>
-        <div className="w-full flex justify-center">
-          <Link to='' className="bg-[#347836] text-[#fff] p-1 rounded px-2 block w-[160px] text-center m-2">
-            Register Fee Payment
-          </Link>
-        </div>
+    
       </div>
       <div>
         <input type="text" value={search} onChange={e=>setSearch(e.target.value)} placeholder="Search" className="w-[200px] border border-[#347836] rounded p-2 my-2" />
-
 
       </div>
       <div className="w-full overflow-y-auto">
@@ -89,6 +85,10 @@ const FeeRow = ({ fee }: { fee: Fee }) => {
   console.log(fee)
 
   useEffect(() => {
+    if(fee.department_id==0){
+      setDepartment('All')
+      return
+    }
     fetch('http://localhost/webais/api/department?id=' + fee.department_id)
       .then(res => res.json())
       .then(data => {

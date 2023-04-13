@@ -3,6 +3,7 @@ import { useNavigate, useParams } from "react-router-dom"
 import { base } from "../../../App"
 
 import { formatDateToYMD } from "../../../helpers/formatDate"
+import useFacultiesAndDepartments from "../../../hooks/useFacultiesAndDepartments"
 
 
 export default function UpdateAdmin() {
@@ -22,16 +23,103 @@ export default function UpdateAdmin() {
     level: '',
     id: '',
   })
+  const [errors, setErrors] = useState({
+    firstName: '',
+    lastName: '',
+    otherNames: '',
+    email: '',
+    phone: '',
+    dob: '',
+    gender: '',
+    password: '',
+    faculty: '',
+    department: '',
+    level: '',
+    studentId: ''
+  })
+  const { faculties, departments, error, loading } = useFacultiesAndDepartments()
   const navigate = useNavigate()
+  const validate = () => {
+    let isValid = true
+    let tempErrors = { ...errors }
+    const emailPattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/
+    if (form.firstName === '') {
+      tempErrors = { ...tempErrors, firstName: 'First name is required' }
+      isValid = false
+    }
+    if (form.lastName === '') {
+      tempErrors = { ...tempErrors, lastName: 'Last name is required' }
+      isValid = false
+    }
+    if (!emailPattern.test(form.email)) {
+      tempErrors = { ...tempErrors, email: 'Email is invalid' }
+      isValid = false
+
+    }
+    if (form.password.length < 6) {
+     tempErrors.password = 'Password must be at least 6 characters'
+      isValid = false
+
+    }
+    if (form.email === '') {
+      tempErrors = { ...tempErrors, email: 'Email is required' }
+      isValid = false
+
+    }
+
+
+    if (form.phone != '' && form.phone.length < 11) {
+      tempErrors = { ...tempErrors, phone: 'Phone number is invalid' }
+      isValid = false
+
+    }
+
+    if (form.faculty === '') {
+      tempErrors = { ...tempErrors, faculty: 'Faculty is required' }
+      isValid = false
+    }
+    if (form.department === '') {
+      tempErrors = { ...tempErrors, department: 'Department is required' }
+      isValid = false
+    }
+    if (form.level === '') {
+      tempErrors = { ...tempErrors, level: 'Level is required' }
+      isValid = false
+    }
+
+
+    if (!isValid) {
+      setErrors(tempErrors)
+      setTimeout(() => {
+       
+        setErrors({
+          firstName: '',
+          lastName: '',
+          otherNames: '',
+          email: '',
+          phone: '',
+          dob: '',
+          gender: '',
+          faculty: '',
+          department: '',
+          level: '',
+          studentId: '',
+          password: ''
+        })
+      }, 3000)
+    }
+    return isValid
+  }
+
 
   const fetchStudent = async () => {
     try {
-      let url = base+`/students?id=${id}`
+      let url = base + `/students?id=${id}`
       const res = await fetch(url);
       const data = await res.json()
       if (data.length) {
-        setForm({...data[0], dob: formatDateToYMD(data[0].dob)})
-        
+        setForm({ ...data[0], dob: formatDateToYMD(data[0].dob) })
+
       } else {
         console.log(data)
       }
@@ -44,11 +132,12 @@ export default function UpdateAdmin() {
   }, [])
   const onSubmit = (e: any) => {
     e.preventDefault()
+    if(validate())
     updateAdmin()
   }
   const updateAdmin = async () => {
     try {
-      let url = base+`/api/students?id=${id}`
+      let url = base + `/api/students?id=${id}`
       const f = new FormData()
       f.append('firstName', form.firstName)
       f.append('lastName', form.lastName)
@@ -96,6 +185,8 @@ export default function UpdateAdmin() {
         alert(err?.message || 'Error deleting student')
       })
   }
+  const departmentFilter = departments?.filter((d) => d.faculty_id == form.faculty)
+  
 
   return (
     <div className="p-4 h-[90vh] overflow-auto flex flex-col items-center w-full">
@@ -120,11 +211,31 @@ export default function UpdateAdmin() {
         <input type="text" id="gender" name="gender" value={form.gender} onChange={(e) => setForm({ ...form, gender: e.target.value })} className="text-[#346237] h-[40px] bg-transparent border border-[#346837] rounded-[5px] px-2" />
         <label htmlFor="level">Level</label>
         <input type="text" id="levle" name="level" value={form.level} onChange={(e) => setForm({ ...form, level: e.target.value })} className="text-[#346237] h-[40px] bg-transparent border border-[#346837] rounded-[5px] px-2" />
-        <label htmlFor="department">Department</label>
-        <input type="text" name="department" id="department" value={form.department} onChange={(e) => setForm({ ...form, department: e.target.value })} className="text-[#346237] h-[40px] bg-transparent border border-[#346837] rounded-[5px] px-2" />
-        <label htmlFor="faculty">Faculty</label>
-        <input type="text" id="faculty" name="faculty" value={form.faculty} onChange={(e) => setForm({ ...form, faculty: e.target.value })} className="text-[#346237] h-[40px] bg-transparent border border-[#346837] rounded-[5px] px-2" />
-        
+        <div className='w-full'>
+          <label htmlFor='faculty'>Faculty</label>
+          {errors.faculty && <p className="text-red-500 text-[12px]">{errors.faculty}</p>}
+          <select name='faculty' id='faculty' onChange={(e) => setForm({ ...form, faculty: e.target.value })}
+          value={form.faculty} className="w-full h-[40px] rounded-[5px] bg-transparent border border-[#347836]  text-black flex items-center focus:outline-none px-2">
+            <option value=''>Select Faculty</option>
+            {error && loading && <option value=''>Loading...</option>}
+            {!error && !loading && faculties.map((faculty: any) => (
+              <option value={faculty.id}>{faculty.name}</option>
+            ))}
+          </select>
+        </div>
+        <div className='w-full'>
+          <label htmlFor='department'>Department</label>
+          {errors.department && <p className="text-red-500 text-[12px]">{errors.department}</p>}
+          <select name='department' value={form.department} id='department' onChange={(e) => setForm({ ...form, faculty: e.target.value })} className="w-full h-[40px] rounded-[5px] bg-transparent border border-[#347836]  text-black flex items-center focus:outline-none px-2">
+            <option value=''>Select Department</option>
+            {error && loading && <option value=''>Loading...</option>}
+            {!error && !loading && departmentFilter.map((department: any) => (
+              <option value={department.id}>{department.name}</option>
+            ))}
+          </select>
+        </div>
+     
+
         <button className="bg-[#346837] py-2 mt-4 rounded-[4px] text-[#fff]">
           Update
         </button>

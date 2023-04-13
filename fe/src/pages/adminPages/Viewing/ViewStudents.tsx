@@ -5,10 +5,12 @@ import { User } from "./ViewAdmin"
 
 import * as routes from '../../../constants/routes'
 import { base } from "../../../App"
+import useFacultiesAndDepartments from "../../../hooks/useFacultiesAndDepartments"
 
 export default function ViewStudents() {
   const [search, setSearch] = useState('')
   const [students, setStudents] = useState<any>([])
+  const {departments, faculties} = useFacultiesAndDepartments()
 
   async function fetchStudents() {
     try {
@@ -16,6 +18,7 @@ export default function ViewStudents() {
 
       const res = await fetch(url);
       const data = await res.json()
+      console.log(data)
 
       setStudents(data)
     } catch (err) {
@@ -25,6 +28,7 @@ export default function ViewStudents() {
   useEffect(() => {
     fetchStudents();
   }, [])
+  
 
 
   const onSubmit = (e: any) => {
@@ -43,6 +47,7 @@ export default function ViewStudents() {
   }
   const filteredStudents = students.filter((student: students) => fullname(student).toLowerCase().includes(search.toLowerCase()) || student.email.toLowerCase().includes(search.toLowerCase()) || student.faculty.toLowerCase().includes(search.toLowerCase()) || student.id.toLowerCase().includes(search.toLowerCase()))
  
+
 
   
  
@@ -89,12 +94,12 @@ export default function ViewStudents() {
                     <td className="border px-4 py-2">{student.firstName} {student.lastName}</td>
                     <td className="border px-4 py-2">{student.phone}</td>
                     <td className="border px-4 py-2">{student.email}</td>
-                    <td className="border px-4 py-2">{student.department}</td>
-                    <td className="border px-4 py-2">{student.faculty}</td>
+                    <td className="border px-4 py-2">{student.department_name}</td>
+                    <td className="border px-4 py-2">{student.faculty_name}</td>
                     <td className="border px-4 py-2">{student.level}</td>
 
                     <td className="border px-4 py-2">
-                      <Link to={`/dashboard-student/${routes.update_student}/${student.id}`} className="border text-[#fff] bg-[#346837] px-3 py-1 rounded-[5px]">Edit</Link>
+                      <Link to={`/dashboard-admin/${routes.update_student}/${student.id}`} className="border text-[#fff] bg-[#346837] px-3 py-1 rounded-[5px]">Edit</Link>
                     </td>
                   </tr>
                 ))}
@@ -112,4 +117,6 @@ export interface students extends User {
   department: string,
   level: string,
   faculty: string,
+  department_name: string,
+  faculty_name: string
 }

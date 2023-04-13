@@ -17,14 +17,16 @@ export default function ViewPayments() {
     }
   }, [user])
   const getPayments = async () => {
-    try {
-      const res = await fetch(base+'/student_payments')
-      const data = await res.json()
-      if (data?.ok) {
-        setPayments(data.data)
+    if(user){
+      try {
+        const res = await fetch(base+'/student_payments?id='+user?.id)
+        const data = await res.json()
+        if (data?.ok) {
+          setPayments(data.data)
+        }
+      } catch (err: any) {
+        console.log(err)
       }
-    } catch (err: any) {
-      console.log(err)
     }
   }
 
@@ -82,6 +84,9 @@ export default function ViewPayments() {
 export interface payment {
   id: number;
   name: string;
+  fullName: string;
+  department: string;
+  faculty: string;
   session: string;
   semester: string;
   level: string;
