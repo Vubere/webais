@@ -7,12 +7,10 @@ use Api\Api;
 //getting current url
 $current_link = $_SERVER['REQUEST_URI'];
 
-
 //handling query string
 if (str_contains($current_link, '?')) {
   $current_link = explode('?', $current_link)[0];
 }
-
 
 //routes
 $urls = [
@@ -24,7 +22,7 @@ $urls = [
   /* create lecturer */
   '/webais/api/lecturers' => ['LecturerController@lecturer'],
   /* create courses */
-  '/webais/api/create_course' => ['CoursesController@create_course'],
+  '/webais/api/create_course' => ['CoursesController@courses'],
   /* create lectures */
   '/webais/api/create_lecture' => ['EventsController@create_lecture'],
   /* create examinations */
@@ -35,7 +33,6 @@ $urls = [
   '/webais/api/department' => ['StructureController@departments'],
   /* authenticate user*/
   '/webais/api/authenticate' => ['AuthController@authenticate'],
-
 
   /* fetching  and updating*/
 
@@ -64,6 +61,7 @@ $urls = [
   ['CoursesController@grading'],
 
   /* courses */
+  '/webais/api/assign_course'=> ['CoursesController@assign_course_to_departments'],
   '/webais/api/available_course' =>
   ['CoursesController@available_course'],
 
@@ -76,6 +74,10 @@ $urls = [
   ['EventsController@get_student_lectures'],
   '/webais/api/grades' =>
   ['GradingController@grades'],
+  '/webais/api/assign_unit_load' =>
+  ['StructureController@assign_unit_load_to_department'],
+  '/webais/api/student_registered_courses' =>
+  ['StudentController@student_registered_courses'],
 
   /* Fee handling */
   '/webais/api/fee' =>
@@ -101,7 +103,8 @@ $urls = [
 
 //check if routes available
 if (!isset($urls[$current_link])) {
-  // header('HTTP/1.0 404 not found');
+  
+  header('HTTP/1.0 404 not found');
 }
 /* api */
 Api::routing($current_link, $urls);

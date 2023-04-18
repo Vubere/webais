@@ -41,9 +41,10 @@ class StudentController
           gender,
           faculty,
           department,
-          level
-        ) VALUES
-      (?,?,?,?,?,?,?,?,?,?,?,?)";
+          level,
+          entrance_session,
+          graduation_session
+        ) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 
         $id = $this->generatedId;
         $firstname = $post['firstName'];
@@ -57,9 +58,15 @@ class StudentController
         $faculty = $post['faculty'];
         $department = $post['department'];
         $level = $post['level'];
+        $duration = $post['duration'];
+        $entrance_session = $post['entrance_session'];
+        $year = explode('/',$entrance_session)[0];
+        $graduation_year = (int)$year + (int)$duration;
+        $graduation_year2 = (int)$year + (int)$duration +1;
+        $graduation_session = ''.$graduation_year.'/'.$graduation_year2;
 
         $stmt = $this->conn->prepare($sql);
-        $stmt->bind_param("ssssssssssss", $id, $firstname, $lastname, $othernames, $email, $phone, $password, $dob, $gender, $faculty, $department, $level);
+        $stmt->bind_param("ssssssssssssss", $id, $firstname, $lastname, $othernames, $email, $phone, $password, $dob, $gender, $faculty, $department, $level,  $entrance_session, $graduation_session);
 
         $res = $stmt->execute();
         if ($res) {
@@ -77,7 +84,7 @@ class StudentController
         //mysqli_close($this->conn);
       }
     } elseif ($_SERVER['REQUEST_METHOD'] == 'GET') {
-      $sql = 'SELECT d.name as department_name, f.name as faculty_name, s.firstName, s.lastName, s.otherNames, s.level, s.password, s.phone, s.email, s.gender, s.faculty, s.department, s.id, s.dob FROM students as s INNER JOIN departments AS d ON s.department = d.id INNER JOIN faculties as f ON f.id = s.faculty WHERE 1=1';
+      $sql = 'SELECT d.name as department_name, d.duration, f.name as faculty_name, s.firstName, s.lastName, s.otherNames, s.level, s.password, s.phone, s.email, s.gender, s.faculty, s.department, s.id, s.dob, s.entrance_session, s.graduation_session FROM students as s INNER JOIN departments AS d ON s.department = d.id INNER JOIN faculties as f ON f.id = s.faculty WHERE 1=1';
       if (isset($_GET['id'])) {
         $sql .= ' AND s.id="' . $_GET['id'] . '"';
       }
@@ -100,10 +107,10 @@ class StudentController
               array_push($data, $row);
             }
             $this->getHeaders();
-            echo json_encode($data);
+            echo json_encode(array('message' => 'successful', 'ok' => 1, 'students' => $data));
           } else {
             $this->getHeaders();
-            echo json_encode(array('message' => 'no student found'));
+            echo json_encode(array('message' => 'no student found', 'ok'=>0));
           }
         }
 
@@ -126,7 +133,10 @@ class StudentController
           gender=?,
           faculty=?,
           department=?,
-          level=?
+          level=?,
+          duration=?,
+          entrance_session=?,
+          graduation_session=?
            WHERE id = '" . $id . "'";
       $stmt = $this->conn->prepare($sql);
       $firstname = $post['firstName'];
@@ -140,7 +150,11 @@ class StudentController
       $faculty = $post['faculty'];
       $department = $post['department'];
       $level = $post['level'];
-      $stmt->bind_param("sssssssssss", $firstname, $lastname, $othernames, $email, $phone, $password, $dob, $gender, $faculty, $department, $level);
+      $duration = $post['duration'];
+      $entrance_session = $post['entrance_session'];
+      $graduation_session = (string)((int)explode($entrance_session, '/')[0] + (int)$duration) . '/' . (string)((int)explode($entrance_session, '/')[1] + (int)$duration);
+      $stmt->bind_param("ssssssssssssss", $firstname, $lastname, $othernames, $email, $phone, $password, $dob, $gender, $faculty, $department, $level, $entrance_session, $graduation_session, $id);
+     
       $res = $stmt->execute();
       if ($res) {
         $this->getHeaders();
@@ -172,6 +186,50 @@ class StudentController
       $this->getHeaders();
       echo json_encode(array('message' => 'wrong method', 'ok' => 0, 'status' => 'failed'));
 
+    }
+  }
+
+  public function student_registered_courses(){
+    $method = $_SERVER['REQUEST_METHOD'];
+    if($method=='GET'){
+      $sql = 'SELECT s.department, CONCAT(s.firstName," ",s.lastName) as fullName, s.id, s.level, s.entrance_session,  dc.code, dc.units, dc.type, c.title, c.description FROM students as s INNER JOIN department_courses as dc ON dc.departments LIKE CONCAT("%", s.department, "%") INNER JOIN courses as c  ON c.id = dc.course_id INNER JOIN course_registrations as cr ON cr.department_course_id = dc.id AND cr.student_id=s.id  WHERE 1=1';
+      if(isset($_GET['student_id'])){
+        $sql .= ' AND s.id="'.$_GET['student_id'].'"';
+      }
+      if(isset($_GET['course_id'])){
+        $sql .= ' AND dc.id="'.$_GET['course_id'].'"';
+      }
+      if(isset($_GET['session'])){
+        $sql .= ' AND dc.session="'.$_GET['session'].'"';
+      }
+      if(isset($_GET['semester'])){
+        $sql .= ' AND dc.semester="'.$_GET['semester'].'"';
+      }
+      try{
+        $stmt = $this->conn->prepare($sql);
+        $res = $stmt->execute();
+        if ($res) {
+          $result = $stmt->get_result();
+          if ($result) {
+            $data = array();
+            if($result->num_rows > 0)
+            while ($row = $result->fetch_assoc()) {
+              array_push($data, $row);
+            }
+            $this->getHeaders();
+            echo json_encode(array('message' => 'successful', 'ok' => 1, 'details' => $data));
+          } else {
+            $this->getHeaders();
+            echo json_encode(array('message' => 'no registered course found', 'ok'=>0));
+          }
+        }
+      }catch(Exception $e){
+        $this->getHeaders();
+        echo json_encode(array('message' => $e->getMessage(), 'ok' => 0, 'status' => 'failed', 'line'=>$e->getLine()));
+      }
+    }else{
+      $this->getHeaders();
+      echo json_encode(array('message' => 'wrong method', 'ok' => 0, 'status' => 'failed'));
     }
   }
 }

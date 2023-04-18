@@ -65,7 +65,7 @@ class LecturerController
         $assigned_courses = json_encode([]);
 
         $stmt = $this->conn->prepare($sql);
-        $stmt->bind_param("ssssssssssss", $id, $firstname, $lastname, $othernames, $email, $phone, $password, $dob, $gender, $discipline, $degreeAcquired, $assigned_courses);
+        $stmt->bind_param("ssssssssssss", $id, $firstname, $lastname, $othernames, $email, $password, $phone, $dob, $gender, $discipline, $degreeAcquired, $assigned_courses);
 
 
         $res = $stmt->execute();

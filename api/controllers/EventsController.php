@@ -25,7 +25,7 @@ class EventsController
 
   private function checkIfCourseExist($course_code)
   {
-    $sql = "SELECT * FROM courses WHERE code = '$course_code'";
+    $sql = "SELECT * FROM department_courses WHERE code = '$course_code'";
     $res = $this->conn->query($sql);
     if ($res) {
       $rows = $res->fetch_assoc();
@@ -92,36 +92,21 @@ class EventsController
       echo json_encode(array('status' => 'error'));
     }
   }
-  private function get_course_id_by_code($course_code)
-  {
-    $sql = "SELECT id FROM courses WHERE code = '" . $course_code. "'";
-    $stmt = $this->conn->query($sql);
-    if ($stmt) {
-      $row = $stmt->fetch_assoc();
-      if ($row) {
-        return $row['id'];
-      } else {
-        throw new Exception('Course code not found ');
-      }
-    } else {
-      throw new Exception('Error processing request');
-    }
-    
-  }
+  
   public function lectures()
   {
     $this->conn;
     $method = $_SERVER['REQUEST_METHOD'];
     if ($method == 'GET') {
       try {
-        $sql = "SELECT lectures.id,lectures.time, lectures.day, lectures.duration, lectures.lecturer_id, lectures.venue,courses.title, courses.code, courses.id AS course_id, CONCAT(lecturers.firstName, ' ', lecturers.lastName) AS lecturer_name, lecturers.discipline  FROM lectures INNER JOIN courses ON lectures.course_id = courses.id INNER JOIN lecturers ON lectures.lecturer_id = lecturers.id";
+        $sql = "SELECT lectures.id,lectures.time, lectures.day, lectures.duration, lectures.lecturer_id, lectures.venue, courses.title, department_courses.code, department_courses.id AS course_id, CONCAT(lecturers.firstName, ' ', lecturers.lastName) AS lecturer_name, lecturers.discipline  FROM lectures INNER JOIN department_courses ON lectures.course_id = department_courses.id INNER JOIN courses ON courses.id = department_courses.course_id INNER JOIN lecturers ON lectures.lecturer_id = lecturers.id";
+
         if(isset($_GET['id'])){
           $sql .= " WHERE lectures.id = '".$_GET['id']."'";
         }
         if(isset($_GET['lecturer_id'])){
           $sql .= " WHERE lectures.lecturer_id LIKE '".$_GET['lecturer_id']."'";
         }
-
         $res = $this->conn->query($sql);
         if (!$res) {
           throw new Exception("Error Processing Request", 1);
@@ -129,7 +114,6 @@ class EventsController
         $this->getHeaders();
         $data = array();
         while ($row = $res->fetch_assoc()) {
-
           $data[] = $row;
         }
         echo json_encode(array('lectures' => $data, 'status' => 'success ', 'ok' => 1));
@@ -138,13 +122,13 @@ class EventsController
         echo json_encode(array('status' => $e->getMessage()));
       }
     } elseif ($method == 'PUT') {
-      $put = $_POST;
-      $sql = "UPDATE lectures SET time=?,day=?,duration=?,course_id=?,lecturer_id=?,venue=? WHERE id='" . $put['id'] . "'";
+      $put = json_decode(file_get_contents('php://input'), true);
+      $sql = "UPDATE lectures SET time=?,day=?,duration=?,course_id=?,lecturer_id=?,venue=? WHERE id='" . $put['id']."'";
       $time = $put['time'];
       $day = $put['day'];
       $duration = $put['duration'];
  
-      $course_id = $put['id'];
+      $course_id = $put['course_id'];
       $stmt = $this->conn->prepare($sql);
       $lecturer_id = $put['lecturer_id'];
       $venue = $put['venue'];
@@ -184,10 +168,7 @@ class EventsController
     if ($method == 'POST') {
       try {
         $post = $_POST;
-        $id = $this->checkIfCourseExist($post['course_code']);
-        if(!$id){
-          throw new Exception("Course does not exist", 1);
-        }
+       
         $sql = "INSERT INTO examinations(
           time,
           date,
@@ -201,7 +182,7 @@ class EventsController
         $time = $post['time'];
         $date = $post['date'];
         $duration = $post['duration'];
-        $course_id = $id;
+        $course_id = $post['course_id'];
         $lecturer_id = $post['lecturer_id'];
         $venue = $post['venue'];
         
@@ -234,10 +215,9 @@ class EventsController
       echo json_encode(array('status' => 'error'));
     }
   }
-
   private function get_course_code($id)
   {
-    $sql = "SELECT code FROM courses WHERE id='" . $id . "'";
+    $sql = "SELECT code FROM department_courses WHERE id='" . $id . "'";
     $res = $this->conn->query($sql);
     if (!$res) {
       throw new Exception("Error Processing Request", 1);
@@ -252,20 +232,18 @@ class EventsController
     if ($method == 'GET') {
       try {
 
-        $sql = "SELECT * FROM examinations";
-        if (isset($_GET['id'])) {
+        $sql = "SELECT e.time, e.date, e.duration, e.id, e.venue, c.title, dc.id AS course_id, dc.code, l.discipline, CONCAT(l.firstName,' ', l.lastName) as lecturer_name, l.id as lecturer_id FROM examinations as e INNER JOIN department_courses as dc ON e.course_id = dc.id INNER JOIN courses as c ON c.id = dc.course_id INNER JOIN lecturers as l ON e.lecturer_id = l.id";
 
-          $sql .= " WHERE id='" . $_GET['id'] . "'";
+        if (isset($_GET['id'])) {
+          $sql .= " WHERE e.id='" . $_GET['id'] . "'";
         }
         $res = $this->conn->query($sql);
         if (!$res) {
           throw new Exception("Error Processing Request", 1);
         }
         $data = array();
-        
-        while ($row = $res->fetch_assoc()) {
-          $row['course_code'] = $this->get_course_code($row['course_id']);
-          $data[] = $row;
+        while($row = $res->fetch_assoc()){
+          $data[] = $row; 
         }
         $this->getHeaders();
         echo json_encode(array('exams' => $data, 'status' => 200, 'ok' => 1));
@@ -274,11 +252,11 @@ class EventsController
         echo json_encode(array('status' => $e->getMessage()));
       }
     } elseif ($method == 'PUT') {
-      $put = $_POST;
+      $put = json_decode(file_get_contents('php://input'), true);
       if(!isset($put['id'])){
         throw new Exception("Error Processing Request", 1);
       }
-      $id = $this->checkIfCourseExist($put['course_code']);
+
       $sql = "UPDATE examinations SET time=?,date=?,duration=?,course_id=?,lecturer_id=?,venue=? WHERE id='" . $put['id'] . "'";
       $time = $put['time'];
       $date = $put['date'];
@@ -302,7 +280,6 @@ class EventsController
       echo json_encode(array('status' => 'Method not allowed', 'ok' => 0));
     }
   }
-  
   public function announcements()
   {
     $this->conn;
@@ -415,7 +392,7 @@ class EventsController
         $session = $_GET['session'];
         $semester = $_GET['semester'];
 
-        $sql = "SELECT lectures.id,lectures.time, lectures.day, lectures.duration, lectures.lecturer_id, lectures.venue,courses.title, courses.code, courses.id as course_id, CONCAT(lecturers.firstName, ' ', lecturers.lastName,' ', lecturers.degreeAcquired) AS lecturer_name FROM lectures INNER JOIN courses ON lectures.course_id = courses.id INNER JOIN lecturers ON lectures.lecturer_id = lecturers.id
+        $sql = "SELECT lectures.id,lectures.time, lectures.day, lectures.duration, lectures.lecturer_id, lectures.venue, courses.title, department_courses.code, department_courses.id as course_id, CONCAT(lecturers.firstName, ' ', lecturers.lastName,' ', lecturers.degreeAcquired) AS lecturer_name FROM lectures INNER JOIN department_courses ON lectures.course_id = department_courses.id INNER JOIN courses ON department_courses.course_id = courses.id INNER JOIN lecturers ON lectures.lecturer_id = lecturers.id
          WHERE course_id
       IN
       (SELECT course_id FROM course_registrations WHERE student_id = '$student_id' AND session = '$session' AND semester = '$semester')";

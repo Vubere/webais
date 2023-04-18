@@ -42,7 +42,6 @@ class Api{
         }
        
         $class = "Api\controllers\\$className";
-       
         $object  = new $class();
         
         CS::getHeaders();

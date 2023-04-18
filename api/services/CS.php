@@ -32,14 +32,14 @@ class CS {
       if ($result && $result->num_rows > 0) {
         $row = mysqli_fetch_assoc($result);
         $id = $row['id'];
-        $id = explode('_', $id);
+        $id = explode('-', $id);
         $id = $id[1];
         $id = (int) $id;
         $id = $id + 1;
-        $id = 'STU_' . $id;
+        $id = 'STU-' . $id;
         return $id;
       } else {
-        return 'STU_1';
+        return 'STU-1';
       }
     } elseif ($type == 'admin') {
       $sql = "SELECT * FROM administrators ORDER BY id DESC LIMIT 1";
