@@ -19,7 +19,7 @@ export default function ViewStudents() {
       const res = await fetch(url);
       const data = await res.json()
       console.log(data)
-
+      if(data.length)
       setStudents(data)
     } catch (err) {
       console.log(err)
@@ -45,7 +45,7 @@ export default function ViewStudents() {
       return 'No name'
     }
   }
-  const filteredStudents = students.filter((student: students) => fullname(student).toLowerCase().includes(search.toLowerCase()) || student.email.toLowerCase().includes(search.toLowerCase()) || student.faculty.toLowerCase().includes(search.toLowerCase()) || student.id.toLowerCase().includes(search.toLowerCase()))
+  const filteredStudents = students?students?.filter((student: students) => fullname(student).toLowerCase().includes(search.toLowerCase()) || student.email.toLowerCase().includes(search.toLowerCase()) || student.faculty.toLowerCase().includes(search.toLowerCase()) || student.id.toLowerCase().includes(search.toLowerCase())):null
  
 
 

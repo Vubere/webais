@@ -3,7 +3,7 @@ import { Link } from "react-router-dom"
 import { base } from "../../../App"
 
 
-export default function ViewLectures() {
+export default function ViewExams() {
   const [exams, setExams] = useState<exam[]>([])
   const [errors, setErrors] = useState('')
 
@@ -12,6 +12,7 @@ export default function ViewLectures() {
     fetch(base+"/exam")
       .then((res) => res.json())
       .then((data) => {
+        console.log(data)
         if (data.ok) {
           setExams(data.exams)
         } else {
@@ -82,6 +83,7 @@ interface exam {
   date: string
   duration: string
   course_code: string
+  course_id: string
   lecturer_id: string
   venue: string
 }

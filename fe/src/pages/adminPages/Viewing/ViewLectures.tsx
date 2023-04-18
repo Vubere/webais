@@ -29,7 +29,7 @@ export default function ViewLectures() {
 
   return (
     <div>
-      <h1 className="font-[600] text-[#347836] text-[28px] text-center leading-[40px]">Lectures</h1>
+      <h3 className="font-[600] text-[#347836] text-[28px] text-center leading-[40px]">Lectures</h3>
       <section>
         <table className="shadow-lg bg-white border-separate max-w-[100vw] overflow-auto ">
           <thead>

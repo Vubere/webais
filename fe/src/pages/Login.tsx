@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from "react"
+import { useContext, useEffect, useRef, useState } from "react"
 import { Link, useNavigate } from "react-router-dom"
 import Icon from "../components/Icon"
 
@@ -25,6 +25,7 @@ export default function Login({ title, src }: { title: string, src: string }) {
   const [postError, setPostError] = useState('')
   const [loading, setLoading] = useState(false)
   const { setUser } = useContext(UserContext)
+  const pwd_ref = useRef<HTMLInputElement>(null)
 
 
   const navigate = useNavigate()
@@ -50,7 +51,6 @@ export default function Login({ title, src }: { title: string, src: string }) {
 
         if (data?.authenticated) {
           console.log(data)
-          setUser(data.user)
           sessionStorage.setItem('user', JSON.stringify(data.user))
           setLoading(false)
           if (title.toLowerCase() == 'student') {
@@ -121,6 +121,16 @@ export default function Login({ title, src }: { title: string, src: string }) {
     return isValid
   }
 
+  const password_visibility = () => {
+    if(pwd_ref.current==null||pwd_ref.current==undefined) return
+    if (pwd_ref.current?.type === 'password') {
+      pwd_ref.current.type = 'text'
+    } else {
+      pwd_ref.current.type = 'password'
+    }
+  }
+
+
 
   return (
     <div className="w-[100vw] p-2 flex flex-col justify-center">
@@ -134,14 +144,18 @@ export default function Login({ title, src }: { title: string, src: string }) {
         </div>
         {postError && <p className="text-red-500 text-[12px] stbt:text-[16px]">{postError}</p>}
         <div className="flex flex-col my-2 bmb:my-4">
-          <label htmlFor="id " className="text-[16px] stbt:text-[18px] text-[#346837]">Id</label>
-          <input type="username" name="id" id="email" onChange={handleChange} value={form.id} className={`border-2 border-gray-300 p-2 rounded-md focus:border-[#346837] ${error.id && 'border-[#f005]'}`} />
+          <label htmlFor="id" className="text-[16px] stbt:text-[18px] text-[#346837]">Id</label>
+          <input type="username" name="id" id="id" onChange={handleChange} value={form.id} className={`border-2 border-gray-300 p-2 rounded-md focus:border-[#346837] ${error.id && 'border-[#f005]'}`} />
           {error.id && <p className="text-red-500 text-[12px] stbt:text-[14px]">{error.id}</p>}
         </div>
         <div className="flex flex-col">
           <label htmlFor="password" className="text-[16px] stbt:text-[18px] text-[#346837]">Password</label>
-          <input type="password" name="password" id="password" onChange={handleChange} value={form.password} className={`border-2 border-gray-300 p-2 rounded-md focus:border-[#346837] ${error.password && 'border-[#f005]'}`} />
+          <input type="password" name="password" id="password" onChange={handleChange} value={form.password} ref={pwd_ref}  className={`border-2 border-gray-300 p-2 rounded-md focus:border-[#346837] ${error.password && 'border-[#f005]'}`} />
           {error.password && <p className="text-red-500 text-[12px] stbt:text-[14px]">{error.password}</p>}
+        </div>
+        <div className="flex gap-2 m-2">
+          <input type="checkbox" name="check" id="check" className="w-[10px] h-[10px] mt-2" onChange={password_visibility} />
+          <label htmlFor="check">password visibility</label>
         </div>
         <button type="submit" className="bg-[#346837] text-white w-full my-4 py-2 px-4 rounded-md">{loading ? 'loading...' : "Login"}</button>
       </form>

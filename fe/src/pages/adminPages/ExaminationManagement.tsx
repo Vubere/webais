@@ -13,6 +13,7 @@ export default function ExaminationManagement() {
     fetch(base+"/exam")
       .then((res) => res.json())
       .then((data) => {
+        console.log(data)
         if (data.ok) {
           setExams(data.exams)
         } else {
@@ -52,24 +53,24 @@ export default function ExaminationManagement() {
               <th className="bg-[#34783644]  border text-left px-4 py-2">Time</th>
               <th className="bg-[#34783644] border text-left px-4 py-2">Date</th>
               <th className="bg-[#34783644] border text-left px-4 py-2">Duration</th>
-              <th className="bg-[#34783644] border text-left px-4 py-2">Course Code</th>
-              <th className="bg-[#34783644] border text-left px-4 py-2">Lecturer ID</th>
+              <th className="bg-[#34783644] border text-left px-4 py-2">Course </th>
+              <th className="bg-[#34783644] border text-left px-4 py-2">Lecturer</th>
               <th className="bg-[#34783644] border text-left px-4 py-2">Venue</th>
               <th className="bg-[#34783644] border text-left px-4 py-2">Action</th>
             </tr>
           </thead>
           <tbody>
-            {exams.map((lecture) => (
-              <tr key={lecture.id}>
-                <td className="border px-4 py-2">{lecture.time}</td>
-                <td className="border px-4 py-2">{formatDateToDMY(lecture.date)}</td>
-                <td className="border px-4 py-2">{lecture.duration}</td>
-                <td className="border px-4 py-2">{lecture.course_code}</td>
-                <td className="border px-4 py-2">{lecture.lecturer_id}</td>
-                <td className="border px-4 py-2">{lecture.venue}</td>
+            {exams.map((exam) => (
+              <tr key={exam.id}>
+                <td className="border px-4 py-2">{exam.time}</td>
+                <td className="border px-4 py-2">{formatDateToDMY(exam.date)}</td>
+                <td className="border px-4 py-2">{exam.duration}</td>
+                <td className="border px-4 py-2">{exam.title}({exam.code})</td>
+                <td className="border px-4 py-2">{exam.lecturer_name}</td>
+                <td className="border px-4 py-2">{exam.venue}</td>
                 <td className="border px-4 py-2">
                   <Link to={
-                    `/dashboard-admin/update-exams/${lecture.id}`
+                    `/dashboard-admin/update-exams/${exam.id}`
                   } className="bg-[#347836] text-white px-4 py-2 rounded-md">Edit</Link>
                 </td>
               </tr>
@@ -85,7 +86,8 @@ interface exam {
   time: string
   date: string
   duration: string
-  course_code: string
-  lecturer_id: string
+  code: string
+  lecturer_name: string
   venue: string
+  title: string
 }

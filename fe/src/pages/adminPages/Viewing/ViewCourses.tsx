@@ -8,7 +8,7 @@ import useFacultiesAndDepartments from '../../../hooks/useFacultiesAndDepartment
 import { base } from '../../../App'
 
 export default function ViewCourse() {
-  const [courses, setCourses] = useState<course[]>([])
+ /*  const [courses, setCourses] = useState<course[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
   const [loadError, setLoadError] = useState('')
@@ -57,8 +57,8 @@ export default function ViewCourse() {
         alert(err?.message)
       }
     }
-  }
-  const toggle_grading_open = async (bool: boolean) => {
+  } */
+  /* const toggle_grading_open = async (bool: boolean) => {
     if (Session) {
       try {
         //course_id, session, semester, all:boolean, 
@@ -68,7 +68,7 @@ export default function ViewCourse() {
         f.append('all', 'true')
         f.append('bool', bool.toString())
 
-        const req = await fetch('http://localhost/webais/api/grading', {
+        const req = await fetch(base+'/grading', {
           method: 'POST',
           body: f
         })
@@ -113,11 +113,11 @@ export default function ViewCourse() {
     }
   }
 
-
+ */
 
   return (
     <div className='p-4 h-[90vh] overflow-auto pb-20'>
-      <h2>View Course</h2>
+     {/*  <h2>View Course</h2>
       {loading ? <p>Loading...</p> : loadError ? <p>{loadError}</p> : (
         <div className='flex flex-col gap-5'>
           <input type="text" placeholder="Search" onChange={e => setSearch(e.target.value)} />
@@ -173,7 +173,7 @@ export default function ViewCourse() {
           </div>
         </div>
       )}
-    
+     */}
     </div>
   )
 }

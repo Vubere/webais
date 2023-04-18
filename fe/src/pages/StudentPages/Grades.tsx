@@ -10,8 +10,8 @@ export default function Grades() {
   const { user } = useContext(UserContext)
   const Session = useContext(SessionContext)
   const [session, setSession] = useState({
-    semester: '',
-    session: ''
+    session: '',
+    current_semester: ''
   })
   const [loading, setLoading] = useState(true)
   const [exams, setExams] = useState<any[]>([])
@@ -19,8 +19,8 @@ export default function Grades() {
   useEffect(() => {
 
     if (Session && user) {
-      const userSes = session.session == '' ? Session.session.session : session.session
-      const userSem = session.semester == '' ? Session.session.semester : session.semester
+      const userSes = session.session == '' ? Session?.session?.session : session.session
+      const userSem = session.current_semester == '' ? Session?.session?.current_semester : session.current_semester
 
       fetch(base+'/registered_courses?student_id=' + user.id + '&semester=' + userSem + '&session=' + userSes)
         .then(res => res.json())
@@ -53,7 +53,7 @@ export default function Grades() {
         </thead>
         <tbody>
           {
-            courses.map((course) => <GradeRow key={course.id} course={course} session= {Session?.session.session} student_id={user.id}/>)
+            courses.map((course) => <GradeRow key={course.id} course={course} session= {Session?.session?.session} student_id={user.id}/>)
           }
         </tbody>
       </table>
@@ -67,7 +67,7 @@ const GradeRow = ({ course, session, student_id }: { course: Course, session:str
 
   useEffect(()=>{
     if(session&&student_id){
-      fetch(`http://localhost/webais/api/grades?student_id=${student_id}&course_id=${course.id}&session=${session}`)
+      fetch(base+`/grades?student_id=${student_id}&course_id=${course.id}&session=${session}`)
       .then(res=>res.json())
       .then(data=>setGrade(data.result.info))
       .catch(err=>console.log(err))

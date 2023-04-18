@@ -85,6 +85,12 @@ export const confirm_payment = "confirm-payment";
 export const view_payments = 'view-payments'
 export const messages = 'messages'
 export const receipt = 'receipt'
+export const assigned_courses = 'assigned-courses'
+export const update_assigned_course = 'update-assigned-course'
+export const view_assigned_courses = 'view-assigned-courses'
+export const assign_units = dashboard + "-" + admin + "/assign_units";
+export const unit_distribution = dashboard + "-" + admin + "/unit_distribution";
+export const edit_unit_load = dashboard + "-" + admin + "/edit-unit-load";
 
 const adminDashboardLinks = [
   {

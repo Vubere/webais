@@ -1,27 +1,48 @@
-import { useLayoutEffect, useState } from "react"
+import { useEffect, useLayoutEffect, useMemo, useState } from "react"
 import { useParams } from "react-router-dom"
 import { base } from "../../../App"
+import { assigned_course } from "../Viewing/ViewAssignedCourses"
 
 export default function UpdateLectures() {
   const [exam, setExam] = useState({
     time: '',
     date: '',
     duration: '',
-    course_code: '',
+    course_id: '',
     lecturer_id: '',
     venue: '',
   })
   const { id } = useParams()
+  const [courses, setCourses] = useState<assigned_course[]>([])
+  const [lecturers, setLecturers] = useState<any[]>([])
+  const [search, setSearch] = useState('')
+  const [searchLect, setSearchLect] = useState('')
   
   const [errors, setErrors] = useState({
     time: '',
     date: '',
     duration: '',
-    course_code: '',
+    course_id: '',
     lecturer_id: '',
     venue: '',
   })
+
+
   const [fetchError, setFetchError] = useState('')
+  useEffect(() => {
+    fetch(base + '/lecturers')
+      .then(res => res.json())
+      .then(data => setLecturers(data.lecturer))
+      .catch(err => console.log(err))
+  }, [])
+  useEffect(() => {
+    fetch(base + '/assign_course')
+      .then(res => res.json())
+      .then(data => {
+        setCourses(data.data)
+      })
+      .catch((err: any) => alert(err?.message || 'something went wrong'))
+  }, [])
   const validate = () => {
     let isValid = true
     let tempERR = { ...errors }
@@ -37,9 +58,9 @@ export default function UpdateLectures() {
       tempERR.duration = 'Duration is required'
       isValid = false
     }
-    if (exam.course_code === '') {
+    if (exam.course_id === '') {
 
-      tempERR.course_code = 'Course code is required'
+      tempERR.course_id = 'Course code is required'
       isValid = false
     }
     if (exam.lecturer_id === '') {
@@ -57,7 +78,7 @@ export default function UpdateLectures() {
           time: '',
           date: '',
           duration: '',
-          course_code: '',
+          course_id: '',
           lecturer_id: '',
           venue: '',
         })
@@ -78,26 +99,37 @@ export default function UpdateLectures() {
     if (validate()) {
       try {
         const f = new FormData()
-        f.append('id', id?.toString() as string)
         f.append('time', exam.time)
         f.append('date', exam.date)
         f.append('duration', exam.duration)
-        f.append('course_code', exam.course_code)
+        f.append('course_id', exam.course_id)
         f.append('lecturer_id', exam.lecturer_id)
         f.append('venue', exam.venue)
 
-        const res = await fetch("http://localhost/webais/api/exam", {
+        const res = await fetch(base+"/exam", {
           method: "PUT",
-          body: f
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            time: exam.time,
+            date: exam.date,
+            duration: exam.duration,
+            course_id: exam.course_id,
+            lecturer_id: exam.lecturer_id,
+            venue: exam.venue,
+            id: id
+          }),
         })
         const data = await res.json()
+      
         if (data.ok) {
           alert('success')
         } else {
           throw new Error(data?.status || 'something went wrong')
         }
-      } catch (err) {
-        console.log(err)
+      } catch (err:any) {
+        alert(err?.message||'something went wrong')
       }
     }
   }
@@ -113,7 +145,7 @@ export default function UpdateLectures() {
     fetch(base+"/exam?id=" + id)
       .then((res) => res.json())
       .then((data) => {
-        console.log(data)
+        
         if (data.ok&&data.exams.length>0) {
           const l = data.exams[0]
           l.date = formatDateToYMD(l.date)
@@ -124,13 +156,24 @@ export default function UpdateLectures() {
       })
       .catch((err) => {
         console.log(err)
+        alert(err?.message||'something went wrong')
         setFetchError('something went wrong')
       })
   }, [])
 
+  const filteredCourses = useMemo(() => {
+    return courses.filter(
+      (course: any) => course.code.toLowerCase().includes(search.toLowerCase()) || course.title.toLowerCase().includes(search.toLowerCase())
+    )
+  }, [search, courses])
+
+  const filteredLecturers = useMemo(() => {
+    return lecturers.filter(i => (i.firstName + ' ' + i.lastName).toLowerCase().includes(searchLect.toLowerCase()) || i.email.toLowerCase().includes(searchLect.toLowerCase() || i.id.toLowerCase().includes(searchLect.toLowerCase())) || i.discipline.toLowerCase().includes(searchLect.toLowerCase()))
+  }, [searchLect, lecturers])
+  
 
   return (
-    <div>
+    <div className="w-full h-[90vh] overflow-y-auto pb-[40px]">
       <h1 className="font-[600] text-[#347836] text-[28px] text-center leading-[40px]">Update Examination</h1>
       <form onSubmit={onSubmit} className="flex flex-col items-center gap-2 max-w-[400px] w-[80vw] gap-4 mx-auto">
 
@@ -164,12 +207,42 @@ export default function UpdateLectures() {
           </select>
         </div>
         <div className="w-full">
-          <label htmlFor="course_code">Course Code</label>
-          <input type="text" name="course_code" id="course_code" value={exam.course_code} onChange={handleChange} className="w-full h-[40px] rounded-[5px] bg-transparent border border-[#347836] xs:p-2 stbt:p-4 xs:text-[14px] stbt:text-[18px] flex items-center focus:outline-none px-2" />
+          <label htmlFor="course_id">Course </label>
+          {/* search courses */}
+          <div className="flex">
+            <label htmlFor="course_id" className="w-[25%] font-[400] text-[14px]"></label>
+            <input type="text" name="course_id" id="course_id" value={search} onChange={({ target }) => setSearch(target.value)} className="w-[55%] h-[30px] rounded-[5px] bg-transparent border border-[#347836]  flex items-center focus:outline-none px-2 mb-2" placeholder="search for a course..." />
+          </div>
+          <select name="course_id" id="course_id" value={exam.course_id} onChange={handleChange} className="w-full h-[40px] rounded-[5px] bg-transparent border border-[#347836]  flex items-center focus:outline-none px-2">
+            <option value="">Select Course </option>
+            {filteredCourses.length ? filteredCourses.map((course: any) => {
+              return (
+                <option value={course.id}>{course.code}({course.title})</option>
+              )
+            }) : <option value="" className="text-[#a22]">No Course</option>
+            }
+          </select>
         </div>
         <div className="w-full">
-          <label htmlFor="lecturer_id">Lecturer ID</label>
-          <input type="text" name="lecturer_id" id="lecturer_id" value={exam.lecturer_id} onChange={handleChange} className="w-full h-[40px] rounded-[5px] bg-transparent border border-[#347836] xs:p-2 stbt:p-4 xs:text-[14px] stbt:text-[18px] flex items-center focus:outline-none px-2" />
+          <label htmlFor="lecturer_id">Lecturer </label>
+          {errors.lecturer_id && <span className="text-red-500 text-xs">{errors.lecturer_id}</span>}
+          {/* search lecturers */}
+          <div className="flex">
+            <label htmlFor="lecturer_id" className="w-[25%] font-[400] text-[14px]"></label>
+            <input type="text" name="lecturer_id" id="lecturer_id" value={searchLect} onChange={({ target }) => setSearchLect(target.value)} className="w-[55%] h-[30px] rounded-[5px] bg-transparent border border-[#347836]  flex items-center focus:outline-none px-2 mb-2" placeholder="search for a lecturer..." />
+          </div>
+
+          <select name="lecturer_id" id="lecturer_id" value={exam.lecturer_id} onChange={handleChange} className="w-full h-[40px] rounded-[5px] bg-transparent border border-[#347836]  flex items-center focus:outline-none px-2">
+            <option value="">Select Lecturer</option>
+            {filteredLecturers.length ?
+              filteredLecturers
+                .map((lecturer: any) => {
+                  return (
+                    <option value={lecturer.id}>{lecturer.firstName} {lecturer.lastName}({lecturer.discipline})
+                    </option>
+                  )
+                }) : <option value="" className="text-[#a22]">No Lecturer</option>}
+          </select>
         </div>
         <div className="w-full">
           <label htmlFor="venue">Venue</label>

@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react"
+import { base } from "../App"
 
 
 
-export default function useFacultiesAndDepartments():{faculties:any[], departments:any[], error:string,population:any[], loading:boolean}{
+export default function useFacultiesAndDepartments(): { faculties: any[], departments: any[], error: string, population: any[], loading: boolean } {
   const [faculties, setFaculties] = useState<any[]>([])
   const [departments, setDepartments] = useState<any>([])
   const [population, setPopulation] = useState<any>([])
@@ -11,30 +12,31 @@ export default function useFacultiesAndDepartments():{faculties:any[], departmen
 
   const fetchFaculties = async () => {
     try {
-      const res = await fetch('http://localhost/webais/api/faculty')
+      const res = await fetch(base+'/faculty')
       const data = await res.json()
       if (data.status == 'success') {
         setFaculties(data.data.data)
       } else {
         throw new Error('something went wrong')
       }
-    } catch (err:any) {
+    } catch (err: any) {
       setError(err?.message)
     }
   }
   const fetchDepartments = async () => {
     try {
-      const res = await fetch('http://localhost/webais/api/department')
+      const res = await fetch(base+'/department')
       const data = await res.json()
-      if(data.status=='success'){
+      if (data.status == 'success') {
+      
         setDepartments(data.data.data)
-     
+
         setPopulation(data.data.population)
-     
-      }else{
+
+      } else {
         throw new Error('something went wrong')
       }
-    } catch (err:any) {
+    } catch (err: any) {
       setError(err?.message)
     }
   }
@@ -44,7 +46,7 @@ export default function useFacultiesAndDepartments():{faculties:any[], departmen
       await fetchFaculties()
       await fetchDepartments()
       setLoading(false)
-    } catch (err:any) {
+    } catch (err: any) {
       setError(err?.message)
     }
   }
@@ -52,8 +54,8 @@ export default function useFacultiesAndDepartments():{faculties:any[], departmen
     fetchFacultiesAndDepartments()
   }, [])
 
+
   
 
-
-  return {faculties,population, departments, error, loading}
+  return { faculties, population, departments, error, loading }
 }

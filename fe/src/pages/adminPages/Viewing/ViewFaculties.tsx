@@ -2,13 +2,14 @@ import { useLayoutEffect, useMemo, useState } from "react"
 import { Link } from "react-router-dom"
 import { base } from "../../../App"
 
+import * as routes from '../../../constants/routes'
 
 
 export default function Faculties() {
   const [faculties, setFaculties] = useState<any[]>([])
 
   useLayoutEffect(() => {
-    fetch(base+'/faculty')
+    fetch(base + '/faculty')
       .then(res => res.json())
       .then(res => setFaculties(res.data.data))
   }, [])
@@ -35,7 +36,7 @@ function Faculty({ faculty }: { faculty: { name: string, id: string } }) {
   const [departments, setDepartments] = useState<any>([])
 
   useLayoutEffect(() => {
-    fetch('http://localhost/webais/api/department')
+    fetch(base + '/department')
       .then(res => res.json())
       .then(res => setDepartments(res.data.data))
   }, [])
@@ -62,7 +63,9 @@ function Faculty({ faculty }: { faculty: { name: string, id: string } }) {
           </div>
         ))}
       </div>
-
+      <div className="flex justify-between mt-10">
+        <Link to={routes.unit_distribution} className="border border-[#346837] p-2 py-1 rounded mx-auto hover:text-[white] hover:bg-[#346837]">Departments Semester Unit Load</Link>
+      </div>
     </div>
   )
 }

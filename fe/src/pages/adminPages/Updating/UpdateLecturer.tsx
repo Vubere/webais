@@ -71,7 +71,7 @@ export default function UpdateLecturer() {
   const delete_lecturer = () => {
     const reply = prompt('are you sure you want to delete this Lecturer? Type yes to confirm')
     if (reply?.toLowerCase() !== 'yes') return
-    fetch('http://localhost/webais/api/lecturers?id=' + id, {
+    fetch(base+'/lecturers?id=' + id, {
       method: 'DELETE',
       headers: {
         'Content-Type': 'application/json'

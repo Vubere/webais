@@ -137,7 +137,7 @@ export default function UpdateAdmin() {
   }
   const updateAdmin = async () => {
     try {
-      let url = base + `/api/students?id=${id}`
+      let url = base + `/students?id=${id}`
       const f = new FormData()
       f.append('firstName', form.firstName)
       f.append('lastName', form.lastName)
@@ -165,7 +165,7 @@ export default function UpdateAdmin() {
   const delete_student = () => {
     const reply = prompt('are you sure you want to delete this Student? Type yes to confirm')
     if (reply?.toLowerCase() !== 'yes') return
-    fetch('http://localhost/webais/api/students?id=' + id, {
+    fetch(base+'/students?id=' + id, {
       method: 'DELETE',
       headers: {
         'Content-Type': 'application/json'

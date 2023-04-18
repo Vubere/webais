@@ -44,7 +44,7 @@ export default function DashboardPage() {
         if (user_type == 'admin') return
         user_id = user?.id
       }
-      fetch('http://localhost/webais/api/unread_messages?user_id=' + user_id)
+      fetch(base+'/unread_messages?user_id=' + user_id)
         .then((res) => res.json())
         .then(result => {
           if (result?.ok) {

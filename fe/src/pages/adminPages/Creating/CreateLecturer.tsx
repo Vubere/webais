@@ -62,10 +62,7 @@ export default function CreateLecturer() {
     if (user.email === '') {
       tempERR.email = 'Email is required'
       isValid = false
-
     }
-   
-
     if (user.discipline === '') {
       tempERR.discipline = 'Discipline is required'
       isValid = false
@@ -77,7 +74,6 @@ export default function CreateLecturer() {
  
     if (!isValid) {
       setErrors(tempERR)
-      
       setTimeout(() => {
         setPasswordErr('')
         setErrors({
@@ -144,8 +140,7 @@ export default function CreateLecturer() {
       <h2 className="text-center text-[22px] text-[#346837]">Create Lecturer</h2>
       <form className="flex flex-col items-center gap-2" onSubmit={handleSubmit}>
         <div className="flex flex-row max-w-[400px] w-[80vw] gap-4">
-          <div >
-
+          <div>
             <label htmlFor="name">First Name</label>
             {errors.firstName && <p className="text-red-500 text-[12px]">{errors.firstName}</p>}
             <input type="text" name="firstName" id="name" className="w-full h-[40px] rounded-[5px] bg-transparent border border-[#347836] xs:p-2 stbt:p-4 xs:text-[14px] stbt:text-[18px] flex items-center focus:outline-none px-2"
@@ -181,13 +176,13 @@ export default function CreateLecturer() {
           </div>
         </div>
 
-        <div className="flex max-w-[400px] w-[80vw] gap-4">
-          <div className="w-full">
+        <div className="flex w-[80vw] max-w-[400px] w-[80vw] gap-4">
+          <div className="w-full  w-[50%]">
             <label htmlFor="dob">Date of birth</label>
             {errors.dob && <p className="text-red-500 text-[12px]">{errors.dob}</p>}
-            <input type="date" name="dob" id="dob" className="w-full h-[40px] rounded-[5px] bg-transparent border border-[#347836] xs:p-2 stbt:p-4 xs:text-[14px] stbt:text-[18px] flex items-center focus:outline-none px-2" value={user.dob} onChange={handleChange} />
+            <input type="date" name="dob" id="dob" className="w-full max-w-[100%] h-[40px] rounded-[5px] bg-transparent border border-[#347836] xs:p-2 stbt:p-4 xs:text-[14px] stbt:text-[18px] flex items-center focus:outline-none px-2" value={user.dob} onChange={handleChange} />
           </div>
-          <div className="w-full">
+          <div className="w-full w-[50%]">
             <label htmlFor="gender">Gender</label>
             {errors.gender&&<p className="text-red-500 text-[12px]">{errors.gender}</p>}
             <select name="gender" id="gender" className="w-full h-[40px] rounded-[5px] bg-transparent border border-[#347836]  text-black flex items-center focus:outline-none px-2"

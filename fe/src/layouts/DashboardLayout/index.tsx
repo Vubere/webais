@@ -10,11 +10,12 @@ import useInnerWidth from "../../hooks/useInnerWidth";
 import useCloseOnBlur from "../../hooks/useCloseOnBlur";
 /* constants */
 import * as routes from "../../constants/routes";
-import { UserContext } from "../../App";
+import { UserContext, base } from "../../App";
+import { getUnixTime } from "date-fns";
 
-export type session = { semester: string, session: string }
+export type session = { session: string; current_semester: string | number, first_semester_start: string, first_semester_end: string, second_semester_start: string, second_semester_end: string }
 
-export const SessionContext = createContext<{ session: session, setSession: React.Dispatch<React.SetStateAction<{ session: string; semester: string; }>> } | undefined>({ session: { session: '', semester: '' }, setSession: () => { } });
+export const SessionContext = createContext<{ session: session|undefined, setSession: React.Dispatch<React.SetStateAction<session|undefined>> } | undefined>({session:{ session: '', current_semester: '', first_semester_start: '', first_semester_end: '', second_semester_start: '', second_semester_end: '' }, setSession: () => { } });
 
 
 export default function DashboardLayout({ title, DashboardLinks }: { title: string, DashboardLinks: { icon: string, name: string, path: string }[] }) {
@@ -22,10 +23,7 @@ export default function DashboardLayout({ title, DashboardLinks }: { title: stri
   const widthBool = width > 768 ? true : false;
   const { ref, isOpen: show, setIsOpen: setShow } = useCloseOnBlur();
   const { user, setUser } = useContext(UserContext)
-  const [session, setSession] = useState({
-    session: '',
-    semester: ''
-  })
+  const [session, setSession] = useState<session>()
 
 
   const navigate = useNavigate()
@@ -44,7 +42,7 @@ export default function DashboardLayout({ title, DashboardLinks }: { title: stri
       if (id) {
         if (title == 'admin') {
           const fetchAdmin = async () => {
-            const res = await fetch(`http://localhost:80/webais/api/admins?id=${id}`)
+            const res = await fetch(base+`/admins?id=${id}`)
             const data = await res.json()
             if (data?.admin) {
               setUser(data.admin)
@@ -56,12 +54,11 @@ export default function DashboardLayout({ title, DashboardLinks }: { title: stri
           fetchAdmin()
         } else if (title == 'student') {
           const fetchStudent = async () => {
-            const res = await fetch(`http://localhost:80/webais/api/students?id=${id}`)
+            const res = await fetch(base+`/students?id=${id}`)
             const data = await res.json()
-
-            if (data?.length) {
-              setUser(data[0])
-              sessionStorage.setItem('user', JSON.stringify(data[0]))
+            if (data?.students?.length) {
+              setUser(data?.students[0])
+              sessionStorage.setItem('user', JSON.stringify(data?.students[0]))
             } else {
               navigate(routes.student_login)
             }
@@ -69,7 +66,7 @@ export default function DashboardLayout({ title, DashboardLinks }: { title: stri
           fetchStudent()
         } else {
           const fetchLecturer = async () => {
-            const res = await fetch(`http://localhost:80/webais/api/lecturers?id=${id}`)
+            const res = await fetch(base+`/lecturers?id=${id}`)
             const data = await res.json()
             if (data?.lecturer) {
               setUser(data.lecturer[0])
@@ -99,15 +96,27 @@ export default function DashboardLayout({ title, DashboardLinks }: { title: stri
   }, [])
   useEffect(() => {
 
-    fetch('http://localhost/webais/api/session?current=' + 'true')
+    fetch(base+'/session?current=' + 'true')
       .then(res => res.json())
       .then(result => {
-        if (result?.status == 'success') {
-
-          setSession({
-            session: result.data[0].session,
-            semester: result.data[0].semester
-          })
+        if (result?.ok == 1) {
+          const currentData = result.data[0]
+          const checkSemester = () => {
+            const now = (new Date).getTime()/1000
+            const first_semester_start = currentData.first_semester_start
+            const first_semester_end = currentData.first_semester_end
+            const second_semester_start = currentData.second_semester_start
+            const second_semester_end = currentData.second_semester_end
+            if (now > first_semester_start && now < first_semester_end) {
+              currentData.current_semester = 1
+            } else if (now > second_semester_start && now < second_semester_end) {
+              currentData.current_semester = 2
+            } else {
+              currentData.current_semester = 0
+            }
+          }
+          checkSemester()
+          setSession(currentData)
         } else {
           alert('No session found')
         }

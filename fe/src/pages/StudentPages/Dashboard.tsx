@@ -19,7 +19,6 @@ export default function Dashboard() {
     const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
     const today = new Date()
     const dayOftheWeek = today.getDay()
-    console.log(days[dayOftheWeek])
     return l.date === days[dayOftheWeek]
   })
 
@@ -27,11 +26,13 @@ export default function Dashboard() {
   const fullName = user?.firstName + ' ' + user?.lastName
 
   useEffect(() => {
-    if (user&&Session?.session.session&&Session?.session.semester) {
-      console.log(base)
-      fetch(base+'/student_lectures?student_id=' + user?.id + '&session=' + Session.session.session + '&semester=' + Session.session.semester)
+    if (user&&Session?.session?.session&&Session?.session.current_semester) {
+      
+      fetch(base+'/student_lectures?student_id=' + user?.id + '&session=' + Session.session.session + '&semester=' + Session.session.current_semester)
         .then(res => res.json())
-        .then(data => setLectures(data.lectures))
+        .then(data => {
+          console.log(data)
+          setLectures(data.lectures)})
         .catch(err => console.log(err))
     }
   }, [user, Session])

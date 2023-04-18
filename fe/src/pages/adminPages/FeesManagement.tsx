@@ -89,7 +89,7 @@ const FeeRow = ({ fee }: { fee: Fee }) => {
       setDepartment('All')
       return
     }
-    fetch('http://localhost/webais/api/department?id=' + fee.department_id)
+    fetch(base+'/department?id=' + fee.department_id)
       .then(res => res.json())
       .then(data => {
      

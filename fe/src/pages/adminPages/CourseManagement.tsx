@@ -9,7 +9,7 @@ import searchImg from '../../assets/search.png'
 import { base } from '../../App'
 
 export default function CourseManagement() {
-  const [courses, setCourses] = useState<course[]>([])
+  const [courses, setCourses] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
   const [loadError, setLoadError] = useState('')
@@ -17,33 +17,36 @@ export default function CourseManagement() {
 
   const Session = useContext(SessionContext);
 
-  const searchedCourses = courses.filter(course => course.title.toLowerCase().includes(search.toLowerCase())||course.code.toLowerCase().includes(search.toLowerCase()))
+  const searchedCourses = courses.filter(course => course.title.toLowerCase().includes(search.toLowerCase()))
 
   useEffect(() => {
-    fetch(base+'/courses')
+    fetch(base + '/courses')
       .then(res => res.json())
-      .then(data => {
-        setCourses(data.data)
-
-        setLoading(false)
+      .then((data: any) => {
+        console.log(data)
+        if (data?.ok) {
+          setCourses(data.data)
+          setLoading(false)
+        }
       })
       .catch(err => {
+        console.log(err)
         setLoadError(err.message)
         setLoading(false)
       })
   }, [])
 
   const create_session_result_table = async () => {
-    if (Session) {
+    if (Session?.session) {
       try {
         //course_id, session, semester, all:boolean,
-        const { session, semester } = Session.session
+        const { session, current_semester } = Session.session
         const f = new FormData()
         f.append('session', session)
-        f.append('semester', semester)
+        f.append('semester', current_semester.toString())
         f.append('all', 'true')
 
-        const req = await fetch('http://localhost:80/webais/api/session_result', {
+        const req = await fetch(base+'/session_result', {
 
           method: 'POST',
           body: f
@@ -61,16 +64,16 @@ export default function CourseManagement() {
     }
   }
   const toggle_grading_open = async (bool: boolean) => {
-    if (Session) {
+    if (Session?.session) {
       try {
         //course_id, session, semester, all:boolean, 
-        const { session, semester } = Session.session
+
         const f = new FormData()
-        f.append('session', session)
+        f.append('session', Session?.session?.session)
         f.append('all', 'true')
         f.append('bool', bool.toString())
 
-        const req = await fetch('http://localhost/webais/api/grading', {
+        const req = await fetch(base+'/grading', {
           method: 'POST',
           body: f
         })
@@ -87,17 +90,17 @@ export default function CourseManagement() {
     }
   }
   const toggle_registration_open = async (bool: boolean) => {
-    if (Session) {
+    if (Session?.session) {
       try {
         //course_id, session, semester, all:boolean,
-        const { session, semester } = Session.session
+        const { session, current_semester } = Session.session
         const f = new FormData()
         f.append('session', session)
-        f.append('semester', semester)
+        f.append('semester', current_semester.toString())
         f.append('all', 'true')
         f.append('bool', bool.toString())
 
-        const req = await fetch('http://localhost:80/webais/api/registration', {
+        const req = await fetch(base+'/registration', {
           method: 'POST',
           body: f
         })
@@ -119,9 +122,10 @@ export default function CourseManagement() {
 
   return (
     <div className='p-4 h-[90vh] overflow-auto pb-20'>
-      <div className='w-full flex justify-end'>
-
-        <Link to={routes.create_course} className='bg-[#347836] text-[#fff] p-1 rounded px-2'>Add Course</Link>
+      <div className='w-full flex justify-between'>
+        <Link to={routes.dashboard + '-' + 'admin' + '/' +routes.assigned_courses}
+          className='bg-[#347836] text-[#fff] p-1 rounded px-2'>Assigned Courses</Link>
+        <Link to={routes.create_course} className='bg-[#347836] text-[#fff] p-1 rounded px-2'>Add Course </Link>
       </div>
       <h2 className='w-full text-center font-[700] text-[22px] text-[#346837]'>Course Management</h2>
       {loading ? <p>Loading...</p> : loadError ? <p>{loadError}</p> : (
@@ -133,34 +137,51 @@ export default function CourseManagement() {
               <Icon src={searchImg} className='w-[20px] h-[20px] block ' />
             </button>
           </label>
-          {searchedCourses.map(course => (
-            <div key={course.id}>
-             
-              <p>{course.title.toUpperCase()}({course.code.toUpperCase()})</p>
-              <p>{course.description}</p>
-              <ul>
-                {course.lecturers.map(lecturer => (
-                  <li key={lecturer.id}>
-                    <Link to={routes.dashboard + '-' + 'admin' + '/' + routes.update_lecturer + '/' + lecturer.id}>
-                      <p>Lecturer Id: {lecturer.id}</p>
-                    </Link>
-                  </li>
-                ))}
-              </ul>
+          {searchedCourses.length > 0 ? (
+            <div className="w-full overflow-y-auto">
+              <table className="shadow-lg bg-white border-separate max-w-[100vw] overflow-auto ">
+                <thead>
+                  <tr >
+                    <th className="bg-[#34783644]  border text-left px-4 py-2">Title</th>
+                    <th className="bg-[#34783644] border text-left px-4 py-2">Description</th>
+                    <th className="bg-[#34783644] border text-left px-4 py-2">Actions</th>
 
-              <button className='bg-[#347836] text-[#fff] text-[14px] p-1 px-2 rounded-[5px] w-[100px] mt-5 m-2'>
-                <Link to={routes.dashboard + '-' + 'admin' + '/' + routes.update_course + '/' + course.id}>
-                  Update
-                </Link>
-              </button>
-              <button className='bg-[#347836] text-[#fff] text-[14px] p-1 px-2 rounded-[5px] w-[100px] mt-5 m-2'>
-                <Link to={routes.dashboard + '-' + 'admin' + '/' + routes.view_course + '/' + course.id}>
-                  View
-                </Link>
-              </button>
+                  </tr>
+                </thead>
+                <tbody>
+                  {searchedCourses.map((course) => (
+                    <tr key={course.id}>
+                      <td className="border px-4 py-2">{course.title}</td>
+                      <td className="border px-4 py-2">{course.description}</td>
+                      <td className="border px-4 py-2 flex flex-col gap-2">
+                        <div className='flex gap-2'>
 
+                          <button className='bg-[#347836] text-[#fff] text-[14px]  rounded-[5px] w-[100px] h-[30px]'>
+                            <Link to={routes.dashboard + '-' + 'admin' + '/' + routes.update_course + '/' + course.id}>
+                              Update
+                            </Link>
+                          </button>
+                          <button className='bg-[#347836] text-[#fff] text-[14px] h-[30px] rounded-[5px] w-[100px] '>
+                            <Link to={routes.dashboard + '-' + 'admin' + '/' + routes.view_course + '/' + course.id}>
+                              View
+                            </Link>
+
+                          </button>
+                        </div>
+                        <button className='bg-[#347836] text-[#fff] text-[14px] p-1 px-2 rounded-[5px] w-[140px] m-1 mx-auto '>
+                          <Link to={routes.dashboard + '-' + 'admin' + '/assign_course/' + course.id}>
+                            Assign To Department
+                          </Link>
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
             </div>
-          ))}
+          ) : (
+            <p>No Course Found</p>
+          )}
           <div className='flex flex-col'>
             <h5 className='text-[18px] text-[#aa4444] mt-10'> Expensive Operations</h5>
             <button className='bg-[#aa4444] text-[#fff] text-[14px] p-1 px-2 rounded-[5px] w-[220px] mt-5 m-2' onClick={() => toggle_registration_open(true)}>

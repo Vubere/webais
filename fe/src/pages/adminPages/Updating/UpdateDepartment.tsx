@@ -9,6 +9,7 @@ export default function UpdateDepartment() {
     name: '',
     faculty_id: '',
     id: '',
+    duration: ''
   })
 
   const [faculties, setFaculties] = useState<any[]>([])
@@ -16,6 +17,7 @@ export default function UpdateDepartment() {
   const [errors, setErrors] = useState({
     name: '',
     faculty: '',
+    duration: ''
   })
 
   const [fetchError, setFetchError] = useState('')
@@ -42,6 +44,7 @@ export default function UpdateDepartment() {
         setErrors({
           name: '',
           faculty: '',
+          duration: ''
         })
       }, 2000)
     }
@@ -49,7 +52,7 @@ export default function UpdateDepartment() {
   }
   const fetchFaculties = async () => {
     try {
-      const res = await fetch(base+'/faculty')
+      const res = await fetch(base + '/faculty')
       const result = await res.json()
       setFaculties(result.data.data)
     } catch (error: any) {
@@ -58,7 +61,7 @@ export default function UpdateDepartment() {
   }
   const fetchDepartment = async () => {
     try {
-      const res = await fetch(base+`/department?id=${id}`)
+      const res = await fetch(base + `/department?id=${id}`)
       const result = await res.json()
       setDepartment(result.data.data[0])
 
@@ -80,9 +83,10 @@ export default function UpdateDepartment() {
         const f = new FormData()
         f.append('name', department.name)
         f.append('faculty_id', department.faculty_id)
+        f.append('duration', department.duration)
         f.append('id', department.id)
 
-        const res = await fetch(base+`/department`, {
+        const res = await fetch(base + `/department`, {
           method: 'PUT',
           body: f
         })
@@ -107,19 +111,30 @@ export default function UpdateDepartment() {
           <input type="text" name="name" id="name" className=" w-full h-[40px] rounded-[5px] bg-transparent border border-[#347836] xs:p-2 stbt:p-4 xs:text-[14px] stbt:text-[18px] flex items-center focus:outline-none px-2" value={department.name} onChange={handleChange} />
         </div>
         <div className="form-group">
+          <label htmlFor="duration">Duration</label>
+          <select name="duration" id="duration" value={department.duration} onChange={handleChange} className="w-full h-[40px] rounded-[5px] bg-transparent border border-[#347836] flex items-center focus:outline-none px-2 ">
+            <option value=''>Select Duration</option>
+            <option value='3'>3</option>
+            <option value='4'>4</option>
+            <option value='5'>5</option>
+            <option value='6'>6</option>
+            <option value='7'>7</option>
+          </select>
+        </div>
+        <div className="form-group">
           <label htmlFor="faculty">Faculty</label>
-          <select name="faculty" id="faculty"  value={department.faculty_id} onChange={handleChange} className="w-full h-[40px] rounded-[5px] bg-transparent border border-[#347836]  flex items-center focus:outline-none px-2">
+          <select name="faculty" id="faculty" value={department.faculty_id} onChange={handleChange} className="w-full h-[40px] rounded-[5px] bg-transparent border border-[#347836]  flex items-center focus:outline-none px-2">
             <option value="">Select Faculty</option>
             {faculties.map((faculty) => (
               <option key={faculty.id} value={faculty.id}>
                 {faculty.name}
               </option>
             ))}
-
           </select>
         </div>
         <button type="submit" className="w-full h-[40px] rounded-[5px] bg-[#347836] text-white xs:text-[14px] stbt:text-[18px] mt-3">Update</button>
       </form>
+      
       <div className="w-[80vw] max-w-[400px] mx-auto mt-10 flex flex-col items-end">
         <h4 className="text-[#347836]">Dangerous Operation</h4>
         <button className="bg-[#aa0000] px-2 rounded text-white py-1">Delete</button>

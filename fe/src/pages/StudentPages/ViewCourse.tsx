@@ -5,11 +5,12 @@ import * as routes from "../../constants/routes"
 import { SessionContext } from "../../layouts/DashboardLayout"
 import { base, UserContext } from "../../App"
 import useFacultiesAndDepartments from "../../hooks/useFacultiesAndDepartments"
+import { assigned_course } from "../adminPages/Viewing/ViewAssignedCourses"
 
 
 
 export default function ViewSingleCourse() {
-  const [courseDetails, setCourseDetails] = useState<course>()
+  const [courseDetails, setCourseDetails] = useState<assigned_course>()
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const [pageLoadError, setPageLoadError] = useState('')
@@ -22,9 +23,10 @@ export default function ViewSingleCourse() {
 
   useEffect(() => {
     setLoading(true)
-    fetch(base+'/courses?id=' + id)
+    fetch(base+'/assign_course?id=' + id)
       .then((res) => res.json())
       .then(result => {
+        console.log(result)
         if (result.ok == 1) {
           setCourseDetails(result.data[0])
         } else {
@@ -46,8 +48,8 @@ export default function ViewSingleCourse() {
 
 
   const unregisterCourse = (course: course) => {
-    if (Session && user) {
-      fetch('http://localhost/webais/api/course_registration', {
+    if (Session?.session && user) {
+      fetch(base+'/course_registration', {
         method: 'DELETE',
         headers: {
           'Content-Type': 'application/json'
@@ -55,7 +57,7 @@ export default function ViewSingleCourse() {
         body: JSON.stringify({
           course_id: course.id,
           student_id: user.id,
-          semester: Session.session.semester,
+          semester: Session.session.current_semester,
           session: Session.session.session
         })
       }).then(res => res.json())
@@ -68,20 +70,25 @@ export default function ViewSingleCourse() {
         })
     }
   }
-  const RegisterCourse = (course: course) => {
-    if (Session && user) {
+  const RegisterCourse = (course: assigned_course) => {
+    if(!course.registration_open){
+      console.log(course)
+      alert('Registration is closed for this course')
+      return
+    }
+    if (Session?.session && user) {
       const f = new FormData()
       f.append('course_id', course.id?.toString() as string)
       f.append('student_id', user.id)
-      f.append('semester', Session.session.semester)
+      f.append('semester', Session.session.current_semester.toString())
       f.append('session', Session.session.session)
 
-      fetch('http://localhost/webais/api/course_registration', {
+      fetch(base+'/course_registration', {
         method: 'POST',
         body: f
       }).then(res => res.json())
         .then(data => {
-
+          console.log(data)
           alert('Course registered successfully')
         }).catch(err => {
           console.log(err)
@@ -91,8 +98,8 @@ export default function ViewSingleCourse() {
   }
 
   const checkIfRegistered = (course: course) => {
-    if (Session && user) {
-      fetch('http://localhost/webais/api/course_registration?course_id=' + course.id + '&student_id=' + user.id + '&semester=' + Session.session.semester + '&session=' + Session.session.session)
+    if (Session?.session && user) {
+      fetch(base+'/course_registration?course_id=' + course.id + '&student_id=' + user.id + '&semester=' + Session.session.current_semester + '&session=' + Session.session.session)
 
         .then(res => res.json())
         .then(data => {
@@ -120,26 +127,22 @@ export default function ViewSingleCourse() {
             <div className="w-full flex items-center flex-col">
               <h3 className="font-[700] text-[#347836] text-[22px] text-center ">{courseDetails.title.toUpperCase()} ({courseDetails.code.toUpperCase()})</h3>
               <p>
-                {courseDetails.unit} unit
+                {courseDetails.units} unit(s) ({courseDetails.type})
               </p>
               <p>{courseDetails.description}</p>
               <h4 className="font-[700] text-[#347836] text-[22px]">Departments</h4>
-              <ul>{courseDetails.departments.map((item) => {
+              <ul>{courseDetails.departments.map((item:string) => {
                 const name = departments.find(dept => dept.id == item)?.name
                 return <li key={item}>{name}</li>
               })}</ul>
-              <h4 className="font-[700] text-[#347836] text-[22px]">Faculties</h4>
-              <ul>{courseDetails.faculties.map((item) => {
-                const name = faculties.find(fac => fac.id == item)?.name
-                return <li key={item}>{name}</li>
-              })}</ul>
+              
               <h5 className="font-[700] text-[#347836] text-[22px]">Level</h5>
               <p>{courseDetails.level}</p>
               <h5 className="font-[700] text-[#347836] text-[22px]">Semester</h5>
               <p>{courseDetails.semester == 1 ? 'First' : 'Second'}</p>
               <h5 className="font-[700] text-[#347836] text-[22px]">Lecturers</h5>
               <ul>
-                {courseDetails.lecturers.length ? courseDetails.lecturers.map(item => <Lecturers key={item.id} lecturer={item} />) : 'No lecturer assigned'}
+                {courseDetails.assigned_lecturers.length ? courseDetails.assigned_lecturers.map((item:any) => <Lecturers key={item.id} lecturer={item} />) : 'No lecturer assigned'}
               </ul>
               <div>
                 {!registered ?
@@ -172,7 +175,7 @@ const Lecturers = ({ lecturer }: { lecturer: any }) => {
 
 
   useEffect(() => {
-    fetch('http://localhost/webais/api/lecturers?id=' + id)
+    fetch(base+'/lecturers?id=' + id)
       .then(res => res.json())
       .then(result => {
         console.log(result)
@@ -186,7 +189,7 @@ const Lecturers = ({ lecturer }: { lecturer: any }) => {
 
   return (
     <li className="m-3">
-      <h5 className="font-[500] text-[#347836] text-[18px]">{lecturerDetails?.firstName} {lecturerDetails?.lastName} ({lecturerDetails?.id})</h5>
+      <h5 className="font-[500] text-[#347836] text-[18px]">{lecturerDetails?.firstName} {lecturerDetails?.lastName} ({lecturerDetails?.discipline})</h5>
       <div>
         <p>{lecturerDetails?.email}</p>
         <Link to={'/dashboard-student/chat/' + lecturerDetails?.id} className="text-[#346837] font-[600] text-white p-1 px-2 bg-[#346837] rounded my-2 block w-[110px] text-center">Send a message</Link>

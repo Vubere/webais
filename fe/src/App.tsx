@@ -45,6 +45,8 @@ const CreateExam = lazy(() => import('./pages/adminPages/Creating/CreateExam'));
 const CreateFaculty = lazy(() => import('./pages/adminPages/Creating/CreateFaculty'));
 const CreateAnnouncements = lazy(() => import('./pages/adminPages/Creating/CreateAnnoucements'));
 const CreateFee = lazy(() => import('./pages/adminPages/Creating/CreateFee'));
+const AssignCoursesToDepartments = lazy(() => import('./pages/adminPages/Creating/AssignCourseToDepartments'));
+const AssignUnitsToDepartment = lazy(() => import('./pages/adminPages/Creating/AssignUnitsToDepartment'));
 
 
 const ViewAdmin = lazy(() => import('./pages/adminPages/Viewing/ViewAdmin'))
@@ -58,6 +60,9 @@ const ViewAnnouncements = lazy(() => import('./pages/adminPages/Viewing/ViewAnno
 const ViewSingleAnnouncement = lazy(() => import('./pages/adminPages/Viewing/ViewSingleAnnouncement'))
 const ViewSingleCourse = lazy(()=>import('./pages/adminPages/Viewing/ViewSingleCourse'))
 const ViewFeePayments = lazy(()=>import('./pages/adminPages/Viewing/ViewFeePayments'))
+const ViewAssignedCourses = lazy(()=>import('./pages/adminPages/Viewing/ViewAssignedCourses'))
+const ViewSingleAssignedCourse = lazy(()=>import('./pages/adminPages/Viewing/ViewSingleAssignedCourse'))
+const DepartmentUnitLoads = lazy(()=>import('./pages/adminPages/Viewing/DepartmentUnitLoads'))
 
 const UpdateAdmin = lazy(() => import('./pages/adminPages/Updating/UpdateAdmin'));
 const UpdateStudent = lazy(() => import('./pages/adminPages/Updating/UpdateStudent'));
@@ -69,6 +74,8 @@ const UpdateFaculty = lazy(() => import('./pages/adminPages/Updating/UpdateFacul
 const UpdateDepartment = lazy(() => import('./pages/adminPages/Updating/UpdateDepartment'));
 const UpdateFee = lazy(() => import('./pages/adminPages/Updating/UpdateFee'));
 const PersonalInfoAdmin = lazy(() => import('./pages/adminPages/Updating/PersonalInfo'));
+const UpdateAssignedCourse = lazy(()=>import('./pages/adminPages/Updating/UpdateAssignedCourse'))
+const EditUnitLoad = lazy(()=>import('./pages/adminPages/Updating/EditDepartmentUnitLoad'))
 
 
 const Session = lazy(()=>import('./pages/adminPages/Session'));
@@ -139,17 +146,20 @@ function App() {
                 <Route path = {routes.lecture_management} element={<LectureManagement/>}/>
                 <Route path={routes.course_management} element={<CourseManagement />} />
                 <Route path={routes.fee_management} element={<FeeManagement />} />
+
                 {/* create */}
 
                 <Route path={'create-admin'} element={<CreateAdmin />} />
                 <Route path={'create-student'} element={<CreateStudent />} />
                 <Route path={'create-lecturer'} element={<CreateLecturer />} />
                 <Route path= {'create-fee'} element={<CreateFee/>}/>
-                <Route path={routes.create_course} element={<CreateCourse />} />
+                <Route path={'create-course'} element={<CreateCourse />} />
                 <Route path={routes.create_lectures} element={<CreateLectures />} />
                 <Route path={routes.create_exam} element={<CreateExam />} />
                 <Route path={routes.create_faculty} element={<CreateFaculty />} />
                 <Route path={routes.create_announcement} element={<CreateAnnouncements />} />
+                <Route path={'assign_course/:id'} element={<AssignCoursesToDepartments/>}/>
+                <Route path={'assign_units'} element={<AssignUnitsToDepartment/>}/>
 
 
                 {/* view */}
@@ -164,8 +174,10 @@ function App() {
                 <Route path={`${routes.view_announcement}/:id`} element={<ViewSingleAnnouncement />} />
                 <Route path={routes.view_faculty} element={<ViewFaculties />} />
                 <Route path={routes.fee_payments} element={<ViewFeePayments/>}/>
+                <Route path={routes.assigned_courses} element={<ViewAssignedCourses/>}/>
+                <Route path={routes.assigned_courses+'/:id'} element={<ViewSingleAssignedCourse/>}/>
+                <Route path={routes.unit_distribution} element={<DepartmentUnitLoads/>}/>
                 
-
                 {/* update */}
                 <Route path={`${routes.update_admin}/:id`} element={<UpdateAdmin />} />
                 <Route path={`${routes.update_student}/:id`} element={<UpdateStudent />} />
@@ -177,6 +189,8 @@ function App() {
                 <Route path={`${routes.update_department}/:id`} element={<UpdateDepartment />} />
                 <Route path={`${routes.personal_info}`} element={<PersonalInfoAdmin />} />
                 <Route path={'update-fee/:id'} element={<UpdateFee/>}/>
+                <Route path = {'update-assigned-course/:id'} element={<UpdateAssignedCourse/>}/>
+                <Route path= {'edit-unit-load/:id'} element={<EditUnitLoad/>}/>
 
                 {/* others */}
                 <Route path={`${routes.session}`} element={<Session/>}/>

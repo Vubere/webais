@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react"
+import { ChangeEvent, useEffect, useState } from "react"
 import { Link, useParams } from "react-router-dom"
 import { base } from "../../../App"
 
@@ -9,22 +9,30 @@ export default function UpdateFaculty() {
     id: '',
   })
   const [facultyDepartments, setFacultyDepartments] = useState<any[]>([])
-  const [department, setDepartment] = useState('')
+  const [department, setDepartment] = useState({
+    name: '',
+    duration: ''
+  })
+  const [errors, setErrors] = useState({
+    name: '',
+    duration: ''
+  })
   const { id } = useParams()
 
   useEffect(() => {
-    fetch(base+`/faculty?id=${id}`)
+    fetch(base + `/faculty?id=${id}`)
       .then(res => res.json())
       .then(res => setFaculty(res.data.data[0]))
-   
+
   }, [id])
   useEffect(() => {
     if (faculty.name !== '') {
-      fetch(base+`/department?faculty=${faculty.name}`)
+      fetch(base + `/department?faculty=${faculty.id}`)
         .then(res => res.json())
         .then(res => {
-             setFacultyDepartments(res.data.data)
-          
+          console.log(res)
+          setFacultyDepartments(res.data.data)
+
         }).catch(err => {
           console.log(err)
         })
@@ -41,8 +49,8 @@ export default function UpdateFaculty() {
     const f = new FormData()
     f.append('name', faculty.name)
     f.append('id', faculty.id)
-    
-    fetch(base+`/faculty`, {
+
+    fetch(base + `/faculty`, {
       method: 'PUT',
       body: f
     }).then(res => res.json())
@@ -55,21 +63,37 @@ export default function UpdateFaculty() {
   const addDepartment = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     const f = new FormData()
-    f.append('name', department)
+    f.append('name', department.name)
+    f.append('duration', department.duration)
     f.append('faculty_id', faculty.id)
 
-    fetch(base+`/department`, {
+    fetch(base + `/department`, {
       method: 'POST',
       body: f
     }).then(res => res.json())
       .then(data => {
-        if(data.ok){
+        console.log(data)
+        if (data.status == 'success') {
           alert('Department added successfully')
+          setFacultyDepartments(prev => [...prev, department])
+          setDepartment({
+            duration: '',
+            name: ''
+          })
+        } else {
+          throw new Error(data?.message || 'something went wrond')
         }
       })
-      .catch(err => {
-        console.log(err)
+      .catch((err: any) => {
+        alert(err?.message || 'something went wrong')
       })
+  }
+  const onDeptChange = (e: ChangeEvent<HTMLInputElement|HTMLSelectElement>) => {
+    const { name, value } = e.target
+    setDepartment({
+      ...department,
+      [name]: value
+    })
   }
 
   return (
@@ -86,7 +110,7 @@ export default function UpdateFaculty() {
             facultyDepartments.map((department, index) => {
               return (
                 <div key={index} className='flex gap-[10px] w-full justify-between'>
-                  <p className="text-[#346837]"><span>{index + 1}</span>{': '}{department.name}</p>
+                  <p className="text-[#346837]"><span>{index + 1}</span>{': '}{department.name}({department.duration} years)</p>
                   <Link to={`/dashboard-admin/update-department/${department.id}`}>
                     <button className="bg-[#346837] px-2 rounded text-[#fff]">edit</button>
                   </Link>
@@ -99,8 +123,17 @@ export default function UpdateFaculty() {
 
         <h3 className="font-[500] text-[22px] text-center w-full pb-3 w-full text-[#347836]">Add Department</h3>
         <form onSubmit={addDepartment} className="w-[80vw] max-w-[400px] mx-auto">
-          <input type="text" name="department" id="department" value={department} onChange={(e) => setDepartment(e.target.value)} className="w-full h-[40px] rounded-[5px] bg-transparent border border-[#347836] xs:p-2 stbt:p-4 xs:text-[14px] stbt:text-[18px] flex items-center focus:outline-none px-2 "
-            placeholder="department name..." />
+          <label htmlFor="dept_name">Department Name</label>
+          <input type="text" name="name" id="dept_name" value={department.name} onChange={onDeptChange} className="w-full h-[40px] rounded-[5px] bg-transparent border border-[#347836] xs:p-2 stbt:p-4 xs:text-[14px] stbt:text-[18px] flex items-center focus:outline-none px-2 " placeholder="name..." />
+          <label htmlFor="duration">Duration</label>
+          <select  name="duration" id="duration" value={department.duration} onChange={onDeptChange} className="w-full h-[40px] rounded-[5px] bg-transparent border border-[#347836] flex items-center focus:outline-none px-2 ">
+            <option value=''>Select Duration</option>
+            <option value='3'>3</option>
+            <option value='4'>4</option>
+            <option value='5'>5</option>
+            <option value='6'>6</option>
+            <option value='7'>7</option>
+          </select>
           <button type="submit" className="w-full h-[40px] rounded-[5px] bg-[#347836] text-white xs:text-[14px] stbt:text-[18px] mt-3">Add</button>
         </form>
         <div className="w-[80vw] max-w-[400px] mx-auto mt-10 flex flex-col items-end" >

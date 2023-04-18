@@ -6,9 +6,16 @@ import searchImg from '../../assets/search.png'
 import * as routes from "../../constants/routes"
 import { base } from "../../App"
 
+interface lecture_list extends Lecture {
+  code: string,
+  lecturer_name: string,
+  title: string,
+  discipline: string
+}
+
 
 export default function LectureManagement() {
-  const [lectures, setLectures] = useState<Lecture[]>([])
+  const [lectures, setLectures] = useState<lecture_list[]>([])
   const [errors, setErrors] = useState('')
   const [search, setSearch] = useState('')
 
@@ -62,8 +69,8 @@ export default function LectureManagement() {
                   <th className="bg-[#34783644]  border text-left px-4 py-2">Time</th>
                   <th className="bg-[#34783644] border text-left px-4 py-2">Day</th>
                   <th className="bg-[#34783644] border text-left px-4 py-2">Duration</th>
-                  <th className="bg-[#34783644] border text-left px-4 py-2">Course Code</th>
-                  <th className="bg-[#34783644] border text-left px-4 py-2">Lecturer ID</th>
+                  <th className="bg-[#34783644] border text-left px-4 py-2">Course </th>
+                  <th className="bg-[#34783644] border text-left px-4 py-2">Lecturer</th>
                   <th className="bg-[#34783644] border text-left px-4 py-2">Venue</th>
                   <th className="bg-[#34783644] border text-left px-4 py-2">Action</th>
                 </tr>
@@ -74,8 +81,8 @@ export default function LectureManagement() {
                     <td className="border px-4 py-2">{lecture.time}</td>
                     <td className="border px-4 py-2">{lecture.day}</td>
                     <td className="border px-4 py-2">{lecture.duration}</td>
-                    <td className="border px-4 py-2">{lecture.code.toUpperCase()}</td>
-                    <td className="border px-4 py-2">{lecture.lecturer_id}</td>
+                    <td className="border px-4 py-2">{lecture.title}({lecture.code})</td>
+                    <td className="border px-4 py-2">{lecture.lecturer_name}({lecture.discipline})</td>
                     <td className="border px-4 py-2">{lecture.venue}</td>
                     <td className="border px-4 py-2">
                       <Link to={

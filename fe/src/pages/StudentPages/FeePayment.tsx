@@ -18,7 +18,7 @@ export default function FeePayment() {
   useEffect(() => {
     document.title = 'Fee Payment'
     if (!user && departments?.length) return
-    fetch('http://localhost/webais/api/fee?student_id='+user.id)
+    fetch(base+'/fee?student_id='+user.id)
       .then(res => res.json())
       .then(data => {
         console.log(data)

@@ -20,9 +20,11 @@ export default function UpdateLectures() {
   const [searchLect, setSearchLect] = useState('')
   useEffect(() => {
 
-    fetch(base + '/courses')
+    fetch(base + '/assign_course')
       .then(res => res.json())
-      .then(data => setCourses(data.data))
+      .then(data => {
+        console.log(data)
+        setCourses(data.data)})
       .catch((err: any) => alert(err?.message || 'something went wrong'))
   }, [])
   useEffect(() => {
@@ -32,7 +34,7 @@ export default function UpdateLectures() {
       .then(data => setLecturers(data.lecturer))
       .catch(err => console.log(err))
   }, [])
- 
+
   const { id } = useParams()
   const [errors, setErrors] = useState({
     time: '',
@@ -110,7 +112,10 @@ export default function UpdateLectures() {
 
         const res = await fetch(base+"/lectures", {
           method: "PUT",
-          body: f
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({...lectures, id})
         })
         const data = await res.json()
         console.log(data)
@@ -130,11 +135,11 @@ export default function UpdateLectures() {
     fetch(base+"/lectures?id=" + id)
       .then((res) => res.json())
       .then((data) => {
-
         if (data.ok) {
+          console.log(data)
           const l = data.lectures[0]
           l.course_id = courses.find((c) => c.code === l.code)?.id || ''
-          console.log(l.course_id, courses,l)
+         
           l.day = l.day?.toLowerCase();
           setLectures(l)
         } else {
@@ -175,7 +180,7 @@ export default function UpdateLectures() {
   }, [searchLect, lecturers])
 
   const filteredCourses = useMemo(() => {
-    return courses.filter(
+    return courses?.filter(
       (course: any) => course.code.toLowerCase().includes(search.toLowerCase()) || course.title.toLowerCase().includes(search.toLowerCase())
     )
   }, [search, courses])

@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react"
 import { base } from "../../../App"
 import { Course } from "../../StudentPages/AvailableCourses"
+import { assigned_course } from "../Viewing/ViewAssignedCourses"
 
 export default function CreateLectures() {
   const [lectures, setLectures] = useState({
@@ -23,13 +24,15 @@ export default function CreateLectures() {
     lecturer_id: '',
     venue: '',
   })
-  const [courses, setCourses] = useState<Course[]>([])
+  const [courses, setCourses] = useState<assigned_course[]>([])
   const [lecturers, setLecturers] = useState<any[]>([])
   useEffect(() => {
 
-    fetch(base+'/courses')
+    fetch(base+'/assign_course')
       .then(res => res.json())
-      .then(data => setCourses(data.data))
+      .then(data => {
+        console.log(data)
+        setCourses(data.data)})
       .catch((err:any) => alert(err?.message||'something went wrong'))
   }, [])
   useEffect(() => {
