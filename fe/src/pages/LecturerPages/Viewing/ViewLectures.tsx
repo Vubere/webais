@@ -14,7 +14,6 @@ export default function ViewLectures() {
       fetch(base+`/lectures?lecturer_id=${user.id}`)
         .then(res => res.json())
         .then(data => {
-     
           setLectures(data.lectures)})
           .catch(err => console.log(err))
 
@@ -23,7 +22,7 @@ export default function ViewLectures() {
 
 
   return (
-    <div>
+    <div className="p-3 h-[90vh] overflow-y-auto">
       <h3 className="font-[600] text-[#347836] text-[28px] text-center leading-[40px]">Lectures</h3>
       <section>
         <table className="shadow-lg bg-white border-separate max-w-[100vw] overflow-auto mx-auto">
@@ -49,8 +48,8 @@ export default function ViewLectures() {
                 {/* <td className="border px-4 py-2">{lecture.lecturer_id}</td> */}
                 <td className="border px-4 py-2">{lecture.venue}</td>
                 <td className="border px-4 py-2">
-                  <Link to={'/dashboard-lecturer/view-lectures/' + lecture.id}>
-                    <button className="bg-[#347836] text-white px-4 py-2 rounded-md">View</button>
+                  <Link to={'/dashboard-lecturer/view-courses/' + lecture.course_id}>
+                    <button className="bg-[#347836] text-white px-4 py-2 rounded-md">View Course</button>
                   </Link>
                 </td>
               </tr>

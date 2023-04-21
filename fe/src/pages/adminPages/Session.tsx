@@ -37,7 +37,19 @@ export default function Session() {
     if(currentData?.session){
       checkSemester()
     }
-  },[currentData])
+  },[currentData.first_semester_start])
+
+  useEffect(() => {
+    if (globalSessionHandler?.session?.session) {
+      let tempSession = { ...globalSessionHandler.session }
+      tempSession.first_semester_start = format(fromUnixTime(parseInt(tempSession.first_semester_start)), 'yyyy-MM-dd')
+      tempSession.first_semester_end = format(fromUnixTime(parseInt(tempSession.first_semester_end)), 'yyyy-MM-dd')
+      tempSession.second_semester_start = format(fromUnixTime(parseInt(tempSession.second_semester_start)), 'yyyy-MM-dd')
+      tempSession.second_semester_end = format(fromUnixTime(parseInt(tempSession.second_semester_end)), 'yyyy-MM-dd')
+      setSession(tempSession)
+      setCurrentData(tempSession)
+    }
+  }, [globalSessionHandler?.session])
   
   const now = Math.floor((new Date()).getTime()/1000)
   
@@ -65,8 +77,6 @@ export default function Session() {
       })
     }
   }
-
-
 
   const validate = () => {
     let tempErrors = { ...errors }
@@ -146,7 +156,7 @@ export default function Session() {
       })
         .then((res) => res.json())
         .then((result) => {
-        
+          console.log(result)
           if (result.status == 'success') {
             if (globalSessionHandler) {
               globalSessionHandler.setSession(session)
@@ -160,19 +170,7 @@ export default function Session() {
   }
   const year = new Date().getFullYear()
 
-  useEffect(() => {
-    if (globalSessionHandler?.session) {
-      
-      let tempSession = {...globalSessionHandler.session}
-      tempSession.first_semester_start = format(fromUnixTime(parseInt(tempSession.first_semester_start)), 'yyyy-MM-dd')
-      tempSession.first_semester_end = format(fromUnixTime(parseInt(tempSession.first_semester_end)), 'yyyy-MM-dd')
-      tempSession.second_semester_start = format(fromUnixTime(parseInt(tempSession.second_semester_start)), 'yyyy-MM-dd')
-      tempSession.second_semester_end = format(fromUnixTime(parseInt(tempSession.second_semester_end)), 'yyyy-MM-dd')
-      setSession(tempSession)
-      setCurrentData(tempSession)
-
-    }
-  }, [globalSessionHandler?.session])
+  
 
   const onChange = ({ target }: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     setSession({
@@ -231,7 +229,6 @@ export default function Session() {
           <label htmlFor="start">First Semester Start Date</label>
           {errors.first_semester_start && <p className="text-[#f00] text-[10px] font-[400]">{errors.first_semester_start}</p>}
           <input type="date" onChange={onChange} value={session.first_semester_start} name="first_semester_start" id="start" className="w-full h-[40px] rounded-[5px] bg-transparent border border-[#347836] flex items-center focus:outline-none px-2" />
-
         </div>
         <div className="w-full">
           <label htmlFor="end">First Semester End Date</label>

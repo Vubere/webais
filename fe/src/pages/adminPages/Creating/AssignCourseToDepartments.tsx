@@ -42,6 +42,7 @@ export default function AssignCoursesToDepartments() {
     assigned_lecturers: [],
     id: ''
   })
+ 
 
   const [errors, setErrors] = useState({
     departments: '',
@@ -99,6 +100,28 @@ export default function AssignCoursesToDepartments() {
       setLoadError('Error loading course')
     }
     setLoading(false)
+  }
+  const reset = () => {
+    setCourse({
+      departments: [],
+      faculties: [],
+      course_id: '',
+      type: '',
+      code: '',
+      units: 0,
+      session: '',
+      semester: '',
+      level: 0,
+      assigned_lecturers: [],
+      id: ''
+    })
+    setSelectedDepartments([])
+    setSelectedFaculties([])
+    setLecturer({
+      id: '',
+      assigned_departments: [],
+    })
+    
   }
   const onChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     if (e.target.name == 'units') {
@@ -245,17 +268,8 @@ export default function AssignCoursesToDepartments() {
         console.log(res)
         if(res?.ok==1){
           alert('Course assigned successfully')
-          /* setCourse({
-            ...course,
-            departments: [],
-            faculties: [],
-            course_id: '',
-            type: '',
-            code: '',
-            units: 0,
-            level: 0,
-            assigned_lecturers: [],
-          }) */
+          reset()
+       
         }else{
           throw new Error(res?.message || 'error assigning course')
         }

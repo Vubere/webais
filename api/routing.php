@@ -70,6 +70,8 @@ $urls = [
 
   '/webais/api/course_registration' =>
   ['CoursesController@course_registration'],
+  '/webais/api/unregister_course' =>
+  ['CoursesController@unregister_course'],
   '/webais/api/student_lectures' =>
   ['EventsController@get_student_lectures'],
   '/webais/api/grades' =>
@@ -78,7 +80,8 @@ $urls = [
   ['StructureController@assign_unit_load_to_department'],
   '/webais/api/student_registered_courses' =>
   ['StudentController@student_registered_courses'],
-
+  '/webais/api/lecturer_exams' =>
+  ['EventsController@get_lecturer_assigned_course_exams'],
   /* Fee handling */
   '/webais/api/fee' =>
   ['FeeController@fee'],
@@ -98,6 +101,7 @@ $urls = [
   ['ChatController@retrieve_messages'],
   '/webais/api/unread_messages' =>
   ['ChatController@get_unread_messages'],
+
 
 ];
 

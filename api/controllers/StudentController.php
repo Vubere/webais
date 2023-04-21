@@ -192,7 +192,7 @@ class StudentController
   public function student_registered_courses(){
     $method = $_SERVER['REQUEST_METHOD'];
     if($method=='GET'){
-      $sql = 'SELECT s.department, CONCAT(s.firstName," ",s.lastName) as fullName, s.id, s.level, s.entrance_session,  dc.code, dc.units, dc.type, c.title, c.description FROM students as s INNER JOIN department_courses as dc ON dc.departments LIKE CONCAT("%", s.department, "%") INNER JOIN courses as c  ON c.id = dc.course_id INNER JOIN course_registrations as cr ON cr.department_course_id = dc.id AND cr.student_id=s.id  WHERE 1=1';
+      $sql = 'SELECT s.department, CONCAT(s.firstName," ",s.lastName) as fullName, s.id, s.level, s.entrance_session,dc.id as course_id,  dc.code, dc.units, dc.type, c.title, c.description, dc.semester FROM students as s INNER JOIN department_courses as dc ON dc.departments LIKE CONCAT("%", s.department, "%") INNER JOIN courses as c ON c.id = dc.course_id INNER JOIN course_registrations as cr ON cr.department_course_id = dc.id AND cr.student_id=s.id  WHERE 1=1';
       if(isset($_GET['student_id'])){
         $sql .= ' AND s.id="'.$_GET['student_id'].'"';
       }

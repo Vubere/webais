@@ -18,9 +18,10 @@ export default function AssignedCourses() {
       .then(res => res.json())
       .then((data: any) => {
         if (data?.ok) {
-          console.log(data)
           setCourses(data.data)
           setLoading(false)
+        }else{
+          throw new Error(data?.message||'something went wrong')
         }
       })
       .catch(err => {

@@ -50,7 +50,6 @@ export default function Login({ title, src }: { title: string, src: string }) {
     
 
         if (data?.authenticated) {
-          console.log(data)
           sessionStorage.setItem('user', JSON.stringify(data.user))
           setLoading(false)
           if (title.toLowerCase() == 'student') {
@@ -75,7 +74,6 @@ export default function Login({ title, src }: { title: string, src: string }) {
     }
   }
   const handleChange = (e: any) => {
-
     setForm({
       ...form,
       [e.target.name]: e.target.value

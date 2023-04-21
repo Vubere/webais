@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { base, UserContext } from "../../App"
 import { SessionContext } from "../../layouts/DashboardLayout";
 
-import { Course } from "./AvailableCourses";
+import {Course} from './AvailableCourses'
 
 export default function RegisteredCourses() {
   const [registeredCourses, setRegisteredCourses] = useState<Course[] | []>([]);
@@ -12,26 +12,25 @@ export default function RegisteredCourses() {
   const [session, setSession] = useState({ semester: '', session: '' })
 
   useEffect(() => {
-
-    if (Session && session && user) {
-      const userSes = session.session == '' ? Session.session.session : session.session
-      const userSem = session.semester == '' ? Session.session.semester : session.semester
-    
-      fetch(base+'/registered_courses?student_id=' + user.id + '&semester=' + userSem + '&session=' + userSes)
+    if (Session?.session && user) {
+      fetch(base + '/student_registered_courses?student_id=' + user.id + '&session=' + Session.session.session + '&semester=' + Session.session.current_semester)
         .then(res => res.json())
-        .then(res => {
-        
-          if (res.status == 200) {
-            setRegisteredCourses(res.data)
+        .then(data => {
+
+          if (data?.ok) {
+            setRegisteredCourses(data?.details)
+          } else {
+            throw new Error(data?.message || 'something went wrong')
           }
-        }).catch(err => {
+        })
+        .catch(err => {
           console.log(err)
         })
     }
-  }, [Session, user])
+  }, [Session?.session, user])
 
   const unregisterCourse = (course: Course) => {
-    if (Session && user) {
+    if (Session?.session && user) {
       fetch(base+'/course_registration', {
         method: 'DELETE',
         headers: {
@@ -40,7 +39,7 @@ export default function RegisteredCourses() {
         body: JSON.stringify({
           course_id: course.id,
           student_id: user.id,
-          semester: Session.session.semester,
+          semester: Session?.session.current_semester,
           session: Session.session.session
         })
       }).then(res => res.json())
@@ -56,9 +55,8 @@ export default function RegisteredCourses() {
   }
   
 
-
   return (
-    <div>
+    <div className="h-[90vh] overflow-y-auto w-full p-2 pb-20">
       <h3 className="font-[600] text-[#347836] text-[28px] text-center leading-[40px]">Registered Courses</h3>
       <table className="table-auto w-full">
         <thead>
@@ -68,19 +66,16 @@ export default function RegisteredCourses() {
             <th className="bg-[#34783644]  border text-left px-4 py-2">Unit</th>
             <th className="bg-[#34783644]  border text-left px-4 py-2">Semester</th>
             <th className="bg-[#34783644]  border text-left px-4 py-2">View</th>
-            <th className="bg-[#34783644]  border text-left px-4 py-2">Unregister</th>
-
           </tr>
         </thead>
         <tbody>
 
-          {registeredCourses.length ? registeredCourses.map((course) => (<tr key={course.id}>
+          {registeredCourses.length ? registeredCourses.map((course) => (<tr key={course.course_id}>
             <td className="border px-4 py-2">{course.code}</td>
             <td className="border px-4 py-2">{course.title}</td>
-            <td className="border px-4 py-2">{course.unit}</td>
+            <td className="border px-4 py-2">{course.units}</td>
             <td className="border px-4 py-2">{course.semester}</td>
-            <td className="border px-4 py-2"><Link to={`/dashboard-student/view-course/${course.id}`} className=" text-[#347836] underline font-[500] px-4 py-2 rounded-md">View</Link></td>
-            <td className="border px-4 py-2"><button className="bg-[#347836] text-white px-4 py-2 rounded-md" onClick={() => unregisterCourse(course)}>Unregister</button></td>
+            <td className="border px-4 py-2"><Link to={`/dashboard-student/view-course/${course.course_id}`} className=" text-[#347836] underline font-[500] px-4 py-2 rounded-md">View</Link></td>
 
           </tr>)) : <p>No registered course</p>}
         </tbody>

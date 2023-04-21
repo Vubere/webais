@@ -10,7 +10,7 @@ export default function ExaminationManagement() {
 
 
   useLayoutEffect(() => {
-    fetch(base+"/exam")
+    fetch(base + "/exam")
       .then((res) => res.json())
       .then((data) => {
         console.log(data)
@@ -47,36 +47,38 @@ export default function ExaminationManagement() {
       </div>
       <h3 className="font-[600] text-[#347836] text-[28px] text-center leading-[40px]">Examination Management</h3>
       <section className="w-full overflow-x-auto">
-        <table className="shadow-lg bg-white border-separate max-w-[100vw] overflow-auto ">
-          <thead>
-            <tr >
-              <th className="bg-[#34783644]  border text-left px-4 py-2">Time</th>
-              <th className="bg-[#34783644] border text-left px-4 py-2">Date</th>
-              <th className="bg-[#34783644] border text-left px-4 py-2">Duration</th>
-              <th className="bg-[#34783644] border text-left px-4 py-2">Course </th>
-              <th className="bg-[#34783644] border text-left px-4 py-2">Lecturer</th>
-              <th className="bg-[#34783644] border text-left px-4 py-2">Venue</th>
-              <th className="bg-[#34783644] border text-left px-4 py-2">Action</th>
-            </tr>
-          </thead>
-          <tbody>
-            {exams.map((exam) => (
-              <tr key={exam.id}>
-                <td className="border px-4 py-2">{exam.time}</td>
-                <td className="border px-4 py-2">{formatDateToDMY(exam.date)}</td>
-                <td className="border px-4 py-2">{exam.duration}</td>
-                <td className="border px-4 py-2">{exam.title}({exam.code})</td>
-                <td className="border px-4 py-2">{exam.lecturer_name}</td>
-                <td className="border px-4 py-2">{exam.venue}</td>
-                <td className="border px-4 py-2">
-                  <Link to={
-                    `/dashboard-admin/update-exams/${exam.id}`
-                  } className="bg-[#347836] text-white px-4 py-2 rounded-md">Edit</Link>
-                </td>
+        {exams.length == 0 && <div className='text-center'>No Exams Set</div>}
+        {exams.length > 0 &&
+          <table className="shadow-lg bg-white border-separate max-w-[100vw] overflow-auto ">
+            <thead>
+              <tr >
+                <th className="bg-[#34783644]  border text-left px-4 py-2">Time</th>
+                <th className="bg-[#34783644] border text-left px-4 py-2">Date</th>
+                <th className="bg-[#34783644] border text-left px-4 py-2">Duration</th>
+                <th className="bg-[#34783644] border text-left px-4 py-2">Course </th>
+                <th className="bg-[#34783644] border text-left px-4 py-2">Lecturer</th>
+                <th className="bg-[#34783644] border text-left px-4 py-2">Venue</th>
+                <th className="bg-[#34783644] border text-left px-4 py-2">Action</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {exams.map((exam) => (
+                <tr key={exam.id}>
+                  <td className="border px-4 py-2">{exam.time}</td>
+                  <td className="border px-4 py-2">{formatDateToDMY(exam.date)}</td>
+                  <td className="border px-4 py-2">{exam.duration}</td>
+                  <td className="border px-4 py-2">{exam.title}({exam.code})</td>
+                  <td className="border px-4 py-2">{exam.lecturer_name}</td>
+                  <td className="border px-4 py-2">{exam.venue}</td>
+                  <td className="border px-4 py-2">
+                    <Link to={
+                      `/dashboard-admin/update-exams/${exam.id}`
+                    } className="bg-[#347836] text-white px-4 py-2 rounded-md">Edit</Link>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>}
       </section>
     </div>
   )

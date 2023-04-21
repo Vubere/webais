@@ -237,6 +237,12 @@ class EventsController
         if (isset($_GET['id'])) {
           $sql .= " WHERE e.id='" . $_GET['id'] . "'";
         }
+        if (isset($_GET['course_id'])) {
+          $sql .= " WHERE e.course_id='" . $_GET['course_id'] . "'";
+        }
+        if (isset($_GET['lecturer_id'])) {
+          $sql .= " WHERE e.lecturer_id='" . $_GET['lecturer_id'] . "'";
+        }
         $res = $this->conn->query($sql);
         if (!$res) {
           throw new Exception("Error Processing Request", 1);
@@ -279,6 +285,35 @@ class EventsController
       $this->getHeaders();
       echo json_encode(array('status' => 'Method not allowed', 'ok' => 0));
     }
+  }
+  public function get_lecturer_assigned_course_exams(){
+    $method = $_SERVER['REQUEST_METHOD'];
+    if($method=='GET'){
+      try{
+        $sql = "SELECT e.time, e.date, e.duration, e.id, e.venue, c.title, dc.id AS course_id, dc.code, l.discipline, CONCAT(l.firstName,' ', l.lastName) as lecturer_name, l.id as lecturer_id FROM examinations as e INNER JOIN department_courses as dc ON e.course_id = dc.id INNER JOIN courses as c ON c.id = dc.course_id INNER JOIN lecturers as l ON e.lecturer_id = l.id";
+        if(isset($_GET['lecturer_id'])){
+          $sql .= " WHERE dc.assigned_lecturers LIKE '%".$_GET['lecturer_id']."%'";
+        }
+        $res = $this->conn->query($sql);
+        if(!$res){
+          throw new Exception("Error Processing Request", 1);
+        }
+        $data = array();
+        while($row = $res->fetch_assoc()){
+          $data[] = $row; 
+        }
+        $this->getHeaders();
+        echo json_encode(array('exams' => $data, 'status' => 200, 'ok' => 1));
+      }catch(Exception $e){
+        $this->getHeaders();
+        echo json_encode(array('status' => $e->getMessage()));
+      }
+
+    }else{
+      $this->getHeaders();
+      echo json_encode(array('status' => 'Method not allowed', 'ok' => 0));
+    }
+
   }
   public function announcements()
   {
@@ -393,9 +428,9 @@ class EventsController
         $semester = $_GET['semester'];
 
         $sql = "SELECT lectures.id,lectures.time, lectures.day, lectures.duration, lectures.lecturer_id, lectures.venue, courses.title, department_courses.code, department_courses.id as course_id, CONCAT(lecturers.firstName, ' ', lecturers.lastName,' ', lecturers.degreeAcquired) AS lecturer_name FROM lectures INNER JOIN department_courses ON lectures.course_id = department_courses.id INNER JOIN courses ON department_courses.course_id = courses.id INNER JOIN lecturers ON lectures.lecturer_id = lecturers.id
-         WHERE course_id
+         WHERE department_courses.id
       IN
-      (SELECT course_id FROM course_registrations WHERE student_id = '$student_id' AND session = '$session' AND semester = '$semester')";
+      (SELECT department_course_id FROM course_registrations WHERE student_id = '$student_id' AND session = '$session' AND semester = '$semester')";
         $stmt = $this->conn->prepare($sql);
         $res = $stmt->execute();
         if (!$res) {

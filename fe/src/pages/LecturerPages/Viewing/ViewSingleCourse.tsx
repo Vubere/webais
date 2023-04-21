@@ -3,6 +3,7 @@ import { Link, useParams } from "react-router-dom"
 import { base, UserContext } from "../../../App"
 import useFacultiesAndDepartments from "../../../hooks/useFacultiesAndDepartments"
 import { SessionContext } from "../../../layouts/DashboardLayout"
+import { assigned_course } from "../../adminPages/Viewing/ViewAssignedCourses"
 
 export type course_students = {
   course_id: string,
@@ -15,7 +16,7 @@ export type course_students = {
 }
 
 export default function ViewSingleCourse() {
-  const [course, setCourse] = useState<any>()
+  const [course, setCourse] = useState<assigned_course>()
   const { id } = useParams()
   let { user } = useContext(UserContext)
 
@@ -28,35 +29,32 @@ export default function ViewSingleCourse() {
   const session = useContext(SessionContext)
 
   useEffect(() => {
-    if (session && id) {
+    if (session?.session?.session && id) {
       const sess = session.session.session
       fetch(base+'/grading?id=' + id + '&session=' + sess)
         .then((res) => res.json())
         .then(res => setGrading(!!res?.data?.grading_open))
     }
-  }, [id, session])
+  }, [id, session?.session?.session])
 
 
   useEffect(() => {
 
     if (user) {
       setLoading(true)
-      fetch(base+'/courses?id=' + id)
+      fetch(base+'/assign_course?id=' + id)
         .then(res => res.json())
         .then(res => {
-          console.log(res)
           if (res?.status == 200) {
             if (res.data.length == 0)
               throw new Error('course not found')
-            let data = res.data[0] as course
-            let assigned_departments = data.lecturers.filter(i => i.id == user.id)[0]?.assigned_departments
-
-            setCourse({ ...data, assigned_departments })
+            let data = res.data[0] as assigned_course
+         
+            setCourse(data)
           }
           setLoading(false)
         })
         .catch(err => {
-          console.log(err)
           setError(err?.message || 'something went wrong')
           alert(err?.message || 'something went wrong')
           setLoading(false)
@@ -64,7 +62,7 @@ export default function ViewSingleCourse() {
     }
   }, [id, user])
   useEffect(() => {
-    if (session && course) {
+    if (session?.session?.session && course) {
       fetch(base+'/course_students?course_id=' + course.id + '&session=' + session.session.session)
         .then(res => res.json())
         .then(res => {
@@ -81,33 +79,25 @@ export default function ViewSingleCourse() {
     }
   }, [session, course])
 
+
   return (
     <section className='p-4 h-[90vh] overflow-auto pb-20'>
       {!loading ?
         error != '' ? <p>{error} here</p> : course != undefined ? (
           <div className="w-full flex items-center flex-col gap-4">
-            <h3 className="font-[700] text-[#347836] text-[22px] text-center capitalize">{course.title}({course.code.toUpperCase()})</h3>
+            <h3 className="font-[700] text-[#347836] text-[22px] text-center capitalize">{course.title}({course?.code?.toUpperCase()})</h3>
             <p>{course.description}</p>
             <ul>
               <li><span className="font-[600]">Semester:{' '}</span>{course.semester}</li>
-              <li><span className="font-[600]">Units:{' '}</span>{course.unit}</li>
+              <li><span className="font-[600]">Units:{' '}</span>{course.units}</li>
               <li><span className="font-[600]">Level:{' '}</span>{course.level}</li>
               <li><span className="font-[600]">Grading:{' '}</span>{grading ? 'open' : 'closed'}</li>
             </ul>
-            <div className="flex flex-col items-center">
-              <h4 className="font-[700] text-[#347836] text-[22px]">Faculties</h4>
-              <ul className="flex flex-col items-center">
-                {course.faculties.map((falc: string) => (
-                  <li key={falc}>
-                    {!!faculties && faculties?.find(i => i.id == falc)?.name}
-                  </li>
-                ))}
-              </ul>
-            </div>
+            
             <div className="flex flex-col items-center">
               <h4 className="font-[700] text-[#347836] text-[22px]">Departments</h4>
               <ul className="flex flex-col items-center">
-                {course.departments.map((dept: string) => (
+                {course?.departments?.map((dept: string) => (
                   <li key={dept}>
                     {!!departments && departments?.find(i => i.id == dept)?.name}
                   </li>
@@ -116,8 +106,8 @@ export default function ViewSingleCourse() {
             </div>
             <div className="flex flex-col items-center">
               <h4 className="font-[700] text-[#347836] text-[22px]">Assigned Departments</h4>
-              {!!course?.assigned_departments && course.assigned_departments.map((asDept: string) => (
-                <AssignedDepartment name={asDept} faculties={faculties} departments={departments} students={students} />
+              {!!course?.departments && course.departments.map((asDept: string) => (
+                <AssignedDepartment key={asDept} id={asDept} departments={departments} students={students} />
               ))}
             </div>
             <div className="flex flex-col items-center">
@@ -130,20 +120,22 @@ export default function ViewSingleCourse() {
   )
 }
 
-const AssignedDepartment = ({ name, students, departments, faculties }: { name: string, students: course_students[], faculties: any, departments: any }) => {
+const AssignedDepartment = ({ id, departments, students }: { id: string, students: course_students[], departments: any }) => {
   const [show, setShow] = useState(false)
   const [student, setStudent] = useState<course_students[]>()
 
+  const { name } = departments?.find((dept: any) => dept.id == id) || { name: '' }
+
+ 
+
   useEffect(() => {
-    if (students.length > 0) {
-      let student = students.filter(i => {
-        const dp_name = departments.find((d: any) => d.id == i.department)?.name
-        const fc_name = faculties.find((f: any) => f.id == i.faculty)?.name
-        return dp_name == name || fc_name == name
-      })
-      setStudent(student)
+    if (students) {
+      let data = students.filter((s: course_students) => s.department == id)
+      setStudent(data)
     }
+    
   }, [students])
+
   return (
     <li className="flex flex-col items-center m-1">
       <div className="flex gap-4">

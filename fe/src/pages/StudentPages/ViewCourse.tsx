@@ -145,15 +145,6 @@ export default function ViewSingleCourse() {
                 {courseDetails.assigned_lecturers.length ? courseDetails.assigned_lecturers.map((item:any) => <Lecturers key={item.id} lecturer={item} />) : 'No lecturer assigned'}
               </ul>
               <div>
-                {!registered ?
-                  <button onClick={() => RegisterCourse(courseDetails)} className="bg-[#347836] text-white px-4 py-2 rounded-md m-3">
-                    Register
-                  </button>
-                  :
-                  <button onClick={() => unregisterCourse(courseDetails)} className="bg-[#347836] text-white px-4 py-2 rounded-md m-3">
-                    Unregister
-                  </button>
-                }
               </div>
             </div>
           )}

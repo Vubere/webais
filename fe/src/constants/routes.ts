@@ -92,6 +92,8 @@ export const assign_units = dashboard + "-" + admin + "/assign_units";
 export const unit_distribution = dashboard + "-" + admin + "/unit_distribution";
 export const edit_unit_load = dashboard + "-" + admin + "/edit-unit-load";
 
+
+
 const adminDashboardLinks = [
   {
     name: "Users Management",
@@ -199,6 +201,11 @@ const lecturerDashboardLinks = [
   {
     name: "View Courses",
     path: view_courses,
+    icon: "fas fa-users",
+  },
+  {
+    name: "Examinations",
+    path: examinations,
     icon: "fas fa-users",
   },
 

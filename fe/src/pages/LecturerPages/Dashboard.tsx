@@ -17,19 +17,21 @@ export default function DashboardPage() {
     const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
     const today = new Date()
     const dayOftheWeek = today.getDay()
-    console.log(days[dayOftheWeek])
-    return l.date === days[dayOftheWeek]
+    return l.day.toString().toLowerCase() === days[dayOftheWeek].toString().toLowerCase()
   })
 
 
   useEffect(() => {
 
-    if (u) {
-      fetch(base+`/lectures?id=${u.id}`)
+    if (u?.id) {
+      fetch(base+`/lectures?lecturer_id=${u.id}`)
         .then(res => res.json())
-        .then(data => setLectures(data.lectures))
+        .then(data =>{ 
+          console.log(data)
+          setLectures(data.lectures)
+        })
     }
-  }, [u])
+  }, [u?.id])
   useEffect(() => {
     if (user && (user?.length || user?.id)) {
       let user_id = '';
@@ -116,9 +118,9 @@ export default function DashboardPage() {
                   <thead>
                     <tr>
                       <th className="bg-[#34783644]  border text-left px-4 py-2">Time</th>
-                      <th className="bg-[#34783644] border text-left px-4 py-2">Date</th>
+                      <th className="bg-[#34783644] border text-left px-4 py-2">Day</th>
                       <th className="bg-[#34783644] border text-left px-4 py-2">Duration</th>
-                      <th className="bg-[#34783644] border text-left px-4 py-2">Course Code</th>
+                      <th className="bg-[#34783644] border text-left px-4 py-2">Course </th>
                       {/*   <th className="bg-[#34783644] border text-left px-4 py-2">Lecturer ID</th> */}
                       <th className="bg-[#34783644] border text-left px-4 py-2">Venue</th>
                       {/* <th className="bg-[#34783644] border text-left px-4 py-2">Action</th> */}
@@ -127,9 +129,9 @@ export default function DashboardPage() {
                   {TodayLectures.map((lecture: any) => (
                     <>
                       <td className="border px-4 py-2">{lecture.time}</td>
-                      <td className="border px-4 py-2">{formatDateToDMY(lecture.date)}</td>
+                      <td className="border px-4 py-2">{lecture.day}</td>
                       <td className="border px-4 py-2">{lecture.duration}hr(s)</td>
-                      <td className="border px-4 py-2">{lecture.code.toUpperCase()}</td>
+                      <td className="border px-4 py-2">{lecture.title}({lecture.code.toUpperCase()})</td>
                       {/* <td className="border px-4 py-2">{lecture.lecturer_id}</td> */}
                       <td className="border px-4 py-2">{lecture.venue}</td>
                     </>))}

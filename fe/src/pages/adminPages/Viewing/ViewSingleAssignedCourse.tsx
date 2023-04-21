@@ -14,18 +14,16 @@ export default function ViewAssignedCourse() {
   const [loading, setLoading] = useState(true)
   const [loadError, setLoadError] = useState('')
   const { departments, faculties } = useFacultiesAndDepartments()
-  console.log(departments, faculties)
   const Session = useContext(SessionContext)
-  
 
-  const [search, setSearch] = useState('')
+
 
   useEffect(() => {
     if (id)
-      fetch(base+'/assign_course?id=' + id)
+      fetch(base + '/assign_course?id=' + id)
         .then(res => res.json())
         .then((data: any) => {
-          
+
           if (data?.ok) {
             setCourses(data.data[0])
             setLoading(false)
@@ -36,7 +34,6 @@ export default function ViewAssignedCourse() {
           setLoadError(err.message)
           setLoading(false)
         })
-
   }, [id])
 
 
@@ -54,7 +51,7 @@ export default function ViewAssignedCourse() {
         f.append('all', 'true')
         f.append('course_id', id as string)
 
-        const req = await fetch(base+'/session_result', {
+        const req = await fetch(base + '/session_result', {
           method: 'POST',
           body: f
         })
@@ -78,15 +75,17 @@ export default function ViewAssignedCourse() {
         const f = new FormData()
         f.append('session', session)
         f.append('all', 'false')
-        f.append('bool', bool ? 'true' : 'false')
+        f.append('bool', bool ? '1' : '0')
         f.append('course_id', id as string)
 
-        const req = await fetch(base+'/grading', {
+        const req = await fetch(base + '/grading', {
           method: 'POST',
           body: f
         })
         const res = await req.json();
-        if (res.status === 'success') {
+        if (res?.ok == 1) {
+          console.log(res)
+          setCourses({ ...courses, grading_open: !!bool } as assigned_course)
           alert(res.message)
         } else {
           throw new Error(res.message)
@@ -106,10 +105,10 @@ export default function ViewAssignedCourse() {
         f.append('session', session)
         f.append('semester', semester.toString())
         f.append('all', 'false')
-        f.append('bool', bool ? 'true' : 'false')
+        f.append('bool', !bool ? '0' : '1')
         f.append('course_id', id as string)
 
-        const req = await fetch(base+'/registration', {
+        const req = await fetch(base + '/registration', {
           method: 'POST',
           body: f
         })
@@ -117,6 +116,7 @@ export default function ViewAssignedCourse() {
         console.log(res)
         if (res.status === 'success') {
           alert(res.message)
+          setCourses({ ...courses, registration_open: !bool} as assigned_course)
           create_session_result_table()
         } else {
 
@@ -134,7 +134,7 @@ export default function ViewAssignedCourse() {
     if (check) {
       try {
 
-        const req = await fetch(base+'/courses', {
+        const req = await fetch(base + '/courses', {
           method: 'DELETE',
           headers: {
             'Content-Type': 'application/json'
@@ -146,6 +146,7 @@ export default function ViewAssignedCourse() {
         const res = await req.json();
         if (res.ok == 1) {
           alert('course deleted')
+          
           navigate(-1)
         } else {
           throw new Error(res?.message || 'something went wrong')
@@ -167,7 +168,7 @@ export default function ViewAssignedCourse() {
   }
 
   return (
-    <div className="p-3">
+    <div className="p-3 w-full h-[90vh] overflow-y-auto pb-20">
       {loadError && <p>{loadError}</p>}
       {courses && (
         <div className="w-full">
@@ -183,36 +184,36 @@ export default function ViewAssignedCourse() {
               <Departments i={i} key={dept} dept={dept} departments={departments} faculties={faculties} />
             ))}</li>
 
-            <li> <span className=" block font-[600] text-[18px] text-[#346837]">Lecturers</span> {courses.assigned_lecturers.length == 0 && <p>No assigned lecturers</p>}{courses.assigned_lecturers.map((d: any) => <Lecturers lecturer={d}/>)}</li>
 
           </ul>
-          <div className="w-[400px] mx-auto">
-
-            <div>
-              <button className='bg-[#347836] text-[#fff] text-[14px] p-1 px-2 rounded-[5px] w-[100px] mt-5 m-2'>
-                <Link to={routes.dashboard + '-' + 'admin' + '/' + routes.update_assigned_course + '/' + courses.id}>
-                  Update
-                </Link>
-              </button>
-
-            </div>
-            <div className="mt-4">
-              <h6 className="font-[700] text-[#aa4444] text-[16px]">Expensive Operations</h6>
-
-              <button className='bg-[#aa4444] text-[#fff] text-[14px] p-1 px-2 rounded-[5px] w-[100px] mt-5 m-2' onClick={() => toggle_registration_open(true)}>
-                Open Registration
-              </button>
-              <button className='bg-[#aa4444] text-[#fff] text-[14px] p-1 px-2 rounded-[5px] w-[100px] mt-5 m-2' onClick={() => toggle_registration_open(false)}>
-                Close Registration
-              </button>
+          <div className="w-full max-w-[400px] mx-auto"> <span className=" block font-[600] text-[18px] text-[#346837]">Lecturers</span> {courses.assigned_lecturers.length == 0 && <p>No assigned lecturers</p>}{courses.assigned_lecturers.map((d: any, i: number) => <Lecturers key={d.id} i={i} lecturer={d} />)}</div>
+          <div className="mx-auto flex- items-center justify-center w-full">
+            <button className='bg-[#347836] text-[#fff] text-[14px] p-1 px-2 rounded-[5px] w-[100px] mt-5 m-2 mx-auto block'>
+              <Link to={routes.dashboard + '-' + 'admin' + '/' + routes.update_assigned_course + '/' + courses.id}>
+                Update
+              </Link>
+            </button>
+          </div>
+          <h6 className="font-[700] text-[#aa4444] text-[16px] text-center">Expensive Operations</h6>
+          <div className="w-[400px] mx-auto flex flex-wrap items-center flex-col">
+            <div className="mt-1">
+              {
+                !courses?.registration_open ? (
+                  <button className='bg-[#aa4444] text-[#fff] text-[14px] p-1 px-2 rounded-[5px] w-[140px] mt-5 m-2' onClick={() => toggle_registration_open(true)}>
+                    Open Registration
+                  </button>) : (
+                  <button className='bg-[#aa4444] text-[#fff] text-[14px] p-1 px-2 rounded-[5px] w-[150px] mt-5 m-2' onClick={() => toggle_registration_open(false)}>
+                    Close Registration
+                  </button>)
+              }
             </div>
             <div className="mt-1">
-              <button className='bg-[#aa4444] text-[#fff] text-[14px] p-1 px-2 rounded-[5px] w-[100px] mt-5 m-2' onClick={() => toggle_grading_open(true)}>
+              {!courses?.grading_open ? (<button className='bg-[#aa4444] text-[#fff] text-[14px] p-1 px-2 rounded-[5px] w-[100px] mt-5 m-2' onClick={() => toggle_grading_open(true)}>
                 Open Grading
-              </button>
-              <button className='bg-[#aa4444] text-[#fff] text-[14px] p-1 px-2 rounded-[5px] w-[100px] mt-5 m-2' onClick={() => toggle_grading_open(false)}>
-                Close Grading
-              </button>
+              </button>) : (
+                <button className='bg-[#aa4444] text-[#fff] text-[14px] p-1 px-2 rounded-[5px] w-[100px] mt-5 m-2' onClick={() => toggle_grading_open(false)}>
+                  Close Grading
+                </button>)}
             </div>
             <div>
               <button className='bg-[#aa4444] text-[#fff] text-[14px] p-1 px-2 rounded-[5px] w-[200px] mt-5 m-2' onClick={() => create_session_result_table()}>
@@ -222,8 +223,8 @@ export default function ViewAssignedCourse() {
             <div>
               {/* delete course */}
               <div className='flex flex-col'>
-                <h5 className='text-[18px] text-[#aa4444] mt-10'> Delete Course</h5>
-                <button className='bg-[#aa4444] text-[#fff] text-[14px] p-1 px-2 rounded-[5px] w-[220px] mt-5 m-2' onClick={delete_course}>
+                <h5 className='text-[18px] text-[#aa4444] mt-10 text-center'> Delete Course</h5>
+                <button className='bg-[#aa4444] text-[#fff] text-[14px] p-1 px-2 rounded-[5px] w-[120px] mt-5 m-2' onClick={delete_course}>
                   Delete
                 </button>
               </div>
@@ -246,7 +247,7 @@ const Departments = ({ i, dept, faculties, departments }: { i: number, dept: num
     </div>
   )
 }
-export const Lecturers = ({ lecturer }: { lecturer: any }) => {
+export const Lecturers = ({ lecturer, i }: { lecturer: any, i: number }) => {
   const { id, assigned_departments } = lecturer
   const [lecturerDetails, setLecturerDetails] = useState<any>()
 
@@ -259,12 +260,12 @@ export const Lecturers = ({ lecturer }: { lecturer: any }) => {
 
   return (
     <li className="m-3">
-      <h5 className="font-[500] text-[#347836] text-[18px]">{lecturerDetails?.firstName} {lecturerDetails?.lastName} ({lecturerDetails?.discipline})</h5>
+      <h5 className="font-[500] text-[#347836] text-[18px]"><span>{i + 1}. {' '}</span>{lecturerDetails?.firstName} {lecturerDetails?.lastName} ({lecturerDetails?.discipline})</h5>
 
       <h6 className="font-[400] text-[#347836] text-[16px]">Assigned Departments</h6>
-      <ul>
-        {assigned_departments.map((item: string) => <li>{item}</li>)}
-      </ul>
+      <div>
+        {assigned_departments.map((item: string) => <p key={item}>{item}</p>)}
+      </div>
     </li>
   )
 }

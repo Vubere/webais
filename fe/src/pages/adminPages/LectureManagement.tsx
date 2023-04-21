@@ -30,10 +30,8 @@ export default function LectureManagement() {
     fetch(base + "/lectures")
       .then((res) => res.json())
       .then((data) => {
-        console.log(data)
         if (data.ok) {
           setLectures(data.lectures)
-          console.log(data.lectures)
         } else {
           setErrors('something went wrong')
 
@@ -49,7 +47,7 @@ export default function LectureManagement() {
 
 
   return (
-    <div className="p-3">
+    <div className="p-3 h-[90vh] overflow-y-auto pb-20">
       <div className="w-full flex justify-end">
         <Link to={routes.create_lectures} className='bg-[#347836] text-[#fff] p-1 rounded px-2'>Create Lecture</Link>
       </div>
@@ -63,36 +61,39 @@ export default function LectureManagement() {
         </label>
         {errors == '' ?
           <div className="w-full overflow-y-auto">
-            <table className="shadow-lg bg-white border-separate max-w-[100vw] overflow-auto ">
-              <thead>
-                <tr >
-                  <th className="bg-[#34783644]  border text-left px-4 py-2">Time</th>
-                  <th className="bg-[#34783644] border text-left px-4 py-2">Day</th>
-                  <th className="bg-[#34783644] border text-left px-4 py-2">Duration</th>
-                  <th className="bg-[#34783644] border text-left px-4 py-2">Course </th>
-                  <th className="bg-[#34783644] border text-left px-4 py-2">Lecturer</th>
-                  <th className="bg-[#34783644] border text-left px-4 py-2">Venue</th>
-                  <th className="bg-[#34783644] border text-left px-4 py-2">Action</th>
-                </tr>
-              </thead>
-              <tbody>
-                {searchedLectures.map((lecture) => (
-                  <tr key={lecture.id}>
-                    <td className="border px-4 py-2">{lecture.time}</td>
-                    <td className="border px-4 py-2">{lecture.day}</td>
-                    <td className="border px-4 py-2">{lecture.duration}</td>
-                    <td className="border px-4 py-2">{lecture.title}({lecture.code})</td>
-                    <td className="border px-4 py-2">{lecture.lecturer_name}({lecture.discipline})</td>
-                    <td className="border px-4 py-2">{lecture.venue}</td>
-                    <td className="border px-4 py-2">
-                      <Link to={
-                        `/dashboard-admin/update-lecture/${lecture.id}`
-                      } className="bg-[#347836] text-white px-4 py-2 rounded-md">Edit</Link>
-                    </td>
+            {lectures.length == 0 && <p className="text-center">No lectures found</p>}
+            {lectures.length > 0 &&
+              <table className="shadow-lg bg-white border-separate max-w-[100vw] overflow-auto ">
+                <thead>
+                  <tr >
+                    <th className="bg-[#34783644]  border text-left px-4 py-2">Time</th>
+                    <th className="bg-[#34783644] border text-left px-4 py-2">Day</th>
+                    <th className="bg-[#34783644] border text-left px-4 py-2">Duration</th>
+                    <th className="bg-[#34783644] border text-left px-4 py-2">Course </th>
+                    <th className="bg-[#34783644] border text-left px-4 py-2">Lecturer</th>
+                    <th className="bg-[#34783644] border text-left px-4 py-2">Venue</th>
+                    <th className="bg-[#34783644] border text-left px-4 py-2">Action</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody>
+                  {searchedLectures.map((lecture) => (
+                    <tr key={lecture.id}>
+                      <td className="border px-4 py-2">{lecture.time}</td>
+                      <td className="border px-4 py-2">{lecture.day}</td>
+                      <td className="border px-4 py-2">{lecture.duration}</td>
+                      <td className="border px-4 py-2">{lecture.title}({lecture.code})</td>
+                      <td className="border px-4 py-2">{lecture.lecturer_name}({lecture.discipline})</td>
+                      <td className="border px-4 py-2">{lecture.venue}</td>
+                      <td className="border px-4 py-2">
+                        <Link to={
+                          `/dashboard-admin/update-lecture/${lecture.id}`
+                        } className="bg-[#347836] text-white px-4 py-2 rounded-md">Edit</Link>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            }
           </div> : <p className="w-full ">{errors}</p>}
       </section>
     </div>

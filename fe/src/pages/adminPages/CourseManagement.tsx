@@ -30,7 +30,6 @@ export default function CourseManagement() {
         }
       })
       .catch(err => {
-        console.log(err)
         setLoadError(err.message)
         setLoading(false)
       })
@@ -46,7 +45,7 @@ export default function CourseManagement() {
         f.append('semester', current_semester.toString())
         f.append('all', 'true')
 
-        const req = await fetch(base+'/session_result', {
+        const req = await fetch(base + '/session_result', {
 
           method: 'POST',
           body: f
@@ -73,7 +72,7 @@ export default function CourseManagement() {
         f.append('all', 'true')
         f.append('bool', bool.toString())
 
-        const req = await fetch(base+'/grading', {
+        const req = await fetch(base + '/grading', {
           method: 'POST',
           body: f
         })
@@ -100,7 +99,7 @@ export default function CourseManagement() {
         f.append('all', 'true')
         f.append('bool', bool.toString())
 
-        const req = await fetch(base+'/registration', {
+        const req = await fetch(base + '/registration', {
           method: 'POST',
           body: f
         })
@@ -123,7 +122,7 @@ export default function CourseManagement() {
   return (
     <div className='p-4 h-[90vh] overflow-auto pb-20'>
       <div className='w-full flex justify-between'>
-        <Link to={routes.dashboard + '-' + 'admin' + '/' +routes.assigned_courses}
+        <Link to={routes.dashboard + '-' + 'admin' + '/' + routes.assigned_courses}
           className='bg-[#347836] text-[#fff] p-1 rounded px-2'>Assigned Courses</Link>
         <Link to={routes.create_course} className='bg-[#347836] text-[#fff] p-1 rounded px-2'>Add Course </Link>
       </div>
@@ -156,23 +155,22 @@ export default function CourseManagement() {
                       <td className="border px-4 py-2 flex flex-col gap-2">
                         <div className='flex gap-2'>
 
-                          <button className='bg-[#347836] text-[#fff] text-[14px]  rounded-[5px] w-[100px] h-[30px]'>
-                            <Link to={routes.dashboard + '-' + 'admin' + '/' + routes.update_course + '/' + course.id}>
+                          <Link to={routes.dashboard + '-' + 'admin' + '/' + routes.update_course + '/' + course.id}>
+                            <button className='bg-[#347836] text-[#fff] text-[14px]  rounded-[5px] w-[100px] h-[30px]'>
                               Update
-                            </Link>
-                          </button>
-                          <button className='bg-[#347836] text-[#fff] text-[14px] h-[30px] rounded-[5px] w-[100px] '>
-                            <Link to={routes.dashboard + '-' + 'admin' + '/' + routes.view_course + '/' + course.id}>
-                              View
-                            </Link>
-
-                          </button>
-                        </div>
-                        <button className='bg-[#347836] text-[#fff] text-[14px] p-1 px-2 rounded-[5px] w-[140px] m-1 mx-auto '>
-                          <Link to={routes.dashboard + '-' + 'admin' + '/assign_course/' + course.id}>
-                            Assign To Department
+                            </button>
                           </Link>
-                        </button>
+                          <Link to={routes.dashboard + '-' + 'admin' + '/' + routes.view_course + '/' + course.id}>
+                            <button className='bg-[#347836] text-[#fff] text-[14px] h-[30px] rounded-[5px] w-[100px] '>
+                              View
+                            </button>
+                          </Link>
+                        </div>
+                        <Link to={routes.dashboard + '-' + 'admin' + '/assign_course/' + course.id}>
+                          <button className='bg-[#347836] text-[#fff] text-[14px] p-1 px-2 rounded-[5px] w-[140px] m-1 mx-auto '>
+                            Assign To Department
+                          </button>
+                        </Link>
                       </td>
                     </tr>
                   ))}

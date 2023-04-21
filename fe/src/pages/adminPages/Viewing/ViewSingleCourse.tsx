@@ -40,6 +40,7 @@ export default function ViewSingleCourse() {
       .then(res => res.json())
       .then((data: any) => {
         if (data?.ok) {
+          console.log(data)
           setAssigned(data.data)
           setLoading(false)
         } else {
@@ -87,6 +88,14 @@ export default function ViewSingleCourse() {
 
   return (
     <section className="h-[90vh] overflow-auto p-3 pb-20 ">
+      {
+        courseDetails&&
+        <Link to={routes.dashboard + '-' + 'admin' + '/assign_course/' + courseDetails?.id}>
+          <button className='bg-[#347836] text-[#fff] text-[14px] p-1 px-2 rounded-[5px] w-[140px] m-1 mx-auto '>
+            Assign To Department
+          </button>
+        </Link>
+      }
       {loading && <p>Loading...</p>}
       {courseDetails && (<div className="flex flex-col items-center w-full">
         <h2 className="text-[#347836] text-[22px] font-[500]">{courseDetails.title}</h2>
@@ -97,11 +106,11 @@ export default function ViewSingleCourse() {
       {pageLoadError && <p>{pageLoadError}</p>}
       {(!assigned || !assigned?.length) && (
         <div className="flex flex-col items-center">
-          <p className="text-[#347836] text-[18px] font-[500]">No Lecturers Assigned</p>
+          <p className="text-[#347836] text-[18px] font-[500]">Course not assigned to any department</p>
         </div>
       )}
-      {assigned?.length && (<h4 className="w-full text-[20px] text-[#346837] text-center">Assigned As</h4>)}
-      {assigned?.length && (
+      {!!assigned?.length && (<h4 className="w-full text-[20px] text-[#346837] text-center">Assigned As</h4>)}
+      {!!assigned?.length && (
         <div className="max-w-full overflow-auto">
           <table className="shadow-lg bg-white border-separate max-w-[100vw] overflow-auto ">
 
@@ -114,8 +123,8 @@ export default function ViewSingleCourse() {
                 <th className="bg-[#34783644] border text-left px-4 py-2">Departments</th>
                 <th className="bg-[#34783644] border text-left px-4 py-2">Session</th>
                 <th className="bg-[#34783644] border text-left px-4 py-2">Semester</th>
-
-
+                <th className="bg-[#34783644] border text-left px-4 py-2">Registration Open</th>
+                <th className="bg-[#34783644] border text-left px-4 py-2">Grading Open</th>
                 <th className="bg-[#34783644] border text-left px-4 py-2">Action</th>
               </tr>
             </thead>
@@ -130,6 +139,8 @@ export default function ViewSingleCourse() {
                   <td className="border px-4 py-2">{course.departments.length}</td>
                   <td className="border px-4 py-2">{course.session}</td>
                   <td className="border px-4 py-2">{course.semester}</td>
+                  <td className="border px-4 py-2">{course.registration_open?'open':'closed'}</td>
+                  <td className="border px-4 py-2">{course.grading_open?'open':'closed'}</td>
 
                   <td className="border px-4 py-2">
                     <Link to={`/dashboard-admin/${routes.assigned_courses}/${course.id}`} className="border text-[#fff] bg-[#346837] px-3 py-1 rounded-[5px]">View</Link>

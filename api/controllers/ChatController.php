@@ -91,7 +91,7 @@ class ChatController
 
         $sql = 'INSERT INTO messages (chat_id, user_id, message,  image) VALUES (?, ?, ?, ?)';
         $stmt = $this->db->prepare($sql);
-        $stmt->bind_param('ssss', $chat_Id, $user_id, $message, $image);
+        $stmt->bind_param('ssss', $chat_id, $user_id, $message, $image);
         $stmt->execute();
         $this->getHeaders();
         echo json_encode(['message' => 'Message sent successfully', 'status' => 200, 'ok' => 1]);

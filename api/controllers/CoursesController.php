@@ -47,7 +47,7 @@ class CoursesController
         $stmt = $this->conn->prepare($sql);
         $stmt->bind_param('ss', $post['title'], $post['description']);
         $res = $stmt->execute();
-        
+
         if ($res) {
           $id = $this->conn->insert_id;
           $this->getHeaders();
@@ -72,33 +72,32 @@ class CoursesController
         $res = $stmt->get_result();
         if ($res) {
           $departments_assigned = [];
-          $data = array();
+          $data = [];
           while ($row = $res->fetch_assoc()) {
             $data[] = $row;
-            $sql = "SELECT * FROM department_courses where course_id=".$row['id']."";
-            $stmt = $this->conn->prepare($sql);
-            $stmt->execute();
-            $res = $stmt->get_result();
-            if(!$res){
+          }
+          foreach ($data as $row) {
+            $sql = "SELECT * FROM department_courses where course_id=" . $row['id'] . "";
+            $res = $this->conn->query($sql);
+
+            if (!$res) {
               throw new Exception('Something went wrong');
             }
-            while($row=$res->fetch_assoc()){
-              $departments_assigned[] = $row;
+            if ($res->num_rows > 0) {
+              while ($row = $res->fetch_assoc()) {
+                $departments_assigned[] = $row;
+              }
             }
           }
-          
-
-          
-
           $this->getHeaders();
-          echo json_encode(array('status' => 200, 'message' => 'successful', 'ok' => 1, 'data' => $data, 'assigned'=>$departments_assigned));
+          echo json_encode(array('status' => 200, 'message' => 'successful', 'ok' => 1, 'data' => $data, 'assigned' => $departments_assigned));
         } else {
           $this->getHeaders();
           echo json_encode(array('status' => 503, 'message' => 'failed to fetch data', 'ok' => 0));
         }
       } catch (Exception $e) {
         $this->getHeaders();
-        echo json_encode(array('status' => 503, 'message' => $e->getMessage(),'line'=>$e->getLine(), 'ok' => 0));
+        echo json_encode(array('status' => 503, 'message' => $e->getMessage(), 'line' => $e->getLine(), 'ok' => 0));
       }
     } elseif ($method == 'PUT') {
       try {
@@ -110,13 +109,13 @@ class CoursesController
         $stmt = $this->conn->prepare($sql);
         $stmt->bind_param('sss', $post['title'], $post['description'], $post['id']);
         $res = $stmt->execute();
-     
+
         if ($res) {
           $this->getHeaders();
           echo json_encode(array('status' => 200, 'message' => 'successful', 'ok' => 1));
         } else {
           $this->getHeaders();
-          echo json_encode(array('status' => 503, 'message' => 'failed to update data', 'ok' => 0, 'data'=>$post));
+          echo json_encode(array('status' => 503, 'message' => 'failed to update data', 'ok' => 0, 'data' => $post));
         }
       } catch (Exception $e) {
         $this->getHeaders();
@@ -129,14 +128,14 @@ class CoursesController
         $stmt = $this->conn->prepare($sql);
         $stmt->bind_param('s', $post['id']);
         $res = $stmt->execute();
-        
-        
+
+
         if ($res) {
           $this->getHeaders();
           echo json_encode(array('status' => 200, 'message' => 'successful', 'ok' => 1));
         } else {
           $this->getHeaders();
-          echo json_encode(array('status' => 503, 'message' => 'failed to delete data', 'ok' => 0, 'data'=>$post));
+          echo json_encode(array('status' => 503, 'message' => 'failed to delete data', 'ok' => 0, 'data' => $post));
         }
       } catch (Exception $e) {
         $this->getHeaders();
@@ -164,21 +163,23 @@ class CoursesController
           session,
           course_id
         ) VALUES(?,?,?,?,?,?,?,?,?)";
-        $level = (int)$post['level'];
-        $course_id = (int)$post['course_id'];
-        $semester = (int)$post['semester'];
-        $units = (int)$post['units'];
+        $level = (int) $post['level'];
+        $course_id = (int) $post['course_id'];
+        $semester = (int) $post['semester'];
+        $units = (int) $post['units'];
         $stmt = $this->conn->prepare($sql);
         $stmt->bind_param('sssssssss', $post['departments'], $post['type'], $post['code'], $level, $units, $post['assigned_lecturers'], $semester, $post['session'], $course_id);
         $res = $stmt->execute();
-        
+
         if ($res) {
-          $req = $this->create_table_for_single_course($post);
+          $params = $post;
+          $params['course_id'] = $this->conn->insert_id;
+          $req = $this->create_table_for_single_course($params);
           $this->getHeaders();
-          echo json_encode(array('status' => 200, 'message' => 'successful', 'ok' => 1, 'result'=>$req));
+          echo json_encode(array('status' => 200, 'message' => 'successful', 'ok' => 1, 'result' => $req));
         } else {
           $this->getHeaders();
-          echo json_encode(array('status' => 503, 'message' => 'failed to assign course to departments', 'ok' => 0, 'post'=>$post));
+          echo json_encode(array('status' => 503, 'message' => 'failed to assign course to departments', 'ok' => 0, 'post' => $post));
         }
       } catch (Exception $e) {
         $this->getHeaders();
@@ -186,12 +187,24 @@ class CoursesController
       }
     } elseif ($method == "GET") {
       try {
-        $sql = "SELECT c.title, c.description, dc.id, dc.course_id, dc.departments, dc.units, dc.semester, dc.session, dc.level, dc.assigned_lecturers, dc.type, dc.code FROM department_courses AS dc INNER JOIN  courses AS c ON c.id=dc.course_id WHERE 1=1";
+        $sql = "SELECT c.title, c.description, dc.id, dc.course_id, dc.departments, dc.units, dc.semester, dc.session, dc.level, dc.assigned_lecturers, dc.type, dc.code, cg.grading_open, cg.registration_open FROM department_courses AS dc INNER JOIN course_gradings as cg ON dc.id = cg.department_course_id AND dc.session = cg.session INNER JOIN courses AS c ON c.id=dc.course_id WHERE 1=1";
         if (isset($_GET['id'])) {
           $sql .= " AND dc.id = '" . $_GET['id'] . "'";
         }
-        if(isset($_GET['course_id'])){
+        if (isset($_GET['course_id'])) {
           $sql .= " AND dc.course_id = '" . $_GET['course_id'] . "'";
+        }
+        if (isset($_GET['department_id'])) {
+          $sql .= ' AND dc.departments LIKE "%' . $_GET['department_id'] . '%"';
+        }
+        if (isset($_GET['session'])) {
+          $sql .= ' AND dc.session ="' . $_GET['session'] . '"';
+        }
+        if (isset($_GET['semester'])) {
+          $sql .= ' AND dc.semester ="' . $_GET['semester'] . '"';
+        }
+        if(isset($_GET['lecturer_id'])){
+          $sql .= ' AND dc.assigned_lecturers LIKE "%' . $_GET['lecturer_id'] . '%"';
         }
         $stmt = $this->conn->prepare($sql);
         $stmt->execute();
@@ -231,8 +244,8 @@ class CoursesController
         $stmt = $this->conn->prepare($sql);
         $stmt->bind_param('sssssssss', $department, $post['type'], $post['code'], $post['level'], $lecturers, $post['semester'], $post['session'], $post['course_id']);
         $res = $stmt->execute();
-        
-        
+
+
         if ($res) {
           $this->getHeaders();
           echo json_encode(array('status' => 200, 'message' => 'successful', 'ok' => 1));
@@ -269,7 +282,7 @@ class CoursesController
     }
   }
 
-  
+
   public function registered_course()
   {
     $method = $_SERVER['REQUEST_METHOD'];
@@ -286,7 +299,7 @@ class CoursesController
         echo json_encode(array('status' => 401, 'message' => 'invalid request, student an d course id missing', 'ok' => 0));
         return;
       }
-      $sql = "SELECT dc.id, dc.departments, dc.type, dc.code, dc.semester, dc.session, dc.level, dc.assigned_lecturers, dc.course_id, c.title, c.description, dc.units FROM department_courses AS dc INNER JOIN courses AS c ON dc.course_id = c.id WHERE 1=1 AND dc.session = '" . $get['session'] . "' AND dc.semester = '" . $get['semester'] . "' AND dc.departments LIKE '%".$get['department_id']."%'";
+      $sql = "SELECT dc.id, dc.departments, dc.type, dc.code, dc.semester, dc.session, dc.level, dc.assigned_lecturers, dc.course_id, c.title, c.description, dc.units FROM department_courses AS dc INNER JOIN courses AS c ON dc.course_id = c.id WHERE 1=1 AND dc.session = '" . $get['session'] . "' AND dc.semester = '" . $get['semester'] . "' AND dc.departments LIKE '%" . $get['department_id'] . "%'";
 
       if (isset($get['id'])) {
         $sql .= " AND dc.id = '" . $get['id'] . "'";
@@ -314,7 +327,7 @@ class CoursesController
     }
 
   }
-    public function course_registration()
+  public function course_registration()
   {
     $method = $_SERVER['REQUEST_METHOD'];
 
@@ -364,9 +377,9 @@ class CoursesController
         echo json_encode(array('status' => 400, 'message' => 'failed', 'ok' => 0));
       }
     } elseif ($method == 'DELETE') {
-      $delete = $_POST;
+      $delete = json_decode(file_get_contents('php://input'), true);
       $this->remove_student_from_result_table($delete);
-      $sql = "DELETE FROM course_registrations WHERE student_id = '" . $delete['student_id'] . "' AND course_id = '" . $delete['course_id'] . "' AND semester = '" . $delete['semester'] . "' AND session = '" . $delete['session'] . "'";
+      $sql = "DELETE FROM course_registrations WHERE student_id = '" . $delete['student_id'] . "' AND department_course_id = '" . $delete['course_id'] . "' AND semester = '" . $delete['semester'] . "' AND session = '" . $delete['session'] . "'";
       $res = $this->conn->query($sql);
       if ($res) {
         $this->getHeaders();
@@ -460,10 +473,9 @@ class CoursesController
       $post = $_POST;
       $session = $post['session'];
       $bool = $post['bool'];
-      if ($post['all'] == true) {
+      if ($post['all'] == 'true') {
         $sql = 'UPDATE course_gradings SET grading_open = "' . $bool . '" WHERE session = "' . $session . '"';
-        $stmt = $this->conn->prepare($sql);
-        $res = $stmt->execute();
+        $res = $this->conn->query($sql);
 
         if ($res) {
           $this->getHeaders();
@@ -474,14 +486,13 @@ class CoursesController
         }
       } else {
         $course_id = $post['course_id'];
-        $sql = 'UPDATE course_gradings SET grading_open = "' . $bool . '" WHERE course_id = "' . $course_id . '" AND session = "' . $session . '"';
+        $sql = 'UPDATE course_gradings SET grading_open = "' . $bool . '" WHERE department_course_id = "' . $course_id . '" AND session = "' . $session . '"';
         $stmt = $this->conn->prepare($sql);
         $res = $stmt->execute();
 
-
         if ($res) {
           $this->getHeaders();
-          echo json_encode(array('status' => 200, 'message' => 'successful', 'ok' => 1));
+          echo json_encode(array('status' => 200, 'message' => 'successful', 'ok' => 1, $post));
         } else {
           $this->getHeaders();
           echo json_encode(array('status' => 400, 'message' => 'failed', 'ok' => 0));
@@ -540,20 +551,21 @@ class CoursesController
       $session = $post['session'];
       $bool = $post['bool'];
 
-      if ($post['all'] == true) {
+      if ($post['all'] == 'true') {
+        $bool = $bool == 'true' ? '1' : '0';
         $sql = 'UPDATE course_gradings SET registration_open = "' . $bool . '" WHERE session = "' . $session . '"';
         $stmt = $this->conn->prepare($sql);
         $res = $stmt->execute();
         if ($res) {
           $this->getHeaders();
-          echo json_encode(array('status' => 200, 'message' => 'successful', 'ok' => 1));
+          echo json_encode(array('status' => 200, 'message' => 'successful', 'ok' => 1, $post));
         } else {
           $this->getHeaders();
           echo json_encode(array('status' => 400, 'message' => 'failed', 'ok' => 0));
         }
       } else {
         $course_id = $post['course_id'];
-        $sql = 'UPDATE course_gradings SET registration_open = "' . $bool . '" WHERE course_id = "' . $course_id . '" AND session = "' . $session . '"';
+        $sql = 'UPDATE course_gradings SET registration_open = "' . $bool . '" WHERE department_course_id = "' . $course_id . '" AND session = "' . $session . '"';
         $stmt = $this->conn->prepare($sql);
         $res = $stmt->execute();
 
@@ -564,6 +576,35 @@ class CoursesController
           $this->getHeaders();
           echo json_encode(array('status' => 400, 'message' => 'result table may not have been created', 'ok' => 0));
         }
+      }
+    } else {
+      $this->getHeaders();
+      echo json_encode(array('status' => 400, 'message' => 'wrong method', 'ok' => 0));
+    }
+  }
+  public function unregister_course()
+  {
+    $method = $_SERVER['REQUEST_METHOD'];
+    if ($method == 'POST') {
+      try {
+        $post = $_POST;
+        $session = $post['session'];
+        $course_id = $post['course_id'];
+        $student_id = $post['student_id'];
+        $sql = 'DELETE FROM course_registrations WHERE department_course_id = "' . $course_id . '" AND session = "' . $session . '" AND student_id = "' . $student_id . '" AND semester = "' . $post['semester'] . '"';
+        $stmt = $this->conn->prepare($sql);
+        $res = $stmt->execute();
+
+        if ($res) {
+          $this->getHeaders();
+          echo json_encode(array('status' => 200, 'message' => 'successful', 'ok' => 1));
+        } else {
+          $this->getHeaders();
+          echo json_encode(array('status' => 400, 'message' => 'failed', 'ok' => 0));
+        }
+      } catch (Exception $e) {
+        $this->getHeaders();
+        echo json_encode(array('status' => 400, 'message' => $e->getMessage(), 'ok' => 0));
       }
     } else {
       $this->getHeaders();
@@ -633,7 +674,7 @@ class CoursesController
         $table_name = 'results_' . $session_start . '_' . $session_end . '_' . $semester . '_' . $course_id;
         $sql = "CREATE TABLE IF NOT EXISTS " . $table_name . "(id INT(11) NOT NULL AUTO_INCREMENT, student_id VARCHAR(255) NOT NULL, session VARCHAR(255) NOT NULL, semester VARCHAR(255) NOT NULL, ca INT(11) NOT NULL, exam INT(11) NOT NULL, attendance INT(11) NOT NULL, grade VARCHAR(255) NOT NULL, remark VARCHAR(255) NOT NULL, PRIMARY KEY (id))";
         $res = $this->conn->query($sql);
-        if(!$res){
+        if (!$res) {
           return false;
         }
         $saved = $this->saveCourseGradingTableName($table_name, $course_id, $session);
@@ -728,7 +769,7 @@ class CoursesController
           $data[] = $row;
         }
         $this->getHeaders();
-        echo json_encode(array('status' => 200, 'message' => 'successful', 'ok' => 1, 'data' => $data));
+        echo json_encode(array('status' => 200, 'message' => 'successful', 'ok' => 1, 'data' => $data, $_GET));
       } else {
         $this->getHeaders();
         echo json_encode(array('status' => 400, 'message' => 'failed', 'ok' => 0));

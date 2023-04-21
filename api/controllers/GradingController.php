@@ -49,7 +49,7 @@ class GradingController
       $line = __LINE__;
       try {
 
-        $sql = 'SELECT table_name, grading_open FROM course_gradings WHERE course_id=' . $course_id . ' AND session="' . $session . '"';
+        $sql = 'SELECT table_name, grading_open FROM course_gradings WHERE department_course_id=' . $course_id . ' AND session="' . $session . '"';
         $stmt = $this->conn->query($sql);
 
         if ($stmt) {
@@ -62,7 +62,7 @@ class GradingController
 
 
             if (isset($_GET['student_id'])) {
-              $sql .= ' WHERE student_id="' . $_GET['student_id'];
+              $sql .= ' WHERE student_id="' . $_GET['student_id'].'"';
             }
             $stmt = $this->conn->prepare($sql);
             $res = $stmt->execute();
@@ -114,6 +114,7 @@ class GradingController
           'message' => $e->getMessage(),
           'line' => $e->getLine(),
           'status' => 400,
+          'data_sent' => $_GET,
           'ok' => 0
         ]);
       }
@@ -130,7 +131,7 @@ class GradingController
       $grade = $post['grade'];
       try {
 
-        $sql = 'SELECT table_name FROM course_gradings WHERE course_id="' . $course_id . '" AND session="' . $session . '"';
+        $sql = 'SELECT table_name FROM course_gradings WHERE department_course_id="' . $course_id . '" AND session="' . $session . '"';
 
         $stmt = $this->conn->prepare($sql);
 
