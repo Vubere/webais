@@ -96,6 +96,11 @@ export const edit_unit_load = dashboard + "-" + admin + "/edit-unit-load";
 
 const adminDashboardLinks = [
   {
+    name: 'Dashboard',
+    path: dashboard+'-'+admin,
+    icon: ''
+  },
+  {
     name: "Users Management",
     path: users_management,
     icon: "",
@@ -145,6 +150,11 @@ const adminDashboardLinks = [
 
 const studentDashboardLinks = [
   {
+    name: 'Dashboard',
+    path: dashboard+'-'+student,
+    icon: ''
+  },
+  {
     name: "Available Courses",
     path: "available_courses",
     icon: "",
@@ -193,6 +203,11 @@ const studentDashboardLinks = [
 ];
 
 const lecturerDashboardLinks = [
+  {
+    name: 'Dashboard',
+    path: dashboard+'-'+lecturer,
+    icon: ''
+  },
   {
     name: "View Lectures",
     path: view_lectures,

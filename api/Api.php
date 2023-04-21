@@ -19,7 +19,7 @@ require('./controllers/GradingController.php');
 require('./controllers/AuthController.php');
 require('./controllers/FeeController.php');
 require('./controllers/ChatController.php');
-
+require('./controllers/CgpaController.php');
 
 
 class Api{

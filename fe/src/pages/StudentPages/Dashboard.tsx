@@ -19,9 +19,11 @@ export default function Dashboard() {
     const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
     const today = new Date()
     const dayOftheWeek = today.getDay()
-    console.log(l.day, days[dayOftheWeek])
     return l.day.toLowerCase() === days[dayOftheWeek].toLowerCase()
   }), [lectures])
+  const [performance, setPerformance] = useState<{
+    cgpa: number,
+  }>()
 
 
   const fullName = user?.firstName + ' ' + user?.lastName
@@ -32,12 +34,27 @@ export default function Dashboard() {
       fetch(base + '/student_lectures?student_id=' + user?.id + '&session=' + Session.session.session + '&semester=' + Session.session.current_semester)
         .then(res => res.json())
         .then(data => {
-          console.log(data)
           setLectures(data.lectures)
         })
         .catch(err => console.log(err))
     }
   }, [user, Session])
+
+  useEffect(() => {
+    if (user?.id) {
+      fetch(base + '/student_performance?student_id=' + user.id + '&current_session=' + Session?.session?.session + '&current_semester=' + Session?.session?.current_semester)
+        .then(res => res.json())
+        .then(data => {
+          console.log(data)
+          if (data.ok == 1) {
+            setPerformance(data.performance)
+          }
+        })
+        .catch(err => console.log(err))
+    }
+  }, [user?.id])
+
+  console.log(performance)
 
   useEffect(() => {
     if (user && (user?.length || user?.id)) {
@@ -56,7 +73,6 @@ export default function Dashboard() {
       fetch(base + '/unread_messages?user_id=' + user_id)
         .then((res) => res.json())
         .then(result => {
-          console.log(result)
           if (result?.ok) {
             let unread_messages = result?.messages
             let chats = unread_messages?.length
@@ -79,11 +95,17 @@ export default function Dashboard() {
       {user &&
         <>
           <h3 className="font-[600] text-[#347836] text-[28px] text-center leading-[40px] p-3">Welcome, {fullName}</h3>
+          <div className="py-2">
+            {performance && <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+              <div className="bg-[#34783644] p-3 rounded-[10px] max-w-[400px]">
+                <h4 className="font-[500] text-[#346837] text-[18px]">CGPA: {performance?.cgpa.toFixed(2)}</h4></div>
+            </div>}
+          </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
             <div className="bg-[#34783644] p-3 rounded-[10px] max-w-[400px]">
               {notif.map((n: any) => (
-                !!n.count && <div className="flex justify-between items-center">
+                !!n.count && <div className="flex justify-between items-center" key={n.count}>
                   <h4 className="font-[500] text-[#346837] text-[18px]">{n.count}{' '}{n.message}</h4>
 
                 </div>
@@ -95,7 +117,7 @@ export default function Dashboard() {
           <div className="w-full overflow-y-auto">
 
             {TodayLectures.length > 0 ? (
-              <p>
+              <section>
                 <table className="table-auto w-full overflow-auto">
                   <thead>
                     <tr>
@@ -108,17 +130,20 @@ export default function Dashboard() {
                       {/* <th className="bg-[#34783644] border text-left px-4 py-2">Action</th> */}
                     </tr>
                   </thead>
-                  {TodayLectures.map((lecture: any) => (
-                    <>
-                      <td className="border px-4 py-2">{lecture.time}</td>
-                      <td className="border px-4 py-2">{lecture.day}</td>
-                      <td className="border px-4 py-2">{lecture.duration}hr(s)</td>
-                      <td className="border px-4 py-2 capitalize">{lecture.title}({lecture.code.toUpperCase()})</td>
-                      {/* <td className="border px-4 py-2">{lecture.lecturer_id}</td> */}
-                      <td className="border px-4 py-2">{lecture.venue}</td>
-                    </>))}
+                  <tbody>
+
+                    {TodayLectures.map((lecture: any) => (
+                      <tr key={lecture.id}>
+                        <td className="border px-4 py-2">{lecture.time}</td>
+                        <td className="border px-4 py-2">{lecture.day}</td>
+                        <td className="border px-4 py-2">{lecture.duration}hr(s)</td>
+                        <td className="border px-4 py-2 capitalize">{lecture.title}({lecture.code.toUpperCase()})</td>
+                        {/* <td className="border px-4 py-2">{lecture.lecturer_id}</td> */}
+                        <td className="border px-4 py-2">{lecture.venue}</td>
+                      </tr>))}
+                  </tbody>
                 </table>
-              </p>
+              </section>
             ) : <p>No lectures today</p>
             }
           </div>

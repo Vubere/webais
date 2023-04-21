@@ -5,30 +5,30 @@ import { User } from "./ViewAdmin"
 
 import * as routes from '../../../constants/routes'
 import { base } from "../../../App"
-import useFacultiesAndDepartments from "../../../hooks/useFacultiesAndDepartments"
 
 export default function ViewStudents() {
   const [search, setSearch] = useState('')
   const [students, setStudents] = useState<any>([])
-  const {departments, faculties} = useFacultiesAndDepartments()
 
   async function fetchStudents() {
     try {
-      let url = base+'/students'
+      let url = base + '/students'
 
       const res = await fetch(url);
       const data = await res.json()
       console.log(data)
-      if(data.length)
-      setStudents(data)
-    } catch (err) {
-      console.log(err)
+      if (data.message == 'successful')
+        setStudents(data.students)
+      else
+        throw new Error('unable to fetch students')
+    } catch (err:any) {
+      alert(err?.message||'something went wrong')
     }
   }
   useEffect(() => {
     fetchStudents();
   }, [])
-  
+
 
 
   const onSubmit = (e: any) => {
@@ -45,12 +45,12 @@ export default function ViewStudents() {
       return 'No name'
     }
   }
-  const filteredStudents = students?students?.filter((student: students) => fullname(student).toLowerCase().includes(search.toLowerCase()) || student.email.toLowerCase().includes(search.toLowerCase()) || student.faculty.toLowerCase().includes(search.toLowerCase()) || student.id.toLowerCase().includes(search.toLowerCase())):null
- 
+  const filteredStudents = students ? students?.filter((student: students) => fullname(student).toLowerCase().includes(search.toLowerCase()) || student.email.toLowerCase().includes(search.toLowerCase()) || student.faculty.toLowerCase().includes(search.toLowerCase()) || student.id.toLowerCase().includes(search.toLowerCase())) : null
 
 
-  
- 
+
+
+
 
   return (
     <div className="w-full h-[100vh] p-4 pb-20 overflow-auto">
@@ -81,7 +81,7 @@ export default function ViewStudents() {
                   <th className="bg-[#34783644] border text-left px-4 py-2">Department</th>
                   <th className="bg-[#34783644] border text-left px-4 py-2">Faculty</th>
                   <th className="bg-[#34783644] border text-left px-4 py-2">Level</th>
-                  
+
 
                   <th className="bg-[#34783644] border text-left px-4 py-2">Action</th>
                 </tr>

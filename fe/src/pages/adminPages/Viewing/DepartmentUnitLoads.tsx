@@ -27,10 +27,8 @@ export default function DepartmentUnitLoad() {
     }
   }, [session?.session])
   useEffect(() => {
-
     if (sess) {
       fetch(base + '/assign_unit_load?session=' + sess)
-
         .then(res => res.json())
         .then(data => {
           if (data?.ok == 1) {

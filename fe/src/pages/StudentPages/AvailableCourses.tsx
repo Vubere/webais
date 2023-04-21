@@ -1,12 +1,22 @@
-import { useContext, useEffect, useState } from "react"
+import { useContext, useEffect, useMemo, useState } from "react"
 import { Link } from "react-router-dom";
 import { base, UserContext } from "../../App";
 import { session } from "../../constants/routes";
 import { SessionContext } from "../../layouts/DashboardLayout";
 import { unitLoads } from "../adminPages/Viewing/DepartmentUnitLoads";
 import { setWeekYear } from "date-fns";
+import { assigned_course } from "../adminPages/Viewing/ViewAssignedCourses";
 
 
+export type Performance = {
+  cgpa: number,
+  total_units: number,
+  total_grade_points: number,
+  failed_courses: {
+    number: number,
+    courses: assigned_course[]
+  },
+}
 
 
 export default function AvailableCourses() {
@@ -28,11 +38,11 @@ export default function AvailableCourses() {
 
   useEffect(() => {
     if (Session?.session?.session) {
-
       setSession(Session.session.session)
       setCurrentSemester(Session.session.current_semester)
     }
   }, [Session?.session?.session])
+  const [performance, setPerformance] = useState<Performance>()
 
   useEffect(() => {
     if (registeredCourses?.length && availableCourses) {
@@ -51,12 +61,32 @@ export default function AvailableCourses() {
     }
   }, [registeredCourses])
 
+
   useEffect(() => {
+    if (user?.id && session && performance == undefined) {
+      fetch(base + '/student_performance?student_id=' + user.id + '&current_session=' + Session?.session?.session + '&current_semester=' + Session?.session?.current_semester)
+        .then(res => res.json())
+        .then(data => {
+          if (data.ok == 1) {
+            setPerformance(data.performance)
+
+          }
+        })
+        .catch(err => {
+          alert(err?.message || 'something went wrong')
+          setError('Failed to fetch necessary data. Reload page')
+        })
+    }
+  }, [user?.id, session])
+
+
+  useEffect(() => {
+
     if (session && current_semester && user) {
       fetch(base + '/assign_unit_load?session=' + session + '&semester=' + current_semester + '&level=' + user?.level + '&department_id=' + user?.department + '&faculty=' + user?.faculty)
         .then(res => res.json())
         .then(data => {
-          if (data?.ok) {
+          if (data?.ok == 1) {
             setAllowedUnits(data?.data[0])
           } else {
             throw new Error(data?.message || 'something went wrong')
@@ -64,6 +94,7 @@ export default function AvailableCourses() {
         })
         .catch(err => {
           alert(err?.message || 'something went wrong')
+          setError('Failed to fetch necessary data. Reload page')
         })
     }
   }, [session, current_semester, user])
@@ -80,13 +111,15 @@ export default function AvailableCourses() {
           }
         })
         .catch(err => {
-          console.log(err)
+          alert(err?.message || 'something went wrong')
+          setError('Failed to fetch necessary data. Reload page')
         })
     }
   }, [session, current_semester, user])
 
   useEffect(() => {
     if (session && current_semester && user) {
+      setLoading(true)
       fetch(base + `/assign_course?student_id=${user.id}&session=${session}&semester=${current_semester}&level=${user.level}&department_id=${user.department}&faculty=${user.faculty}`)
         .then(res => res.json())
         .then(res => {
@@ -94,6 +127,7 @@ export default function AvailableCourses() {
             setAvailableCourses(res?.data)
           setLoading(false)
         }).catch(err => {
+          setLoading(false)
           if (err?.message)
             setError(err?.message)
         })
@@ -123,6 +157,7 @@ export default function AvailableCourses() {
         }).catch(err => {
           console.log(err)
           alert('Course registration failed')
+
         })
     }
   }
@@ -137,7 +172,7 @@ export default function AvailableCourses() {
     const already_registered_ids = already_registered.map(course => course.course_id)
 
     const temp = compulsoryCoursesIds.map(id => {
-      if (!compulsoryCoursesMarkedIds.includes(id)&&!already_registered_ids.includes(id)) {
+      if (!compulsoryCoursesMarkedIds.includes(id) && !already_registered_ids.includes(id)) {
         return false
       }
       return true
@@ -184,7 +219,6 @@ export default function AvailableCourses() {
 
 
   const RegisterAllMarkedCourses = () => {
-   
     const temp = availableCourses.filter(course => {
       const f = markedCourse.find(val => val.id === course.id && val.reg)
       if (f) {
@@ -246,10 +280,32 @@ export default function AvailableCourses() {
     push_registered_course_for_unregistration()
   }
 
+  const perform = useMemo(() => {
+    console.log(current_semester)
+    if(performance!=undefined&&current_semester){
+      const temp2 = performance.failed_courses.courses
+      let temp = temp2.filter((course: assigned_course) => {
+        let ses = course.session.split('/')
+        let ses2 = session.split('/')
+        
+        if ((ses[0] === ses2[0] && ses[1] === ses2[1]) || course.semester != current_semester) {
+         
+          return false
+        }
+        return true
+      })
+      return temp
+    }else{
+      return undefined
+    }
+  }, [performance, current_semester])
 
   return (
     <section className="p-3 h-[90vh] overflow-y-auto pb-20">
       <h3 className="font-[600] text-[#347836] text-[28px] text-center leading-[40px]">Available Courses</h3>
+      <div>
+
+      </div>
       <div className="flex justify-between items-center">
         <div className="flex flex-col">
           <label htmlFor="session">Session</label>
@@ -273,15 +329,9 @@ export default function AvailableCourses() {
       </div>
       {loading && <p>Loading...</p>}
       {error && <p>{error}</p>}
-      {registeredCourses.length ? (
-        <div>
-          <p></p>
-        </div>
-      ) : (
-        <div></div>
-      )}
+
       {
-        allowedUnits && unitsRegistered &&
+        !!allowedUnits &&
         <div className="h-[120px]">
           <ul>
             <li>Minimum allowed units: {allowedUnits?.min_units}</li>
@@ -291,9 +341,9 @@ export default function AvailableCourses() {
           </ul>
         </div>
       }
-      <div className="w-full overflow-x-auto">
+      <div className="w-full overflow-x-auto mt-8">
 
-        <table className="shadow-lg bg-white border-separate max-w-[100vw] overflow-auto  mx-auto">
+        <table className="w-full shadow-lg bg-white border-separate  w-[80%] overflow-auto  mx-auto  min-w-[80%] ">
           <thead>
             <tr>
               <th className="bg-[#34783644]  border text-left px-4 py-2 text-center"></th>
@@ -316,6 +366,38 @@ export default function AvailableCourses() {
           </tbody>
         </table>
       </div>
+      {performance&&perform&&perform.length >0 && <>
+        <div className="flex justify-between items-center w-full overflow-y-auto mt-20">
+          <div className="flex flex-col">
+            {performance.failed_courses.number > 0 ? (<div>
+              <h4 className="text-center text-[18px] ">Carry Over Courses ({performance.failed_courses.number})</h4>
+              <table className="shadow-lg bg-white border-separate max-w-[80%] overflow-auto  mx-auto min-w-[80%] w-[80%]">
+                <thead>
+                  <tr>
+                    <th className="bg-[#34783644]  border text-left px-4 py-2 text-center"></th>
+                    <th className="bg-[#34783644]  border text-left px-4 py-2 text-center">Code</th>
+                    <th className="bg-[#34783644]  border text-left px-4 py-2 text-center">Title</th>
+                    <th className="bg-[#34783644]  border text-left px-4 py-2 text-center">Units</th>
+                    <th className="bg-[#34783644]  border text-left px-4 py-2 text-center">Type</th>
+
+                    <th className="bg-[#34783644]  border text-left px-4 py-2 text-center">Semester</th>
+                    <th className="bg-[#34783644]  border text-left px-4 py-2 text-center">Registration</th>
+                    <th className="bg-[#34783644]  border text-left px-4 py-2 text-center">View</th>
+                  </tr>
+                </thead>
+                <tbody>
+
+                  {perform.map((course: any) => {
+                    return <Available_course key={course.id + 'f'} course={course} setMarkedCourse={setMarkedCourseFunction} />
+                  })}
+                </tbody>
+              </table>
+            </div>)
+              : <p></p>}
+          </div>
+        </div>
+      </>
+      }
       <div>
         <div className="border px-4 py-2"><button className="bg-[#347836] text-white px-4 py-2 rounded-md" onClick={send}>Register</button></div>
       </div>
@@ -340,7 +422,7 @@ const Available_course = ({ course, setMarkedCourse }: { course: avail_course, s
 
 
 
-  return (<tr key={course.id}>
+  return (<tr >
 
     <td className="border px-4 py-2">
       <input type="checkbox" checked={reg} name="" id="" onChange={onChange} />

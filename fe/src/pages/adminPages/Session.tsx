@@ -85,10 +85,6 @@ export default function Session() {
       tempErrors.session = 'Session is required'
       isValid = false
     }
-    if (session.current_semester === '') {
-      tempErrors.current_semester = 'Semester is required'
-      isValid = false
-    }
     if (session.first_semester_start === '') {
       tempErrors.first_semester_start = 'First semester start is required'
 
@@ -108,6 +104,7 @@ export default function Session() {
     }
     
     if (!isValid) {
+      console.log(tempErrors)
       setErrors(tempErrors)
       setTimeout(() => {
         setErrors({
@@ -147,7 +144,6 @@ export default function Session() {
         first_semester_end: getUnixTime(new Date(session.first_semester_end)),
         second_semester_start: getUnixTime(new Date(session.second_semester_start)),
         second_semester_end: getUnixTime(new Date(session.second_semester_end)),
-
       }):f
     
       fetch(base + '/session', {

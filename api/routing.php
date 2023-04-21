@@ -102,7 +102,8 @@ $urls = [
   '/webais/api/unread_messages' =>
   ['ChatController@get_unread_messages'],
 
-
+ /* cgpa and failed courses */
+  '/webais/api/student_performance' => ['CgpaController@student_performance'],
 ];
 
 //check if routes available

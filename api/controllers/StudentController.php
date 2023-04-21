@@ -120,8 +120,8 @@ class StudentController
       }
     } elseif ($_SERVER['REQUEST_METHOD'] == 'PUT') {
 
-      $post = $_POST;
-      $id = $post['id'];
+      $put = json_decode(file_get_contents('php://input'), true);
+      $id = $put['id'];
       $sql = "UPDATE students SET 
           firstName=?,
           lastName=?,
@@ -139,19 +139,19 @@ class StudentController
           graduation_session=?
            WHERE id = '" . $id . "'";
       $stmt = $this->conn->prepare($sql);
-      $firstname = $post['firstName'];
-      $lastname = $post['lastName'];
-      $othernames = $post['otherNames'];
-      $email = htmlspecialchars($post['email']);
-      $phone = htmlspecialchars($post['phone']);
-      $password = $post['password'];
-      $dob = $post['dob'];
-      $gender = $post['gender'];
-      $faculty = $post['faculty'];
-      $department = $post['department'];
-      $level = $post['level'];
-      $duration = $post['duration'];
-      $entrance_session = $post['entrance_session'];
+      $firstname = $put['firstName'];
+      $lastname = $put['lastName'];
+      $othernames = $put['otherNames'];
+      $email = htmlspecialchars($put['email']);
+      $phone = htmlspecialchars($put['phone']);
+      $password = $put['password'];
+      $dob = $put['dob'];
+      $gender = $put['gender'];
+      $faculty = $put['faculty'];
+      $department = $put['department'];
+      $level = $put['level'];
+      $duration = $put['duration'];
+      $entrance_session = $put['entrance_session'];
       $graduation_session = (string)((int)explode($entrance_session, '/')[0] + (int)$duration) . '/' . (string)((int)explode($entrance_session, '/')[1] + (int)$duration);
       $stmt->bind_param("ssssssssssssss", $firstname, $lastname, $othernames, $email, $phone, $password, $dob, $gender, $faculty, $department, $level, $entrance_session, $graduation_session, $id);
      
@@ -167,7 +167,7 @@ class StudentController
     } elseif ($_SERVER['REQUEST_METHOD'] == 'DELETE') {
       try {
 
-        $post = $_POST;
+        $post =json_decode(file_get_contents('php://input'), true);
         $id = $post['id'];
         $sql = "DELETE FROM students WHERE id = '" . $id . "'";
         $res = $this->conn->query($sql);
@@ -223,6 +223,45 @@ class StudentController
             echo json_encode(array('message' => 'no registered course found', 'ok'=>0));
           }
         }
+      }catch(Exception $e){
+        $this->getHeaders();
+        echo json_encode(array('message' => $e->getMessage(), 'ok' => 0, 'status' => 'failed', 'line'=>$e->getLine()));
+      }
+    }else{
+      $this->getHeaders();
+      echo json_encode(array('message' => 'wrong method', 'ok' => 0, 'status' => 'failed'));
+    }
+  }
+  public function move_students_to_next_level(){
+    $method = $_SERVER['REQUEST_METHOD'];
+    if($method=='POST'){
+      $post = json_decode(file_get_contents('php://input'), true);
+      $session = $post['session'];
+      $sql = 'SELECT * FROM students WHERE 1=1';
+      if(isset($post['department'])){
+        $sql .= ' AND department="'.$post['department'].'"';
+      }
+      if(isset($post['level'])){
+        $sql .= ' AND level="'.$post['level'].'"';
+      }
+      try{
+        $stmt = $this->conn->prepare($sql);
+        $res = $stmt->execute();
+        $result = $stmt->get_result();
+        $students = $result->fetch_all(MYSQLI_ASSOC);
+        
+        foreach($students as $student){
+          $duration = $student['duration'];
+          $entrance_session = $student['entrance_session'];
+         $graduation_session = $student['graduation_session'];
+         if($graduation_session==$entrance_session){
+            return;
+         }
+          $sql = 'UPDATE students SET level="'.((int)$student['level'] + 100).'" WHERE id="'.$student['id'].'"';
+          $stmt = $this->conn->prepare($sql);
+          $res = $stmt->execute();
+        }
+        
       }catch(Exception $e){
         $this->getHeaders();
         echo json_encode(array('message' => $e->getMessage(), 'ok' => 0, 'status' => 'failed', 'line'=>$e->getLine()));

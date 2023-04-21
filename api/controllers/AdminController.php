@@ -73,7 +73,7 @@ class AdminController{
       }
     } elseif ($_SERVER['REQUEST_METHOD'] == 'PUT') {
     
-      $post = $_POST;
+      $post = json_decode(file_get_contents('php://input'), true);
 
       $id = $post['id'];
       $sql = "UPDATE administrators SET 

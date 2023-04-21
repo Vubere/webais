@@ -122,7 +122,7 @@ class FeeController
       }
     }elseif($method =='PUT'){
       try {
-        $post = $_POST;
+        $post = json_decode(file_get_contents('php://input'), true);
         $sql = "UPDATE fees SET name = ?, amount = ?, department_id = ?, session = ?, level = ?, semester = ?, fee_status = ?, updated_at = ? WHERE id = ?";
         $name = $post['name'];
         $amount = $post['amount'];

@@ -342,7 +342,7 @@ class EventsController
         echo json_encode(array('status' => $e->getMessage()));
       }
     } elseif ($method == 'PUT') {
-      $put = $_POST;
+      $put = json_decode(file_get_contents('php://input'), true);
       $type = $put['type'];
       $title = $put['title'];
       $content = $put['content'];

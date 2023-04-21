@@ -474,6 +474,7 @@ class CoursesController
       $session = $post['session'];
       $bool = $post['bool'];
       if ($post['all'] == 'true') {
+        $bool = (int)$bool;
         $sql = 'UPDATE course_gradings SET grading_open = "' . $bool . '" WHERE session = "' . $session . '"';
         $res = $this->conn->query($sql);
 
@@ -486,6 +487,7 @@ class CoursesController
         }
       } else {
         $course_id = $post['course_id'];
+        $bool = (int)$bool;
         $sql = 'UPDATE course_gradings SET grading_open = "' . $bool . '" WHERE department_course_id = "' . $course_id . '" AND session = "' . $session . '"';
         $stmt = $this->conn->prepare($sql);
         $res = $stmt->execute();

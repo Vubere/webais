@@ -42,7 +42,7 @@ export default function AssignedCourses() {
   }
   return (
     <div className="p-3 h-[90vh] overflow-y-auto pb-20">
-      <h3 className="font-[600] text-[#347836] text-[28px] text-center leading-[40px]">Assigned Courses</h3>
+      <h3 className="font-[600] text-[#347836] text-[28px] text-center leading-[40px]">Department Assigned Courses</h3>
       <div className="w-full overflow-y-auto">
 
         {loadError && <p className="text-red-500">{loadError}</p>}

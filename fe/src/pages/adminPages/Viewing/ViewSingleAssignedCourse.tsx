@@ -83,6 +83,7 @@ export default function ViewAssignedCourse() {
           body: f
         })
         const res = await req.json();
+        console.log(res)
         if (res?.ok == 1) {
           console.log(res)
           setCourses({ ...courses, grading_open: !!bool } as assigned_course)
