@@ -37,10 +37,10 @@ export default function CreateFee() {
   const {error:dept_error, faculties, departments } = useFacultiesAndDepartments()
 
   useEffect(() => {
-    if(sess){
+    if(sess?.session){
       setFee({...fee, session: sess.session.session})
     }
-  }, [sess])
+  }, [sess?.session])
 
   const onChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     setFee({ ...fee, [e.target.name]: e.target.value })

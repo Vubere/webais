@@ -89,7 +89,7 @@ export default function UpdateCourse() {
       }
     }
   }
-  const delete_course = async (e: React.FormEvent<HTMLFormElement>) => {
+  const delete_course = async (e:any) => {
     e.preventDefault()
     try {
       const url = base + '/courses'

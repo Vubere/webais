@@ -33,7 +33,10 @@ export default function Examination() {
   }, [Session?.session?.session, user])
 
   const formatDateToDMY = (date: string) => {
-    const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
+    const d = new Date(date)
+    const day = d.getDay()
+    const getNameOfDay = (day: number) => {
+      const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
       return days[day]
     }
     return (
@@ -43,9 +46,9 @@ export default function Examination() {
           {getNameOfDay(d.getDay())}
         </span>
       </span>)
-  }   const d = new Date(date)
-    const getNameOfDay = (day: number) => {
-   
+  }
+
+
 
   useEffect(() => {
 

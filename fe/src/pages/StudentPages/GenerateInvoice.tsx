@@ -34,7 +34,7 @@ export default function GenerateInvoice() {
   const [invoiceDetails, setInvocieDetails] = useState<any>()
 
   useLayoutEffect(() => {
-    if (fee && user && session) {
+    if (fee && user && session?.session?.session) {
       setInvocieDetails({
         invoice_no: invoice,
         name: fee.name,
@@ -46,7 +46,7 @@ export default function GenerateInvoice() {
         fee_status: 'active',
       })
     }
-  }, [fee, user, session])
+  }, [fee, user, session?.session])
 
   useEffect(() => {
     /* get invoice if exist*/
@@ -130,7 +130,7 @@ export default function GenerateInvoice() {
                 <li>Programmes: {user?.programmes || 'undergraduate'}</li>
                 <li>Department: {user.department}</li>
                 <li>Level: {user.level}</li>
-                <li>Session: {session.session.session}</li>
+                <li>Session: {session?.session?.session||''}</li>
                 <br></br>
                 <li>Student id: {user.id}</li>
               </ul>
