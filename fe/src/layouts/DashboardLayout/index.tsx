@@ -30,6 +30,7 @@ export default function DashboardLayout({ title, DashboardLinks }: { title: stri
 
   const signout = () => {
     sessionStorage.removeItem('user')
+    setUser(undefined)
     navigate('/')
   }
 

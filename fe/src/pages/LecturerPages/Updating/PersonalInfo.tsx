@@ -1,16 +1,12 @@
 import { FormEvent, useContext, useEffect, useState } from "react"
 import { base, UserContext } from "../../../App"
 import { formatDateToYMD } from "../../../helpers/formatDate";
-import visible from '../../../assets/visible.png'
-import invisible from '../../../assets/invisible.png'
-
 
 export default function PersonalInfo() {
 
   const { user } = useContext(UserContext)
 
   const [lecturer, setLecturer] = useState<any>();
-  const [confirmPassword, setConfirmPassword] = useState('');
   const [errors, setError] = useState({
     firstName: '',
     lastName: '',
@@ -86,23 +82,16 @@ export default function PersonalInfo() {
     if (validate()) {
       try {
         let url = base+`/lecturers`
-        const f = new FormData()
-        f.append('firstName', lecturer.firstName)
-        f.append('lastName', lecturer.lastName)
-        f.append('otherNames', lecturer.otherNames)
-        f.append('email', lecturer.email)
-        f.append('phone', lecturer.phone)
-        f.append('gender', lecturer.gender)
-        f.append('dob', lecturer.dob)
-        f.append('faculty', lecturer.faculty)
-        f.append('department', lecturer.department)
-        f.append('id', lecturer.id)
 
         const res = await fetch(url, {
           method: 'PUT',
-          body: f
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(lecturer),
         })
         const data = await res.json()
+       
         if(data?.ok){
           alert('Updated successfully')
         }else{
@@ -130,6 +119,7 @@ export default function PersonalInfo() {
   return (
     <section className="h-[90vh] overflow-auto">
       <h3 className="font-[600] text-[#347836] text-[28px] text-center leading-[40px] p-3">Personal Information</h3>
+      
       {lecturer && (
         <div>
           <ul className="flex flex-col w-[80vw] max-w-[400px] gap-2 p-4 mx-auto">
@@ -147,7 +137,7 @@ export default function PersonalInfo() {
               <input type="text" id="phone" name="phone" value={lecturer.phone} onChange={(e) => setLecturer({ ...lecturer, phone: e.target.value })} className="text-[#346237] h-[40px] bg-transparent border border-[#346837] rounded-[5px] px-2" />
               <label htmlFor="dob">Date of Birth</label>
               {errors.dob && <p className="text-red-500 text-sm">{errors.dob}</p>}
-              <input type="date" id="dob" name="dob" value={formatDateToYMD(lecturer.dob)} onChange={(e) => setLecturer({ ...lecturer, password: e.target.value })} className="text-[#346237] h-[40px] bg-transparent border border-[#346837] rounded-[5px] px-2" />
+              <input type="date" id="dob" name="dob" value={formatDateToYMD(lecturer.dob)} onChange={(e) => setLecturer({ ...lecturer, dob: e.target.value })} className="text-[#346237] h-[40px] bg-transparent border border-[#346837] rounded-[5px] px-2" />
               <label htmlFor="gender">Gender</label>
               {errors.gender && <p className="text-red-500 text-sm">{errors.gender}</p>}
               <select name="gender" id="gender" value={lecturer.gender} className="text-[#346237] h-[40px] bg-transparent border border-[#346837] rounded-[5px] px-2" onChange={(e) => setLecturer({ ...lecturer, gender: e.target.value })}>
@@ -166,7 +156,7 @@ export default function PersonalInfo() {
                 <input type="checkbox" name="showPassword" id="showPassword" onChange={togglePasswordVisibility} />
                 <p>Toggle Password Visibility</p>
               </div>
-              <button className="bg-[#346837] py-2 mt-4 rounded-[4px] text-[#fff]">
+              <button className="bg-[#346837] py-2 mt-4 rounded-[4px] text-[#fff]" onClick={updateInfo}>
                 Update Information
               </button>
             </form>

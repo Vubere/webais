@@ -1,5 +1,5 @@
 import { useEffect, useLayoutEffect, useMemo, useState } from "react"
-import { useParams } from "react-router-dom"
+import { useNavigate, useParams } from "react-router-dom"
 import { base } from "../../../App"
 import { assigned_course } from "../Viewing/ViewAssignedCourses"
 
@@ -26,6 +26,7 @@ export default function UpdateLectures() {
     lecturer_id: '',
     venue: '',
   })
+  const navigate = useNavigate()
 
 
   const [fetchError, setFetchError] = useState('')
@@ -148,6 +149,9 @@ export default function UpdateLectures() {
         
         if (data.ok&&data.exams.length>0) {
           const l = data.exams[0]
+          if(l===undefined){
+            throw new Error('could not find course')
+          }
           l.date = formatDateToYMD(l.date)
           setExam(l)
         } else {
@@ -157,6 +161,7 @@ export default function UpdateLectures() {
       .catch((err) => {
         console.log(err)
         alert(err?.message||'something went wrong')
+        navigate(-1)
         setFetchError('something went wrong')
       })
   }, [])
@@ -171,6 +176,31 @@ export default function UpdateLectures() {
     return lecturers.filter(i => (i.firstName + ' ' + i.lastName).toLowerCase().includes(searchLect.toLowerCase()) || i.email.toLowerCase().includes(searchLect.toLowerCase() || i.id.toLowerCase().includes(searchLect.toLowerCase())) || i.discipline.toLowerCase().includes(searchLect.toLowerCase()))
   }, [searchLect, lecturers])
   
+  const delete_exam = async () => {
+    if(id){
+      try {
+        const res = await fetch(base+"/exam", {
+          method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            id: id
+          }),
+        })
+        const data = await res.json()
+        if (data.ok) {
+          alert('success')
+          navigate(-1)
+        } else {
+          throw new Error(data?.status || 'something went wrong')
+        }
+      } catch (err:any) {
+        alert(err?.message||'something went wrong')
+      }
+    }
+  }
+
 
   return (
     <div className="w-full h-[90vh] overflow-y-auto pb-[40px]">
@@ -250,6 +280,10 @@ export default function UpdateLectures() {
         </div>
         <button type="submit" className="w-full h-[40px] rounded-[5px] bg-[#347836] text-white xs:text-[14px] stbt:text-[18px]">Update</button>
       </form>
+      <div className="w-[80vw] max-w-[400px] mx-auto mt-10 flex flex-col items-end" >
+        <h4 className="text-[#347836]">Dangerous Operation</h4>
+        <button className="bg-[#990000] px-2 rounded text-white py-2" onClick={delete_exam}>Delete Exmination</button>
+      </div>
     </div>
   )
 }

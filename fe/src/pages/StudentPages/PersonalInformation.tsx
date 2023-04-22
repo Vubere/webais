@@ -44,30 +44,14 @@ export default function PersonalInformation() {
 
 
   const { user: u } = useContext(UserContext)
-  const validate = () => {
-    if (form.password !== form.confirmPassword) {
-      setError({ ...errors, confirmPassword: 'Password do not match' })
-      return false
-    }
-    return true
-  }
+
   const updateStudent = async () => {
     try {
       
       let url = base+`/students?id=${u.id}`
-      const f = new FormData()
-      f.append('firstName', form.firstName)
-      f.append('lastName', form.lastName)
-      f.append('otherNames', form.otherNames)
-      f.append('email', form.email)
-      f.append('phone', form.phone)
-      f.append('dob', form.dob)
-      f.append('gender', form.gender)
-
-
       const res = await fetch(url, {
         method: 'PUT',
-        body: f
+        body: JSON.stringify(form),
       })
       const data = await res.json()
       if(data.ok==1){
@@ -129,12 +113,13 @@ export default function PersonalInformation() {
       fetch(base+'/students?id=' + u.id)
         .then((res) => res.json())
         .then((res) => {
-          if (res.length) {
-            setForm({ ...form, ...res[0] })
+          if (res.students.length) {
+            const { students } = res
+            setForm({ ...form, ...students[0] })
           }
         })
         .catch((err) => {
-          console.log(err)
+          alert(err?.message||'error loading data')
         })
     }
 
@@ -142,7 +127,7 @@ export default function PersonalInformation() {
 
   const onSubmit = (e: any) => {
     e.preventDefault()
-    if (validate()&&validilty()) {
+    if (validilty()) {
       updateStudent()
     }
   }
@@ -181,18 +166,9 @@ export default function PersonalInformation() {
           <option value="male">Male</option>
           <option value="female">Female</option>
         </select>
-        <button className="bg-[#346837] py-2 mt-4 rounded-[4px] text-[#fff]">
-          Update
-        </button>
-      </form>
-      <h3 className="text-center text-[20px] text-[#346837]">Update Password</h3>
-      <form onSubmit={onSubmit} className="flex flex-col w-[80vw] max-w-[400px] gap-2 p-4 mx-auto">
         <label htmlFor="password">Password</label>
         <input type={visibility?'text':'password'} id="password" name="password" value={form.password} onChange={(e) => setForm({ ...form, password: e.target.value })} className="text-[#346237] h-[40px] bg-transparent border border-[#346837] rounded-[5px] px-2" />
-        <label htmlFor='confirmPassword'>Confirm Password</label>
-        <input type={visibility?'text':'password'} id="confirmPassword" name="confirmPassword" value={form.confirmPassword} onChange={(e) => setForm({ ...form, confirmPassword: e.target.value })} className="text-[#346237] h-[40px] bg-transparent border border-[#346837] rounded-[5px] px-2" />
-        {errors.password && <p className="text-red-500 text-[12px]">{errors.password}</p>}
-        {errors.confirmPassword && <p className="text-red-500 text-[12px]">{errors.confirmPassword}</p>}
+        
         <div className="flex items-center gap-2">
           <input type="checkbox" id="visibility" name="visibility" onChange={() => setVisibility(!visibility)} />
           <label htmlFor="visibility">

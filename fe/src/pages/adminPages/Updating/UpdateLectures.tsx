@@ -23,8 +23,13 @@ export default function UpdateLectures() {
     fetch(base + '/assign_course')
       .then(res => res.json())
       .then(data => {
-        console.log(data)
-        setCourses(data.data)})
+        if(data.ok){
+          
+          setCourses(data.data)
+        }else{
+          throw new Error(data?.status || 'something went wrong')
+        }
+      })
       .catch((err: any) => alert(err?.message || 'something went wrong'))
   }, [])
   useEffect(() => {
@@ -110,12 +115,12 @@ export default function UpdateLectures() {
         f.append('lecturer_id', lectures.lecturer_id)
         f.append('venue', lectures.venue)
 
-        const res = await fetch(base+"/lectures", {
+        const res = await fetch(base + "/lectures", {
           method: "PUT",
           headers: {
             'Content-Type': 'application/json'
           },
-          body: JSON.stringify({...lectures, id})
+          body: JSON.stringify({ ...lectures, id })
         })
         const data = await res.json()
         console.log(data)
@@ -123,7 +128,7 @@ export default function UpdateLectures() {
           alert('Lecture Updated Successfully')
         } else {
           throw new Error(data?.status || 'something went wrong')
-        } 
+        }
       } catch (err) {
         console.log(err)
       }
@@ -131,31 +136,35 @@ export default function UpdateLectures() {
   }
 
   useLayoutEffect(() => {
-    if(courses.length&&lecturers.length) 
-    fetch(base+"/lectures?id=" + id)
-      .then((res) => res.json())
-      .then((data) => {
-        if (data.ok) {
-          console.log(data)
-          const l = data.lectures[0]
-          l.course_id = courses.find((c) => c.code === l.code)?.id || ''
-         
-          l.day = l.day?.toLowerCase();
-          setLectures(l)
-        } else {
-          throw new Error('something went wrong')
-        }
-      })
-      .catch((err) => {
-        alert(err?.message || 'something went wrong')
-        setFetchError('something went wrong')
-      })
+    if (courses.length && lecturers.length)
+      fetch(base + "/lectures?id=" + id)
+        .then((res) => res.json())
+        .then((data) => {
+          if (data.ok) {
+            console.log(data)
+            const l = data.lectures[0]
+            if(l==undefined) {
+              throw new Error('course not found')
+            }
+            l.course_id = courses.find((c) => c.code === l.code)?.id || ''
+
+            l.day = l.day?.toLowerCase();
+            setLectures(l)
+          } else {
+            throw new Error('something went wrong')
+          }
+        })
+        .catch((err) => {
+          alert(err?.message || 'something went wrong')
+          navigate(-1)
+          setFetchError('something went wrong')
+        })
   }, [courses])
 
   const delete_lecture = () => {
     const confirm = window.confirm('Are you sure you want to delete this lecture?')
     if (!confirm) return
-    fetch(base+"/lectures", {
+    fetch(base + "/lectures", {
       method: "DELETE",
       headers: {
         "Content-Type": "application/json",
@@ -188,7 +197,7 @@ export default function UpdateLectures() {
 
   return (
     <div className="w-full flex flex-col items-center h-[90vh] overflow-y-auto pb-[30px]">
-      <h1 className="font-[600] text-[#347836] text-[28px] text-center leading-[40px]">Update Lectures</h1>
+      <h1 className="font-[600] text-[#347836] text-[28px] text-center leading-[40px]">Update Lecture</h1>
       <form onSubmit={onSubmit} className="flex flex-col items-center gap-2 max-w-[400px] w-[80vw] gap-4 mx-auto">
 
         <div className="w-full">
@@ -275,7 +284,7 @@ export default function UpdateLectures() {
       </form>
       <div className="w-[80vw] max-w-[400px] mx-auto mt-10 flex flex-col items-end" >
         <h4 className="text-[#347836]">Dangerous Operation</h4>
-        <button className="bg-[#990000] px-2 rounded text-white py-2" onClick={delete_lecture}>Delete Lecturer</button>
+        <button className="bg-[#990000] px-2 rounded text-white py-2" onClick={delete_lecture}>Delete Lecture</button>
       </div>
     </div>
   )

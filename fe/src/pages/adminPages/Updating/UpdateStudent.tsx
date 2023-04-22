@@ -14,28 +14,34 @@ export default function UpdateAdmin() {
     lastName: '',
     otherNames: '',
     email: '',
+    duration: '',
+    entrance_session: '',
     phone: '',
-    password: '',
     dob: '',
     gender: '',
     faculty: '',
     department: '',
+    password: '',
     level: '',
-    id: '',
+    studentId: '',
+    id: ''
   })
   const [errors, setErrors] = useState({
     firstName: '',
     lastName: '',
     otherNames: '',
+    password: '',
     email: '',
+    duration: '',
+    entrance_session: '',
     phone: '',
     dob: '',
     gender: '',
-    password: '',
     faculty: '',
     department: '',
     level: '',
-    studentId: ''
+    studentId: '',
+    id: ''
   })
   const { faculties, departments, error, loading } = useFacultiesAndDepartments()
   const navigate = useNavigate()
@@ -57,7 +63,7 @@ export default function UpdateAdmin() {
 
     }
     if (form.password.length < 6) {
-     tempErrors.password = 'Password must be at least 6 characters'
+      tempErrors.password = 'Password must be at least 6 characters'
       isValid = false
 
     }
@@ -65,6 +71,10 @@ export default function UpdateAdmin() {
       tempErrors = { ...tempErrors, email: 'Email is required' }
       isValid = false
 
+    }
+    if (form.dob === '') {
+      tempErrors = { ...tempErrors, dob: 'Date of birth is required' }
+      isValid = false
     }
 
 
@@ -86,17 +96,27 @@ export default function UpdateAdmin() {
       tempErrors = { ...tempErrors, level: 'Level is required' }
       isValid = false
     }
+    if (form.duration === '') {
+      tempErrors = { ...tempErrors, duration: 'Duration is required' }
+      isValid = false
+    }
+    if (form.entrance_session === '') {
+      tempErrors = { ...tempErrors, entrance_session: 'Entrance session is required' }
+      isValid = false
+    }
 
 
     if (!isValid) {
       setErrors(tempErrors)
       setTimeout(() => {
-       
+
         setErrors({
           firstName: '',
           lastName: '',
           otherNames: '',
           email: '',
+          duration: '',
+          entrance_session: '',
           phone: '',
           dob: '',
           gender: '',
@@ -104,7 +124,8 @@ export default function UpdateAdmin() {
           department: '',
           level: '',
           studentId: '',
-          password: ''
+          password: '',
+          id: ''
         })
       }, 3000)
     }
@@ -117,8 +138,10 @@ export default function UpdateAdmin() {
       let url = base + `/students?id=${id}`
       const res = await fetch(url);
       const data = await res.json()
-      if (data.length) {
-        setForm({ ...data[0], dob: formatDateToYMD(data[0].dob) })
+      if (data.ok == 1) {
+        console.log(data.students)
+        const student = data.students[0]
+        setForm({ ...student, dob: formatDateToYMD(student.dob) })
 
       } else {
         console.log(data)
@@ -132,40 +155,40 @@ export default function UpdateAdmin() {
   }, [])
   const onSubmit = (e: any) => {
     e.preventDefault()
-    if(validate())
-    updateAdmin()
+    if (validate())
+      updateAdmin()
   }
   const updateAdmin = async () => {
-    try {
-      let url = base + `/students?id=${id}`
-      const f = new FormData()
-      f.append('firstName', form.firstName)
-      f.append('lastName', form.lastName)
-      f.append('otherNames', form.otherNames)
-      f.append('email', form.email)
-      f.append('phone', form.phone)
-      f.append('dob', form.dob)
-      f.append('gender', form.gender)
-      f.append('password', form.password)
-      f.append('id', form.id)
-      f.append('faculty', form.faculty)
-      f.append('department', form.department)
-      f.append('level', form.level)
+    if (id) {
+      try {
+        let url = base + `/students`
+        
 
-      const res = await fetch(url, {
-        method: 'PUT',
-        body: f
-      })
-      const data = await res.json()
-      console.log(data)
-    } catch (err) {
-      console.log(err)
+        const res = await fetch(url, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(form),
+        })
+        const data = await res.json()
+        if(data.ok){
+          alert(data.message||'Student updated successfully')
+        }else{
+          throw new Error(data.message||'Error updating student')
+        }
+      } catch (err:any) {
+        alert(err.message||'Error updating student')
+      }
+
+    } else {
+      alert('failed to update student')
     }
   }
   const delete_student = () => {
     const reply = prompt('are you sure you want to delete this Student? Type yes to confirm')
     if (reply?.toLowerCase() !== 'yes') return
-    fetch(base+'/students?id=' + id, {
+    fetch(base + '/students?id=' + id, {
       method: 'DELETE',
       headers: {
         'Content-Type': 'application/json'
@@ -186,7 +209,8 @@ export default function UpdateAdmin() {
       })
   }
   const departmentFilter = departments?.filter((d) => d.faculty_id == form.faculty)
-  
+
+  const year = (new Date()).getFullYear()
 
   return (
     <div className="p-4 h-[90vh] overflow-auto flex flex-col items-center w-full">
@@ -211,11 +235,25 @@ export default function UpdateAdmin() {
         <input type="text" id="gender" name="gender" value={form.gender} onChange={(e) => setForm({ ...form, gender: e.target.value })} className="text-[#346237] h-[40px] bg-transparent border border-[#346837] rounded-[5px] px-2" />
         <label htmlFor="level">Level</label>
         <input type="text" id="levle" name="level" value={form.level} onChange={(e) => setForm({ ...form, level: e.target.value })} className="text-[#346237] h-[40px] bg-transparent border border-[#346837] rounded-[5px] px-2" />
+
+        <div className="w-full">
+          <label htmlFor="entrance_session">Entrance Session</label>
+          <select name="entrance_session" id="session" value={form.entrance_session} onChange={({ target }) => setForm({ ...form, entrance_session: target.value })} className="w-full h-[40px] rounded-[5px] bg-transparent border border-[#347836] flex items-center focus:outline-none px-2">
+            <option value="">Select Session </option>
+            <option value={`${year + 2}/${year + 3}`}>{`${year + 2}/${year + 3}`}</option>
+            <option value={`${year + 1}/${year + 2}`}>{`${year + 1}/${year + 2}`}</option>
+            <option value={`${year}/${year + 1}`}>{`${year}/${year + 1}`}</option>
+            <option value={`${year - 1}/${year}`}>{`${year - 1}/${year}`}</option>
+            <option value={`${year - 2}/${year - 1}`}>{`${year - 2}/${year - 1}`}</option>
+            <option value={`${year - 3}/${year - 2}`}>{`${year - 3}/${year - 2}`}</option>
+          </select>
+
+        </div>
         <div className='w-full'>
           <label htmlFor='faculty'>Faculty</label>
           {errors.faculty && <p className="text-red-500 text-[12px]">{errors.faculty}</p>}
           <select name='faculty' id='faculty' onChange={(e) => setForm({ ...form, faculty: e.target.value })}
-          value={form.faculty} className="w-full h-[40px] rounded-[5px] bg-transparent border border-[#347836]  text-black flex items-center focus:outline-none px-2">
+            value={form.faculty} className="w-full h-[40px] rounded-[5px] bg-transparent border border-[#347836]  text-black flex items-center focus:outline-none px-2">
             <option value=''>Select Faculty</option>
             {error && loading && <option value=''>Loading...</option>}
             {!error && !loading && faculties.map((faculty: any) => (
@@ -234,7 +272,7 @@ export default function UpdateAdmin() {
             ))}
           </select>
         </div>
-     
+
 
         <button className="bg-[#346837] py-2 mt-4 rounded-[4px] text-[#fff]">
           Update

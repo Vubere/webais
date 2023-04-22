@@ -83,9 +83,7 @@ export default function ViewAssignedCourse() {
           body: f
         })
         const res = await req.json();
-        console.log(res)
         if (res?.ok == 1) {
-          console.log(res)
           setCourses({ ...courses, grading_open: !!bool } as assigned_course)
           alert(res.message)
         } else {
@@ -106,7 +104,7 @@ export default function ViewAssignedCourse() {
         f.append('session', session)
         f.append('semester', semester.toString())
         f.append('all', 'false')
-        f.append('bool', !bool ? '0' : '1')
+        f.append('bool', bool ? '1' : '0')
         f.append('course_id', id as string)
 
         const req = await fetch(base + '/registration', {
@@ -114,11 +112,9 @@ export default function ViewAssignedCourse() {
           body: f
         })
         const res = await req.json();
-        console.log(res)
-        if (res.status === 'success') {
+        if (res.ok == 1) {
           alert(res.message)
-          setCourses({ ...courses, registration_open: !bool} as assigned_course)
-          create_session_result_table()
+          setCourses({ ...courses, registration_open: !!bool} as assigned_course)
         } else {
 
           throw new Error(res.message)

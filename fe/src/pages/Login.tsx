@@ -36,7 +36,7 @@ export default function Login({ title, src }: { title: string, src: string }) {
     if (validate()) {
       setLoading(true)
       const f = new FormData()
-      f.append('id',form.id)
+      f.append('id',form.id.toUpperCase())
       f.append('password', form.password)
       f.append('type', title.toLowerCase())
    

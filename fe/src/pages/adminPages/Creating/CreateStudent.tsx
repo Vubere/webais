@@ -1,5 +1,4 @@
 import { useContext, useEffect, useState } from "react"
-import { useNavigate } from "react-router-dom"
 import { base, UserContext } from "../../../App"
 import useFacultiesAndDepartments from "../../../hooks/useFacultiesAndDepartments"
 import { SessionContext } from "../../../layouts/DashboardLayout"
@@ -84,13 +83,14 @@ export default function CreateUser() {
       isValid = false
 
     }
+    
 
 
     if (user.phone != '' && user.phone.length < 11) {
       tempErrors = { ...tempErrors, phone: 'Phone number is invalid' }
       isValid = false
-
     }
+
 
     if (user.faculty === '') {
       tempErrors = { ...tempErrors, faculty: 'Faculty is required' }
@@ -102,6 +102,14 @@ export default function CreateUser() {
     }
     if (user.level === '') {
       tempErrors = { ...tempErrors, level: 'Level is required' }
+      isValid = false
+    }
+    if(user.duration === ''){
+      tempErrors = { ...tempErrors, duration: 'Duration is required' }
+      isValid = false
+    }
+    if(user.entrance_session === ''){
+      tempErrors = { ...tempErrors, entrance_session: 'Entrance session is required' }
       isValid = false
     }
 

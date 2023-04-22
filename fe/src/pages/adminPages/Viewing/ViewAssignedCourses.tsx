@@ -25,7 +25,6 @@ export default function AssignedCourses() {
         }
       })
       .catch(err => {
-        console.log(err)
         setLoadError(err.message)
         setLoading(false)
       })
@@ -61,7 +60,6 @@ export default function AssignedCourses() {
                 <th className="bg-[#34783644] border text-left px-4 py-2">Semester</th>
                 <th className="bg-[#34783644] border text-left px-4 py-2">Registration</th>
                 <th className="bg-[#34783644] border text-left px-4 py-2">Grading</th>
-
                 <th className="bg-[#34783644] border text-left px-4 py-2">Action</th>
               </tr>
             </thead>

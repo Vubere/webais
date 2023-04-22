@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react"
-import { useParams } from "react-router-dom"
+import { useNavigate, useParams } from "react-router-dom"
 import { base } from "../../../App"
 
 export default function UpdateDepartment() {
@@ -11,6 +11,7 @@ export default function UpdateDepartment() {
     id: '',
     duration: ''
   })
+  const navigate = useNavigate()
 
   const [faculties, setFaculties] = useState<any[]>([])
 
@@ -63,7 +64,12 @@ export default function UpdateDepartment() {
     try {
       const res = await fetch(base + `/department?id=${id}`)
       const result = await res.json()
-      setDepartment(result.data.data[0])
+      let dept = result.data.data[0]
+      if(dept==undefined){
+        alert('Department not found')
+        navigate(-1)
+      }
+      setDepartment(dept)
 
     } catch (error: any) {
       setFetchError(error?.message || 'something went wrong')
@@ -79,16 +85,15 @@ export default function UpdateDepartment() {
   const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     if (validate()) {
+      console.log(errors)
       try {
-        const f = new FormData()
-        f.append('name', department.name)
-        f.append('faculty_id', department.faculty_id)
-        f.append('duration', department.duration)
-        f.append('id', department.id)
 
         const res = await fetch(base + `/department`, {
           method: 'PUT',
-          body: f
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(department),
         })
         const result = await res.json()
 
@@ -98,10 +103,34 @@ export default function UpdateDepartment() {
           throw new Error(result?.status || 'something went wrong')
         }
       } catch (error: any) {
+        alert(error?.message || 'something went wrong')
         setFetchError(error?.message || 'something went wrong')
       }
     }
   }
+  const delete_dept = async () => {
+    try {
+      const res = await fetch(base + `/department`, {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ id: department.id }),
+      })
+      const result = await res.json()
+      
+      if (result.status === 'success') {
+        alert('success')
+        navigate(-1)
+      } else {
+        throw new Error(result?.status || 'something went wrong')
+      }
+    } catch (error: any) {
+      alert(error?.message || 'something went wrong')
+      setFetchError(error?.message || 'something went wrong')
+    }
+  }
+
   return (
     <section className="h-[90vh] overflow-auto p-4 flex flex-col gap-10 pb-10">
       <h3 className="font-[700] text-[22px] text-center w-full pb-3 w-full text-[#347836]">Update Department</h3>
@@ -137,7 +166,7 @@ export default function UpdateDepartment() {
       
       <div className="w-[80vw] max-w-[400px] mx-auto mt-10 flex flex-col items-end">
         <h4 className="text-[#347836]">Dangerous Operation</h4>
-        <button className="bg-[#aa0000] px-2 rounded text-white py-1">Delete</button>
+        <button className="bg-[#aa0000] px-2 rounded text-white py-1" onClick={delete_dept}>Delete</button>
       </div>
     </section>
   )

@@ -95,6 +95,12 @@ export default function Dashboard() {
       {user &&
         <>
           <h3 className="font-[600] text-[#347836] text-[28px] text-center leading-[40px] p-3">Welcome, {fullName}</h3>
+          <div className="flex justify-between items-center">
+            <div className="flex items-center ">
+              <h4 className="font-[500] text-[#346837] text-[18px]">Session: {Session?.session?.session||'none ongoing'}</h4>
+              <h4 className="font-[500] text-[#346837] text-[18px] ml-3">Semester: {Session?.session?.current_semester||'none ongoing'}</h4>
+            </div>
+          </div>
           <div className="py-2">
             {performance && <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
               <div className="bg-[#34783644] p-3 rounded-[10px] max-w-[400px]">

@@ -43,23 +43,20 @@ export default function UpdateAdmin() {
   }
   const updateAdmin = async () => {
     try {
-      let url = base+`/admins?id=${id}`
-      const f = new FormData()
-      f.append('firstName', form.firstName)
-      f.append('lastName', form.lastName)
-      f.append('otherNames', form.otherNames)
-      f.append('email', form.email)
-      f.append('phone', form.phone)
-      f.append('dob', form.dob)
-      f.append('gender', form.gender)
-      f.append('password', form.password)
-      f.append('id', form.id)
+      let url = base+`/admins`
+     
 
       const res = await fetch(url, {
         method: 'PUT',
-        body: f
+        body: JSON.stringify(form),
       })
       const data = await res.json()
+      if (data?.ok) {
+        alert('Administrator updated successfully')
+     
+      } else {
+        throw new Error(data?.message || 'Error updating administrator')
+      }
     } catch (err) {
       console.log(err)
     }

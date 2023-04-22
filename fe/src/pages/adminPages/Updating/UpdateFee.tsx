@@ -85,19 +85,10 @@ export default function UpdateFee() {
   const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     if (validate()) {
-      const f = new FormData()
-      f.append('id', id as string)
-      f.append('name', fee.name)
-      f.append('amount', fee.amount.toString() as string)
-      f.append('department', fee.department)
-      f.append('session', fee.session)
-      f.append('semester', fee.semester.toString() as string)
-      f.append('level', fee.level)
-      f.append('status', fee.status)
 
       fetch(base+'/fee', {
         method: 'PUT',
-        body: f
+        body: JSON.stringify(fee),
       })
         .then(res => res.json())
         .then(data => {
@@ -134,7 +125,7 @@ export default function UpdateFee() {
   const delete_fee = () => {
     const reply = prompt('are you sure you want to delete this fee? Type yes to confirm')
     if(reply?.toLowerCase() !== 'yes') return
-    fetch(base+'/fee?id=' + id, {
+    fetch(base+'/fee' , {
       method: 'DELETE',
       headers: {
         'Content-Type': 'application/json'
@@ -145,6 +136,7 @@ export default function UpdateFee() {
       .then(data => {
         if (data?.ok) {
           alert('Fee deleted successfully')
+          navigate(-1)
         } else {
           throw new Error(data?.message || 'Error deleting fee')
         }

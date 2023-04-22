@@ -1,5 +1,6 @@
 import { useContext, useEffect, useState } from "react"
 import { base, UserContext } from "../../App"
+import { SessionContext } from "../../layouts/DashboardLayout"
 
 
 export default function DashboardPage() {
@@ -12,6 +13,7 @@ export default function DashboardPage() {
     message: string,
     count: number
   }[]>([])
+  const session_data = useContext(SessionContext)
 
   const TodayLectures = lectures.filter((l: any) => {
     const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
@@ -24,9 +26,9 @@ export default function DashboardPage() {
   useEffect(() => {
 
     if (u?.id) {
-      fetch(base+`/lectures?lecturer_id=${u.id}`)
+      fetch(base + `/lectures?lecturer_id=${u.id}`)
         .then(res => res.json())
-        .then(data =>{ 
+        .then(data => {
           console.log(data)
           setLectures(data.lectures)
         })
@@ -46,16 +48,16 @@ export default function DashboardPage() {
         if (user_type == 'admin') return
         user_id = user?.id
       }
-      fetch(base+'/unread_messages?user_id=' + user_id)
+      fetch(base + '/unread_messages?user_id=' + user_id)
         .then((res) => res.json())
         .then(result => {
           if (result?.ok) {
             let unread_messages = result?.messages
             let chats = unread_messages?.length
             const val = unread_messages.map((message: any) => message?.count).reduce((a: any, b: any) => a + b, 0)
-          
-            if(notif.find(n=>n.message.includes('unread message(s) from '+chats+' conversation(s)' ))) return
-            setNotif([...notif, { message: 'unread message(s) from '+chats+' conversation(s)', count: val}])
+
+            if (notif.find(n => n.message.includes('unread message(s) from ' + chats + ' conversation(s)'))) return
+            setNotif([...notif, { message: 'unread message(s) from ' + chats + ' conversation(s)', count: val }])
 
           }
         })
@@ -99,12 +101,18 @@ export default function DashboardPage() {
 
         <div className="p-3">
           <h2 className="font-[600] text-[#347836] text-[28px] text-center leading-[40px] p-3">Welcome, {fullName(u)}</h2>
+          <div className="flex justify-between items-center">
+            <div className="flex items-center">
+              <h4 className="font-[500] text-[#346837] text-[18px]">Session: {session_data?.session?.session}</h4>
+              <h4 className="font-[500] text-[#346837] text-[18px] ml-3">Semester: {session_data?.session?.current_semester}</h4>
+            </div>
+          </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3 max-w-[400px]">
             <div className="bg-[#34783644] p-3 rounded-[10px]">
               {notif.map((n: any) => (
-                !!n.count&&<div className="flex justify-between items-center">
+                !!n.count && <div className="flex justify-between items-center">
                   <h4 className="font-[500] text-[#346837] text-[18px]">{n.count}{' '}{n.message}</h4>
-                 
+
                 </div>
               ))}
             </div>

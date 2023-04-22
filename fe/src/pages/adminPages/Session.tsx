@@ -21,7 +21,7 @@ export default function Session() {
     second_semester_start: '',
     second_semester_end: '',
   });
-  
+
   const [errors, setErrors] = useState({
     session: '',
     current_semester: '',
@@ -30,14 +30,14 @@ export default function Session() {
     second_semester_start: '',
     second_semester_end: '',
   });
-  
+
   const globalSessionHandler = useContext(SessionContext)
-  
-  useEffect(()=>{
-    if(currentData?.session){
+
+  useEffect(() => {
+    if (currentData?.session) {
       checkSemester()
     }
-  },[currentData.first_semester_start])
+  }, [currentData.first_semester_start])
 
   useEffect(() => {
     if (globalSessionHandler?.session?.session) {
@@ -50,10 +50,10 @@ export default function Session() {
       setCurrentData(tempSession)
     }
   }, [globalSessionHandler?.session])
-  
-  const now = Math.floor((new Date()).getTime()/1000)
-  
- /* check if the unix timestamp now is greater or lesser than end data of first semester start date or second semester end date*/
+
+  const now = Math.floor((new Date()).getTime() / 1000)
+
+  /* check if the unix timestamp now is greater or lesser than end data of first semester start date or second semester end date*/
   const checkSemester = () => {
     const now = getUnixTime(new Date())
     const first_semester_start = getUnixTime(new Date(currentData.first_semester_start))
@@ -102,7 +102,7 @@ export default function Session() {
       tempErrors.second_semester_end = 'Second semester end is required'
       isValid = false
     }
-    
+
     if (!isValid) {
       console.log(tempErrors)
       setErrors(tempErrors)
@@ -125,15 +125,15 @@ export default function Session() {
 
     if (validate()) {
       const f = new FormData()
-      const fss = (new Date(session.first_semester_start)).getTime()
-      const fse = (new Date(session.first_semester_end)).getTime()
-      const sss = (new Date(session.second_semester_start)).getTime()
-      const sse = (new Date(session.second_semester_end)).getTime()
+      const fss = (new Date(session.first_semester_start)).getTime()/1000
+      const fse = (new Date(session.first_semester_end)).getTime()/1000
+      const sss = (new Date(session.second_semester_start)).getTime()/1000
+      const sse = (new Date(session.second_semester_end)).getTime()/1000
 
       f.append('session', session.session)
       f.append('semester', session.current_semester.toString())
       f.append('first_semester_start', fss.toString())
-      f.append('first_semester_end',fse.toString())
+      f.append('first_semester_end', fse.toString())
       f.append('second_semester_start', sss.toString())
       f.append('second_semester_end', sse.toString())
       const method = globalSessionHandler?.session?.session == session.session ? "PUT" : "POST"
@@ -144,8 +144,8 @@ export default function Session() {
         first_semester_end: getUnixTime(new Date(session.first_semester_end)),
         second_semester_start: getUnixTime(new Date(session.second_semester_start)),
         second_semester_end: getUnixTime(new Date(session.second_semester_end)),
-      }):f
-    
+      }) : f
+
       fetch(base + '/session', {
         method: method,
         body: body
@@ -159,14 +159,22 @@ export default function Session() {
               setCurrentData(session)
             }
             alert('succesful')
+          }else{
+            if(result?.error?.toLowerCase()?.includes('duplicate')){
+              throw new Error('Session already exists')
+            }
+            throw new Error(result.message)
           }
         })
-        .catch((err) => console.log(err))
+        .catch((err) => {
+          console.log(err)
+          alert(err.message||'An error occured')
+        })
     }
   }
   const year = new Date().getFullYear()
 
-  
+
 
   const onChange = ({ target }: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     setSession({
@@ -184,27 +192,27 @@ export default function Session() {
         <ul className="text-[#346837] font-[400]">
           <li>
             Current Session:{' '}
-            {currentData.session||'No session ongoing'}
+            {currentData.session || 'No session ongoing'}
           </li>
           <li>
-            {now>parseInt(globalSessionHandler?.session?.first_semester_start||'')?'started':'starts'}: {' '}{currentData.first_semester_start||'No session ongoing'}
+            {now > parseInt(globalSessionHandler?.session?.first_semester_start || '') ? 'started' : 'starts'}: {' '}{currentData.first_semester_start || 'No session ongoing'}
           </li>
           <li>
-            {now > parseInt(globalSessionHandler?.session?.first_semester_end || '') ?'ended':'ends'}: {' '}{session.second_semester_end||'No session ongoing'}
+            {now > parseInt(globalSessionHandler?.session?.first_semester_end || '') ? 'ended' : 'ends'}: {' '}{session.second_semester_end || 'No session ongoing'}
           </li>
           <li>
             Current Semester: {' '}
-            {session.current_semester!=0?currentData.current_semester:'No semester ongoing'}
+            {session.current_semester != 0 ? currentData.current_semester : 'No semester ongoing'}
           </li>
           <li>
-            {now > parseInt(globalSessionHandler?.session?.second_semester_start || '') ? 'started' : 'starts'}: {' '}{session.current_semester === '1' ? currentData.first_semester_start||'No semester ongoing' : currentData.second_semester_start||'No semester ongoing'}
+            {now > parseInt(globalSessionHandler?.session?.second_semester_start || '') ? 'started' : 'starts'}: {' '}{session.current_semester === '1' ? currentData.first_semester_start || 'No semester ongoing' : currentData.second_semester_start || 'No semester ongoing'}
           </li>
           <li>
-            {now > parseInt(globalSessionHandler?.session?.second_semester_end || '') ? 'ended' : 'ends'}: {' '}{currentData.current_semester === '1' ? currentData.first_semester_end||'No semester ongoing' : currentData.second_semester_end||'No semester ongoing'}
+            {now > parseInt(globalSessionHandler?.session?.second_semester_end || '') ? 'ended' : 'ends'}: {' '}{currentData.current_semester === '1' ? currentData.first_semester_end || 'No semester ongoing' : currentData.second_semester_end || 'No semester ongoing'}
           </li>
         </ul>
       </div>
-    
+
       <form onSubmit={onSubmit} className="flex flex-col items-center gap-2 mx-auto w-80vw max-w-[400px] mt-3">
         <div className="w-full">
           <label htmlFor="session">Session </label>
@@ -220,7 +228,7 @@ export default function Session() {
           </select>
           <p className="red">{errors.session}</p>
         </div>
-     
+
         <div className="w-full">
           <label htmlFor="start">First Semester Start Date</label>
           {errors.first_semester_start && <p className="text-[#f00] text-[10px] font-[400]">{errors.first_semester_start}</p>}
@@ -234,7 +242,7 @@ export default function Session() {
         <div className="w-full">
           <label htmlFor="sstart">Second Semester Start Date</label>
           {errors.second_semester_start && <p className="text-[#f00] text-[10px] font-[400]">{errors.second_semester_start}</p>}
-          <input type="date" onChange={onChange}  value={session.second_semester_start} name="second_semester_start" id="sstart" className="w-full h-[40px] rounded-[5px] bg-transparent border border-[#347836] flex items-center focus:outline-none px-2" />
+          <input type="date" onChange={onChange} value={session.second_semester_start} name="second_semester_start" id="sstart" className="w-full h-[40px] rounded-[5px] bg-transparent border border-[#347836] flex items-center focus:outline-none px-2" />
         </div>
         <div className="w-full">
           <label htmlFor="send">Second Semester End Date</label>
@@ -247,10 +255,10 @@ export default function Session() {
 
 
       {/* go to next semester */}
-      <div className="flex flex-col items-center gap-2 mx-auto w-[60vw] max-w-[300px] mt-3">
+      {/*    <div className="flex flex-col items-center gap-2 mx-auto w-[60vw] max-w-[300px] mt-3">
         <button className="w-full h-[40px] rounded-[5px] bg-[#f33] text-white xs:text-[14px] stbt:text-[18px]">End Current Semester</button>
         <button className="w-full h-[40px] rounded-[5px] bg-[#f33] text-white xs:text-[14px] stbt:text-[18px]">Start Next Semester</button>
-      </div>
+      </div> */}
     </div>
   )
 }

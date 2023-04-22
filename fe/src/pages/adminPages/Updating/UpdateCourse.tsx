@@ -29,7 +29,7 @@ export default function UpdateCourse() {
         .then(data => {
 
           if (data.ok) {
-            if(data.data.length === 0){
+            if (data.data.length === 0) {
               throw new Error('course not found')
             }
             setCourse(data?.data[0])
@@ -78,7 +78,6 @@ export default function UpdateCourse() {
           body: JSON.stringify({ ...course, id: id })
         })
         const data = await res.json()
-        console.log(data)
         if (data.ok) {
           alert('Course updated successfully')
         } else {
@@ -89,25 +88,29 @@ export default function UpdateCourse() {
       }
     }
   }
-  const delete_course = async (e:any) => {
+  const delete_course = async (e: any) => {
     e.preventDefault()
-    try {
-      const url = base + '/courses'
-      const res = await fetch(url, {
-        method: 'DELETE',
-        body: JSON.stringify({ id: id })
-      })
-      const data = await res.json()
-      console.log(data)
-      if (data.ok) {
-        alert('Course deleted successfully')
-        navigate(-1)
-      } else {
-        throw new Error(data?.message || 'failed to delete course')
+    const boolean = window.confirm('Are you sure you want to delete this course?')
+    if (boolean) {
+
+      try {
+        const url = base + '/courses'
+        const res = await fetch(url, {
+          method: 'DELETE',
+          body: JSON.stringify({ id: id })
+        })
+        const data = await res.json()
+        console.log(data)
+        if (data.ok) {
+          alert('Course deleted successfully')
+          navigate(-1)
+        } else {
+          throw new Error(data?.message || 'failed to delete course')
+        }
       }
-    }
-    catch (err: any) {
-      alert(err?.message || 'something went wrong')
+      catch (err: any) {
+        alert(err?.message || 'something went wrong')
+      }
     }
   }
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {

@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react"
-import { useParams } from "react-router-dom"
+import { useNavigate, useParams } from "react-router-dom"
 import { base } from "../../../App"
 import { assigned_course } from "../Viewing/ViewAssignedCourses"
 
@@ -15,6 +15,7 @@ interface ac extends assigned_course {
 export default function UpdateAssignedCourse() {
   const { id } = useParams<{ id: string }>()
   const [loading, setLoading] = useState(true)
+  const navigate = useNavigate()
   const [assigned, setAssigned] = useState<ac>({
     id: 0,
     title: '',
@@ -60,12 +61,8 @@ export default function UpdateAssignedCourse() {
         .then(res => res.json())
         .then((data: any) => {
           if (data?.ok) {
-
             setAssigned(data.data[0])
             setSelectedDepartments(data.data[0]?.departments)
-            console.log(data.data[0])
-
-
             setLoading(false)
           } else {
             throw new Error(data?.message || 'something went wrong')
@@ -100,8 +97,8 @@ export default function UpdateAssignedCourse() {
   }, [])
 
   const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault()  
-    if(Validate()){
+    e.preventDefault()
+    if (Validate()) {
       fetch(base + '/assign_course', {
         method: 'PUT',
         headers: {
@@ -111,7 +108,6 @@ export default function UpdateAssignedCourse() {
       })
         .then(res => res.json())
         .then((data: any) => {
-       
           if (data?.ok) {
             alert('course updated successfully')
           } else {
@@ -163,7 +159,7 @@ export default function UpdateAssignedCourse() {
       temp.level = 'Course level is required'
       valid = false
     }
-  
+
     if (!valid) {
       setErrors(temp)
       setTimeout(() => {
@@ -264,7 +260,31 @@ export default function UpdateAssignedCourse() {
       assigned_departments: [],
     })
   }
-  
+  const delete_course = () => {
+    if (window.confirm('Are you sure you want to delete this course?')) {
+      fetch(base + '/assign_course', {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ id: assigned.id })
+      })
+        .then(res => res.json())
+        .then((data: any) => {
+          if (data?.ok) {
+            alert('course deleted successfully')
+            navigate(-1)
+          } else {
+            throw new Error(data?.message || 'something went wrong')
+          }
+        })
+        .catch(err => {
+          alert(err?.message || 'failed to fetch assigned courses')
+          setLoading(false)
+        })
+    }
+  }
+
 
 
   return (
@@ -365,14 +385,14 @@ export default function UpdateAssignedCourse() {
                 {assigned?.assigned_lecturers.map((item: any, index: any) => {
                   let temp = item.assigned_departments
                   temp.map((item: any, index: number) => {
-                    
+
                     const f = departments.find((d) => d.id == item)
                     if (f) {
                       temp[index] = f.name
                     }
                   })
                   const h = lecturers.find((l) => l.id == item.id)
-                 
+
 
                   return (
                     <li key={index} className="flex flex-col gap-2">
@@ -414,6 +434,10 @@ export default function UpdateAssignedCourse() {
           </div>
 
         </form>
+        <div className='max-w-[400px] mx-auto mt-5 flex flex-col items-center'>
+          <h6 className='font-[600] text-[18px] text-[#346837] text-center'>Dangerous Operation</h6>
+          <button onClick={delete_course} className="bg-[#700] text-white p-2 m-2 rounded-md w-[50vw]  max-w-[120px]">Delete Course</button>
+        </div>
       </section>
     </div>
   )
