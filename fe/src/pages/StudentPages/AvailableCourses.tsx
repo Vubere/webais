@@ -147,6 +147,7 @@ export default function AvailableCourses() {
       f.append('student_id', user.id)
       f.append('semester', current_semester.toString())
       f.append('session', session)
+      f.append('method',"POST")
 
       fetch(base + '/course_registration', {
         method: 'POST',
@@ -243,6 +244,7 @@ export default function AvailableCourses() {
       f.append('student_id', user.id)
       f.append('semester', current_semester.toString())
       f.append('session', session)
+      f.append('method',"POST")
       fetch(base + '/unregister_course', {
         method: 'POST',
         body: f

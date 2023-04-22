@@ -2,8 +2,6 @@
 require 'Api.php';
 use Api\Api;
 
-
-
 //getting current url
 $current_link = $_SERVER['REQUEST_URI'];
 

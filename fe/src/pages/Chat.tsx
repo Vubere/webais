@@ -93,6 +93,7 @@ export default function Message() {
 
       data.append('receiver_type', id[0]?.toLowerCase() == 's' ? 'students' : id[0]?.toLowerCase() == 'l' ? 'lecturers' : 'administrators')
       data.append('receiver_id', id)
+      data.append('method', 'POST')
 
       if (image)
         data.append('image', image)

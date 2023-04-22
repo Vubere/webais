@@ -60,15 +60,13 @@ export default function ViewSingleCourse() {
     const check = confirm('Are you sure you want to delete this course?');
     if (check) {
       try {
+        const formData = new FormData()
+        formData.append('id', id as string)
+        formData.append('method', 'DELETE')
 
         const req = await fetch(base + '/courses', {
-          method: 'DELETE',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({
-            id: id
-          })
+          method: 'POST',
+          body: formData
         })
         const res = await req.json();
         if (res.ok == 1) {

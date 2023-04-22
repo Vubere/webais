@@ -94,6 +94,7 @@ export default function Annoucements() {
       f.append('date', form.date)
       f.append('time', form.time)
       f.append('targets', form.targets)
+      f.append('method', 'POST')
 
       fetch(base+`/announcements`, {
         method: 'POST',

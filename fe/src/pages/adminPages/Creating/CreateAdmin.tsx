@@ -92,6 +92,7 @@ export default function CreateAdmin() {
         f.append('dob', user.dob)
         f.append('gender', user.gender)
         f.append('adminId', user.adminId)
+        f.append('method','POST')
         
         const res = await fetch(base+'/admins', {
           method: 'POST',

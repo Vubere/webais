@@ -87,6 +87,7 @@ export default function CreateFee() {
       f.append('last_updated', fee.last_updated)
       f.append('id', fee.id.toString())
       
+      f.append('method', 'POST')
 
       fetch(base+'/fee', {
         method: 'POST',

@@ -108,6 +108,8 @@ export default function CreateLectures() {
       f.append('lecturer_id', lectures.lecturer_id)
       f.append('venue', lectures.venue)
 
+      f.append('method', 'POST')
+
       fetch(base+'/create_lecture', {
         method: 'POST',
         body: f

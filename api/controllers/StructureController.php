@@ -67,11 +67,17 @@ class StructureController
         echo json_encode($response);
       }
     } elseif ($method == 'POST') {
-      $this->createDepartment();
-    } elseif ($method == 'PUT') {
-      $this->updateDepartment();
-    } elseif ($method == 'DELETE') {
-      $this->deleteDepartment();
+      $method = $_POST['method'];
+      if ($method == 'POST') {
+        $this->createDepartment();
+      } elseif ($method == 'PUT') {
+        $this->updateDepartment();
+      } elseif ($method == 'DELETE') {
+        $this->deleteDepartment();
+      } else {
+        $this->getHeaders();
+        echo json_encode(array('status' => 'error', 'message' => 'Invalid request method'));
+      }
     } else {
       $this->getHeaders();
       echo json_encode(array('status' => 'error', 'message' => 'Invalid request method'));
@@ -81,48 +87,7 @@ class StructureController
   {
     $this->conn;
     $method = $_SERVER['REQUEST_METHOD'];
-    if ($method == 'POST') {
-      $post = $_POST;
-      try {
-        $department_id = $post['department_id'];
-        $min_units = $post['min_units'];
-        $max_units = $post['max_units'];
-        $level = $post['level'];
-        $semester = htmlspecialchars($post['semester']);
-        $session = htmlspecialchars($post['session']);
-        $sql = "INSERT INTO department_units_distribution(
-        department_id,
-        min_units,
-        max_units,
-        level,
-        semester,
-        session
-      ) VALUES (
-        ?,?,?,?,?,?
-      )";
-        $stmt = $this->conn->prepare($sql);
-        $stmt->bind_param(
-          "iiiiis",
-          $department_id,
-          $min_units,
-          $max_units,
-          $level,
-          $semester,
-          $session
-        );
-        $res = $stmt->execute();
-        if ($res) {
-          $this->getHeaders();
-          echo json_encode(array('status' => 'success', 'ok'=>1, $session));
-        } else {
-          $this->getHeaders();
-          echo json_encode(array('status' => 'error', 'ok'=>0, 'message' => 'Error occured while saving data'));
-        }
-      } catch (Exception $e) {
-        $this->getHeaders();
-        echo json_encode(array('status' => 'error', 'message' => $e->getMessage(), 'ok'=>0));
-      }
-    } elseif ($method == 'GET') {
+    if ($method == 'GET') {
       try {
         $sql = "SELECT dul.id, dul.min_units, dul.max_units, dul.semester, dul.session, dul.level, d.name as department_name, d.faculty_id, d.id as department_id FROM department_units_distribution as dul INNER JOIN departments as d ON d.id = dul.department_id WHERE 1=1";
         if (isset($_GET['id'])) {
@@ -132,7 +97,7 @@ class StructureController
           $sql .= " AND d.id = " . $_GET['department_id'];
         }
         if (isset($_GET['session'])) {
-          $sql .= " AND dul.session='".$_GET['session']."'";
+          $sql .= " AND dul.session='" . $_GET['session'] . "'";
         }
         if (isset($_GET['semester'])) {
           $sql .= " AND dul.semester = " . $_GET['semester'];
@@ -155,65 +120,112 @@ class StructureController
         }
       } catch (Exception $e) {
         $this->getHeaders();
-        echo json_encode(array('status' => 'error', 'message' => $e->getMessage(),'ok'=>0));
+        echo json_encode(array('status' => 'error', 'message' => $e->getMessage(), 'ok' => 0));
       }
-    }elseif($method=='PUT'){
-      $post = json_decode(file_get_contents('php://input'), true);
-      try {
-        $id = $post['id'];
-        $min_units = $post['min_units'];
-        $max_units = $post['max_units'];
-        $level = $post['level'];
-        $semester = $post['semester'];
-        $session = htmlspecialchars($post['session']);
-        $sql = "UPDATE department_units_distribution SET min_units = ?, max_units = ?, level = ?, semester = ?, session = ? WHERE id = ?";
-        $stmt = $this->conn->prepare($sql);
-        $stmt->bind_param(
-          "iiiiss",
-          $min_units,
-          $max_units,
-          $level,
-          $semester,
-          $session,
-          $id
-        );
-        $res = $stmt->execute();
-        if ($res) {
+    } elseif ($method == 'POST') {
+      $post = $_POST;
+      $method = $post['method'];
+      if ($method == 'POST') {
+        try {
+          $department_id = $post['department_id'];
+          $min_units = $post['min_units'];
+          $max_units = $post['max_units'];
+          $level = $post['level'];
+          $semester = htmlspecialchars($post['semester']);
+          $session = htmlspecialchars($post['session']);
+          $sql = "INSERT INTO department_units_distribution(
+        department_id,
+        min_units,
+        max_units,
+        level,
+        semester,
+        session
+      ) VALUES (
+        ?,?,?,?,?,?
+      )";
+          $stmt = $this->conn->prepare($sql);
+          $stmt->bind_param(
+            "iiiiis",
+            $department_id,
+            $min_units,
+            $max_units,
+            $level,
+            $semester,
+            $session
+          );
+          $res = $stmt->execute();
+          if ($res) {
+            $this->getHeaders();
+            echo json_encode(array('status' => 'success', 'ok' => 1, $session));
+          } else {
+            $this->getHeaders();
+            echo json_encode(array('status' => 'error', 'ok' => 0, 'message' => 'Error occured while saving data'));
+          }
+        } catch (Exception $e) {
           $this->getHeaders();
-          echo json_encode(array('status' => 'success', 'ok'=>1, $session));
-        } else {
-          $this->getHeaders();
-          echo json_encode(array('status' => 'error', 'ok'=>0));
+          echo json_encode(array('status' => 'error', 'message' => $e->getMessage(), 'ok' => 0));
         }
-      } catch (Exception $e) {
-        $this->getHeaders();
-        echo json_encode(array('status' => 'error', 'message' => $e->getMessage(), 'ok'=>0));
-      }
-    }elseif($method=='DELETE'){
-      $post = json_decode( file_get_contents('php://inputs'),true);
-      try {
-        $id = $post['id'];
-        $sql = "DELETE FROM department_units_distribution WHERE id = ?";
-        $stmt = $this->conn->prepare($sql);
-        $stmt->bind_param(
-          "i",
-          $id
-        );
-        $res = $stmt->execute();
-        if ($res) {
+      } elseif ($method == 'PUT') {
+        $post = $_POST;
+        try {
+          $id = $post['id'];
+          $min_units = $post['min_units'];
+          $max_units = $post['max_units'];
+          $level = $post['level'];
+          $semester = $post['semester'];
+          $session = htmlspecialchars($post['session']);
+          $sql = "UPDATE department_units_distribution SET min_units = ?, max_units = ?, level = ?, semester = ?, session = ? WHERE id = ?";
+          $stmt = $this->conn->prepare($sql);
+          $stmt->bind_param(
+            "iiiiss",
+            $min_units,
+            $max_units,
+            $level,
+            $semester,
+            $session,
+            $id
+          );
+          $res = $stmt->execute();
+          if ($res) {
+            $this->getHeaders();
+            echo json_encode(array('status' => 'success', 'ok' => 1, $session));
+          } else {
+            $this->getHeaders();
+            echo json_encode(array('status' => 'error', 'ok' => 0));
+          }
+        } catch (Exception $e) {
           $this->getHeaders();
-          echo json_encode(array('status' => 'success', 'ok'=>1));
-        } else {
-          $this->getHeaders();
-          echo json_encode(array('status' => 'error', 'ok'=>0));
+          echo json_encode(array('status' => 'error', 'message' => $e->getMessage(), 'ok' => 0));
         }
-      } catch (Exception $e) {
+      } elseif ($method == 'DELETE') {
+        $post = $_POST;
+        try {
+          $id = $post['id'];
+          $sql = "DELETE FROM department_units_distribution WHERE id = ?";
+          $stmt = $this->conn->prepare($sql);
+          $stmt->bind_param(
+            "i",
+            $id
+          );
+          $res = $stmt->execute();
+          if ($res) {
+            $this->getHeaders();
+            echo json_encode(array('status' => 'success', 'ok' => 1));
+          } else {
+            $this->getHeaders();
+            echo json_encode(array('status' => 'error', 'ok' => 0));
+          }
+        } catch (Exception $e) {
+          $this->getHeaders();
+          echo json_encode(array('status' => 'error', 'message' => $e->getMessage(), 'ok' => 0));
+        }
+      } else {
         $this->getHeaders();
-        echo json_encode(array('status' => 'error', 'message' => $e->getMessage(),'ok'=>0));
+        echo json_encode(array('status' => 'error', 'message' => 'Invalid request method', 'ok' => 0));
       }
-    }else{
+    } else {
       $this->getHeaders();
-      echo json_encode(array('status' => 'error', 'message' => 'Invalid request method', 'ok'=>0));
+      echo json_encode(array('status' => 'error', 'message' => 'Invalid request method', 'ok' => 0));
     }
   }
 
@@ -256,7 +268,7 @@ class StructureController
   }
   private function updateDepartment()
   {
-    $post = json_decode(file_get_contents('php://input'), true);
+    $post = $_POST;
     $id = $post['id'];
     $name = $post['name'];
     $faculty = $post['faculty_id'];
@@ -281,7 +293,7 @@ class StructureController
   }
   private function deleteDepartment()
   {
-    $delete = json_decode(file_get_contents('php://input'), true);
+    $delete = $_POST;
     $id = $delete['id'];
     $sql = "DELETE FROM departments WHERE id = ?";
     try {
@@ -362,11 +374,17 @@ class StructureController
         echo json_encode($response);
       }
     } elseif ($method == 'POST') {
-      $this->createFaculty();
-    } elseif ($method == 'PUT') {
-      $this->updateFaculty();
-    } elseif ($method == 'DELETE') {
-      $this->deleteFaculty();
+      $method = $_POST['method'];
+      if ($method == 'POST') {
+        $this->createFaculty();
+      } elseif ($method == 'PUT') {
+        $this->updateFaculty();
+      } elseif ($method == 'DELETE') {
+        $this->deleteFaculty();
+      } else {
+        $this->getHeaders();
+        echo json_encode(array('status' => 'error', 'message' => 'Invalid request method'));
+      }
     } else {
       $this->getHeaders();
       echo json_encode(array('status' => 'error', 'message' => 'Invalid request method'));
@@ -407,7 +425,7 @@ class StructureController
   }
   private function updateFaculty()
   {
-    $put = json_decode(file_get_contents('php://input'), true);
+    $put = $_POST;
     $id = $put['id'];
     $name = $put['name'];
     $sql = "UPDATE faculties SET name = ? WHERE id = ?";
@@ -433,7 +451,7 @@ class StructureController
   }
   private function deleteFaculty()
   {
-    $post = json_decode(file_get_contents('php://input'), true);
+    $post = $_POST;
     $id = $post['id'];
     $sql = "DELETE FROM faculties WHERE id = ?";
     $stmt = $this->conn->prepare($sql);

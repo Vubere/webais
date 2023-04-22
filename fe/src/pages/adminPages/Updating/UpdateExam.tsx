@@ -97,7 +97,7 @@ export default function UpdateLectures() {
   }
   const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-    if (validate()) {
+    if (validate()&&id) {
       try {
         const f = new FormData()
         f.append('time', exam.time)
@@ -106,21 +106,13 @@ export default function UpdateLectures() {
         f.append('course_id', exam.course_id)
         f.append('lecturer_id', exam.lecturer_id)
         f.append('venue', exam.venue)
+        f.append('id', id.toString())
+        f.append('method', 'PUT')
+
 
         const res = await fetch(base+"/exam", {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            time: exam.time,
-            date: exam.date,
-            duration: exam.duration,
-            course_id: exam.course_id,
-            lecturer_id: exam.lecturer_id,
-            venue: exam.venue,
-            id: id
-          }),
+          method: "POST",
+          body: f
         })
         const data = await res.json()
       
@@ -179,14 +171,13 @@ export default function UpdateLectures() {
   const delete_exam = async () => {
     if(id){
       try {
+        const formData = new FormData()
+        formData.append('id', id.toString())
+        formData.append('method', 'DELETE')
+
         const res = await fetch(base+"/exam", {
-          method: "DELETE",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            id: id
-          }),
+          method: "POST",
+          body: formData
         })
         const data = await res.json()
         if (data.ok) {

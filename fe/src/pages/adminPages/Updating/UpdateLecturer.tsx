@@ -49,12 +49,24 @@ export default function UpdateLecturer() {
       
 
       let url = base + `/lecturers?id=${id}`
+
+      const formData = new FormData()
+      formData.append('id', form.id)
+      formData.append('firstName', form.firstName)
+      formData.append('lastName', form.lastName)
+      formData.append('otherNames', form.otherNames)
+      formData.append('email', form.email)
+      formData.append('phone', form.phone)
+      formData.append('dob', form.dob)
+      formData.append('password', form.password)
+      formData.append('gender', form.gender)
+      formData.append('degreeAcquired', form.degreeAcquired)
+      formData.append('discipline', form.discipline)
+      formData.append('method', 'PUT')
+
       const res = await fetch(url, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(form),
+        method: 'POST',
+        body: formData
       })
 
       const data = await res.json()
@@ -74,12 +86,13 @@ export default function UpdateLecturer() {
       alert('no lecturer id found')
       return
     }
+    const formData = new FormData()
+    formData.append('id', id)
+    formData.append('method', 'DELETE')
+
     fetch(base + '/lecturers?id=' + id, {
-      method: 'DELETE',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({ id: id })
+      method: 'POST',
+      body: formData
     })
       .then(res => res.json())
       .then(data => {

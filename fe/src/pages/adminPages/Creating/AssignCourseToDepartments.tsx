@@ -259,6 +259,7 @@ export default function AssignCoursesToDepartments() {
         form.append('level', course.level.toString())
         form.append('assigned_lecturers', JSON.stringify(course.assigned_lecturers))
         form.append('id', course.id)
+        form.append('method', 'POST')
         
         const req = await fetch(base + '/assign_course', {
           method: 'POST',

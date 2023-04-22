@@ -85,15 +85,17 @@ export default function UpdateDepartment() {
   const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     if (validate()) {
-      console.log(errors)
       try {
+        const formData = new FormData()
+        formData.append('name', department.name)
+        formData.append('faculty_id', department.faculty_id)
+        formData.append('duration', department.duration)
+        formData.append('id', department.id)
+        formData.append('method', 'PUT')
 
         const res = await fetch(base + `/department`, {
-          method: 'PUT',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(department),
+          method: 'POST',
+          body: formData
         })
         const result = await res.json()
 
@@ -110,12 +112,13 @@ export default function UpdateDepartment() {
   }
   const delete_dept = async () => {
     try {
+      const formData = new FormData()
+      formData.append('id', department.id)
+      formData.append('method', 'DELETE')
+
       const res = await fetch(base + `/department`, {
-        method: 'DELETE',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ id: department.id }),
+        method: 'POST',
+        body: formData
       })
       const result = await res.json()
       

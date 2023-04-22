@@ -50,6 +50,7 @@ export default function ViewAssignedCourse() {
         f.append('semester', semester.toString())
         f.append('all', 'true')
         f.append('course_id', id as string)
+        f.append('method', 'POST')
 
         const req = await fetch(base + '/session_result', {
           method: 'POST',
@@ -77,6 +78,7 @@ export default function ViewAssignedCourse() {
         f.append('all', 'false')
         f.append('bool', bool ? '1' : '0')
         f.append('course_id', id as string)
+        f.append('method', "POST")
 
         const req = await fetch(base + '/grading', {
           method: 'POST',
@@ -106,6 +108,7 @@ export default function ViewAssignedCourse() {
         f.append('all', 'false')
         f.append('bool', bool ? '1' : '0')
         f.append('course_id', id as string)
+        f.append('method', "POST")
 
         const req = await fetch(base + '/registration', {
           method: 'POST',
@@ -130,15 +133,12 @@ export default function ViewAssignedCourse() {
     const check = confirm('Are you sure you want to delete this course?');
     if (check) {
       try {
-
+        const formData = new FormData()
+        formData.append('id', id as string)
+        formData.append('method', 'DELETE')
         const req = await fetch(base + '/courses', {
-          method: 'DELETE',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({
-            id: id
-          })
+          method: 'POST',
+          body: formData
         })
         const res = await req.json();
         if (res.ok == 1) {

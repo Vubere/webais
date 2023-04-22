@@ -86,9 +86,22 @@ export default function UpdateFee() {
     e.preventDefault()
     if (validate()) {
 
+      const formData = new FormData()
+      formData.append('id', fee.id.toString())
+      formData.append('name', fee.name)
+      formData.append('amount', fee.amount.toString())
+      formData.append('department', fee.department)
+      formData.append('session', fee.session)
+      formData.append('semester', fee.semester.toString())
+      formData.append('level', fee.level)
+      formData.append('status', fee.status)
+      formData.append('created', fee.created)
+      formData.append('last_updated', fee.last_updated)
+      formData.append('method', 'PUT')
+
       fetch(base+'/fee', {
-        method: 'PUT',
-        body: JSON.stringify(fee),
+        method: 'POST',
+        body: formData
       })
         .then(res => res.json())
         .then(data => {
@@ -125,12 +138,13 @@ export default function UpdateFee() {
   const delete_fee = () => {
     const reply = prompt('are you sure you want to delete this fee? Type yes to confirm')
     if(reply?.toLowerCase() !== 'yes') return
+
+    const formData = new FormData()
+    formData.append('id', fee.id.toString())
+    formData.append('method', 'DELETE')
     fetch(base+'/fee' , {
-      method: 'DELETE',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({ id: id })
+      method: 'POST',
+      body: formData
     })
       .then(res => res.json())
       .then(data => {

@@ -99,12 +99,30 @@ export default function UpdateAssignedCourse() {
   const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     if (Validate()) {
+
+      const formData = new FormData()
+      formData.append('id', assigned.id.toString())
+      formData.append('code', assigned.code)
+      formData.append('type', assigned.type)
+      formData.append('units', assigned.units.toString())
+      formData.append('departments', JSON.stringify(selectedDepartments))
+      formData.append('course_id', assigned.course_id.toString())
+      formData.append('session', assigned.session)
+      formData.append('semester', assigned.semester.toString())
+      formData.append('level', assigned.level.toString())
+      formData.append('assigned_lecturers', JSON.stringify(assigned.assigned_lecturers))
+      formData.append('faculties', JSON.stringify(selectedFaculties))
+      formData.append('registration_open', assigned.registration_open.toString())
+      formData.append('grading_open', assigned.grading_open.toString())
+      formData.append('description', assigned.description)
+      formData.append('title', assigned.title)
+      
+      formData.append('method', 'PUT')
+
+      setLoading(true)
       fetch(base + '/assign_course', {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(assigned)
+        method: 'POST',
+        body: formData
       })
         .then(res => res.json())
         .then((data: any) => {
@@ -113,6 +131,7 @@ export default function UpdateAssignedCourse() {
           } else {
             throw new Error(data?.message || 'something went wrong')
           }
+          setLoading(false)
         })
         .catch(err => {
           alert(err?.message || 'failed to fetch assigned courses')
@@ -262,12 +281,14 @@ export default function UpdateAssignedCourse() {
   }
   const delete_course = () => {
     if (window.confirm('Are you sure you want to delete this course?')) {
+      setLoading(true)
+      const formData = new FormData()
+      formData.append('id', assigned.id.toString())
+      formData.append('method', 'DELETE')
+
       fetch(base + '/assign_course', {
-        method: 'DELETE',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ id: assigned.id })
+        method: 'POST',
+        body: formData
       })
         .then(res => res.json())
         .then((data: any) => {

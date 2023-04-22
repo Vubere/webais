@@ -92,6 +92,7 @@ export default function CreateLectures() {
     f.append('course_id', exam.course_id)
     f.append('lecturer_id', exam.lecturer_id)
     f.append('venue', exam.venue)
+    f.append('method', 'POST')
 
     if (validate()) {
       fetch(base + '/create_exam', {

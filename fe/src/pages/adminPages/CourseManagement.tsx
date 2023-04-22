@@ -45,7 +45,7 @@ export default function CourseManagement() {
         f.append('session', Session?.session?.session)
         f.append('all', 'true')
         f.append('bool', !!bool?'1':'0')
-
+        f.append('method', 'POST')
         const req = await fetch(base + '/grading', {
           method: 'POST',
           body: f
@@ -72,7 +72,7 @@ export default function CourseManagement() {
         f.append('semester', current_semester.toString())
         f.append('all', 'true')
         f.append('bool', bool.toString())
-
+        f.append('method', 'POST')
         const req = await fetch(base + '/registration', {
           method: 'POST',
           body: f

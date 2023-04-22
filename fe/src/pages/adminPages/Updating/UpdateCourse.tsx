@@ -69,13 +69,18 @@ export default function UpdateCourse() {
 
   const update = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-    if (validate()) {
+    if (validate()&&id) {
       try {
+        const formData = new FormData()
+        formData.append('title', course.title)
+        formData.append('description', course.description)
+        formData.append('id', id.toString())
+        formData.append('method', 'PUT')
 
         const url = base + '/courses'
         const res = await fetch(url, {
-          method: 'PUT',
-          body: JSON.stringify({ ...course, id: id })
+          method: 'POST',
+          body: formData
         })
         const data = await res.json()
         if (data.ok) {
@@ -91,13 +96,16 @@ export default function UpdateCourse() {
   const delete_course = async (e: any) => {
     e.preventDefault()
     const boolean = window.confirm('Are you sure you want to delete this course?')
-    if (boolean) {
+    if (boolean&&id) {
 
       try {
         const url = base + '/courses'
+        const formData = new FormData()
+        formData.append('id', id.toString())
+        formData.append('method', 'DELETE')
         const res = await fetch(url, {
-          method: 'DELETE',
-          body: JSON.stringify({ id: id })
+          method: 'POST',
+          body: formData
         })
         const data = await res.json()
         console.log(data)

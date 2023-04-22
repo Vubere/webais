@@ -83,12 +83,27 @@ export default function PersonalInfo() {
       try {
         let url = base+`/lecturers`
 
+        const formData = new FormData()
+        formData.append('firstName', lecturer.firstName)
+        formData.append('lastName', lecturer.lastName)
+        formData.append('otherNames', lecturer.otherNames)
+        formData.append('email', lecturer.email)
+        formData.append('phone', lecturer.phone)
+        formData.append('dob', formatDateToYMD(lecturer.dob))
+        formData.append('password', lecturer.password)
+        formData.append('gender', lecturer.gender)
+        formData.append('faculty', lecturer.faculty)
+        formData.append('department', lecturer.department)
+        formData.append('level', lecturer.level)
+        formData.append('id', lecturer.id)
+        formData.append('confirmPassword', lecturer.confirmPassword)
+
+        formData.append('method', 'PUT')
+
+
         const res = await fetch(url, {
-          method: 'PUT',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(lecturer),
+          method: 'POST',
+          body: formData
         })
         const data = await res.json()
        

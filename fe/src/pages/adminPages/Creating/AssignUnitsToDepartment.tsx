@@ -117,6 +117,7 @@ export default function AssignUnitsToDepartment() {
       form.append('semester', semester.toString())
       form.append('min_units', min_units)
       form.append('max_units', max_units)
+      form.append('method', "POST")
       setLoading(true)
       fetch(base + '/assign_unit_load', {
         method: 'POST',

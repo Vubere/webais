@@ -49,9 +49,10 @@ export default function UpdateFaculty() {
     const f = new FormData()
     f.append('name', faculty.name)
     f.append('id', faculty.id)
+    f.append('method', 'PUT')
 
     fetch(base + `/faculty`, {
-      method: 'PUT',
+      method: 'POST',
       body: f
     }).then(res => res.json())
       .then(data => {
@@ -66,6 +67,7 @@ export default function UpdateFaculty() {
     f.append('name', department.name)
     f.append('duration', department.duration)
     f.append('faculty_id', faculty.id)
+    f.append('method', 'POST')
 
     fetch(base + `/department`, {
       method: 'POST',

@@ -163,13 +163,30 @@ export default function UpdateAdmin() {
       try {
         let url = base + `/students`
         
+        const formData = new FormData()
+
+        formData.append('firstName', form.firstName)
+        formData.append('lastName', form.lastName)
+        formData.append('otherNames', form.otherNames)
+        formData.append('email', form.email)
+        formData.append('duration', form.duration)
+        formData.append('entrance_session', form.entrance_session)
+        formData.append('password', form.password)
+        formData.append('phone', form.phone)  
+        formData.append('dob', form.dob)
+        formData.append('gender', form.gender)
+        formData.append('faculty', form.faculty)
+        formData.append('department', form.department)
+        formData.append('level', form.level)
+        formData.append('studentId', form.studentId)
+        formData.append('id', form.id)
+
+        formData.append('method', 'PUT')
+
 
         const res = await fetch(url, {
-          method: 'PUT',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify(form),
+          method: 'POST',
+          body: formData
         })
         const data = await res.json()
         if(data.ok){
@@ -187,13 +204,15 @@ export default function UpdateAdmin() {
   }
   const delete_student = () => {
     const reply = prompt('are you sure you want to delete this Student? Type yes to confirm')
-    if (reply?.toLowerCase() !== 'yes') return
+    if (reply?.toLowerCase() !== 'yes'||!id) return
+
+    const formData = new FormData()
+    formData.append('id', id)
+    formData.append('method', 'DELETE')
+
     fetch(base + '/students?id=' + id, {
-      method: 'DELETE',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({ id: id })
+      method: 'POST',
+      body: formData
     })
       .then(res => res.json())
       .then(data => {

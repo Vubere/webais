@@ -49,17 +49,17 @@ export default function ViewSingleCourse() {
 
   const unregisterCourse = (course: course) => {
     if (Session?.session && user) {
+
+      const formData = new FormData()
+      formData.append('course_id', course.id?.toString() as string)
+      formData.append('student_id', user.id)
+      formData.append('semester', Session.session.current_semester.toString())
+      formData.append('session', Session.session.session)
+      formData.append('method', 'DELETE')
+
       fetch(base+'/course_registration', {
-        method: 'DELETE',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          course_id: course.id,
-          student_id: user.id,
-          semester: Session.session.current_semester,
-          session: Session.session.session
-        })
+        method: 'POST',
+        body: formData
       }).then(res => res.json())
         .then(res => {
           if (res.status == 200) {
@@ -82,6 +82,7 @@ export default function ViewSingleCourse() {
       f.append('student_id', user.id)
       f.append('semester', Session.session.current_semester.toString())
       f.append('session', Session.session.session)
+      f.append('method', 'POST')
 
       fetch(base+'/course_registration', {
         method: 'POST',

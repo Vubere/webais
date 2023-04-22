@@ -55,12 +55,18 @@ export default function EditUnitLoad() {
     e.preventDefault()
     if (validate()) {
       console.log(unitLoad.session)
+      const formData = new FormData()
+      formData.append('department_id', unitLoad.department_id)
+      formData.append('session', unitLoad.session)
+      formData.append('semester', unitLoad.semester.toString())
+      formData.append('level', unitLoad.level)
+      formData.append('min_units', unitLoad.min_units)
+      formData.append('max_units', unitLoad.max_units)
+      formData.append('method', 'PUT')
+
       fetch(base + '/assign_unit_load', {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(unitLoad)
+        method: 'POST',
+        body: formData
       }).then(res => res.json())
         .then(data => {
           console.log(data)

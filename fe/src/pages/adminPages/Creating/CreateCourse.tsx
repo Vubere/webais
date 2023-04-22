@@ -44,6 +44,8 @@ export default function CreateCourse() {
         const form = new FormData()
         form.append('title', course.title)
         form.append('description', course.description)
+
+        form.append('method', 'POST')
         const url = base + '/courses'
         const res = await fetch(url, {
           method: 'POST',

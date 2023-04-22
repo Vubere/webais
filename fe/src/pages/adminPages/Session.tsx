@@ -137,18 +137,12 @@ export default function Session() {
       f.append('second_semester_start', sss.toString())
       f.append('second_semester_end', sse.toString())
       const method = globalSessionHandler?.session?.session == session.session ? "PUT" : "POST"
-      const body = globalSessionHandler?.session?.session == session.session ? JSON.stringify({
-        session: session.session,
-        current_semester: session.current_semester,
-        first_semester_start: getUnixTime(new Date(session.first_semester_start)),
-        first_semester_end: getUnixTime(new Date(session.first_semester_end)),
-        second_semester_start: getUnixTime(new Date(session.second_semester_start)),
-        second_semester_end: getUnixTime(new Date(session.second_semester_end)),
-      }) : f
+      f.append('method', method)
+     
 
       fetch(base + '/session', {
-        method: method,
-        body: body
+        method: "POST",
+        body: f
       })
         .then((res) => res.json())
         .then((result) => {

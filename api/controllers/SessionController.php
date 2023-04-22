@@ -49,53 +49,56 @@ class SessionController
         echo json_encode(['message' => 'Error occured', 'error' => $e->getMessage()]);
       }
     } elseif ($method == 'POST') {
-      $post = $_POST;
-      $session = $post['session'];
-      $current_semester = $post['semester'];
+      $method = $_POST['method'];
+      if ($method == 'POST') {
+        $post = $_POST;
+        $session = $post['session'];
+        $current_semester = $post['semester'];
 
-      $first_semester_start = $post['first_semester_start'];
-      $first_semester_end = $post['first_semester_end'];
-      $second_semester_start = $post['second_semester_start'];
-      $second_semester_end = $post['second_semester_end'];
-      $current = 1;
-      /* turn previously current semester to 0 */
+        $first_semester_start = $post['first_semester_start'];
+        $first_semester_end = $post['first_semester_end'];
+        $second_semester_start = $post['second_semester_start'];
+        $second_semester_end = $post['second_semester_end'];
+        $current = 1;
+        /* turn previously current semester to 0 */
 
-      $sql = "INSERT INTO session (session, first_semester_start, first_semester_end, second_semester_start, second_semester_end, current) VALUES ('$session', '$first_semester_start', '$first_semester_end', '$second_semester_start', '$second_semester_end', '$current')";
-      try {
-        $result = $this->conn->query($sql);
-        if ($result) {
-          $sql = "UPDATE session SET current = 0 WHERE current = 1";
-          $this->conn->query($sql);
-          $sql = "UPDATE session SET current = 1 WHERE session = '$session'";
-          $this->conn->query($sql);
+        $sql = "INSERT INTO session (session, first_semester_start, first_semester_end, second_semester_start, second_semester_end, current) VALUES ('$session', '$first_semester_start', '$first_semester_end', '$second_semester_start', '$second_semester_end', '$current')";
+        try {
+          $result = $this->conn->query($sql);
+          if ($result) {
+            $sql = "UPDATE session SET current = 0 WHERE current = 1";
+            $this->conn->query($sql);
+            $sql = "UPDATE session SET current = 1 WHERE session = '$session'";
+            $this->conn->query($sql);
+            $this->getHeaders();
+            echo json_encode(['message' => 'Session created successfully', 'ok' => 1]);
+          } else {
+            throw new Exception('Error creating session');
+          }
+        } catch (Exception $e) {
           $this->getHeaders();
-          echo json_encode(['message' => 'Session created successfully', 'ok' => 1]);
-        } else {
-          throw new Exception('Error creating session');
+          echo json_encode(['message' => 'Error occured', 'error' => $e->getMessage(), 'ok' => 0]);
         }
-      } catch (Exception $e) {
-        $this->getHeaders();
-        echo json_encode(['message' => 'Error occured', 'error' => $e->getMessage(), 'ok' => 0]);
-      }
-    } elseif ($method == 'PUT') {
-      $post = json_decode(file_get_contents('php://input'), true);
-      $session = $post['session'];
+      } elseif ($method == 'PUT') {
+        $post = $_POST;
+        $session = $post['session'];
 
-      $first_semester_start = $post['first_semester_start'];
-      $first_semester_end = $post['first_semester_end'];
-      $second_semester_start = $post['second_semester_start'];
-      $second_semester_end = $post['second_semester_end'];
-      $current = 1;
-      $sql = 'UPDATE session SET   first_semester_start = "' . $first_semester_start . '", first_semester_end = "' . $first_semester_end . '", second_semester_start = "' . $second_semester_start . '", second_semester_end = "' . $second_semester_end . '", current = "' . $current . '" WHERE session = "' . $session . '"';
-      try {
-        $result = $this->conn->query($sql);
-        if ($result) {
-          echo json_encode(['message' => 'Session updated successfully', 'ok' => 1, 'post' => $post]);
-        } else {
-          throw new Exception('Error updating session');
+        $first_semester_start = $post['first_semester_start'];
+        $first_semester_end = $post['first_semester_end'];
+        $second_semester_start = $post['second_semester_start'];
+        $second_semester_end = $post['second_semester_end'];
+        $current = 1;
+        $sql = 'UPDATE session SET   first_semester_start = "' . $first_semester_start . '", first_semester_end = "' . $first_semester_end . '", second_semester_start = "' . $second_semester_start . '", second_semester_end = "' . $second_semester_end . '", current = "' . $current . '" WHERE session = "' . $session . '"';
+        try {
+          $result = $this->conn->query($sql);
+          if ($result) {
+            echo json_encode(['message' => 'Session updated successfully', 'ok' => 1, 'post' => $post]);
+          } else {
+            throw new Exception('Error updating session');
+          }
+        } catch (Exception $e) {
+          echo json_encode(['message' => $e->getMessage(), 'ok' => 0]);
         }
-      } catch (Exception $e) {
-        echo json_encode(['message' => $e->getMessage(), 'ok' => 0]);
       }
     } else {
       echo json_encode(['message' => 'Method not allowed', 'ok' => 0]);

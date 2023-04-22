@@ -145,6 +145,7 @@ export default function CreateUser() {
         f.append('type', 'admin')
         f.append('id', admin?.id)
         f.append('password', password)
+        f.append('method', 'POST')
         const authAdmin = await fetch(base + '/authenticate', {
           method: 'POST',
           body: f
@@ -166,6 +167,8 @@ export default function CreateUser() {
           f.append('department', user.department)
           f.append('level', user.level)
           f.append('studentId', user.studentId)
+
+          f.append('method', 'POST')
 
           const res = await fetch(base + '/students', {
             method: 'POST',

@@ -137,6 +137,7 @@ const Result_row = ({ row, session, course_id, grading }: { row: Result, session
         f.append('session', session)
         f.append('course_id', course_id.toString())
         f.append('student_id', row.student_id)
+        f.append('method', 'POST')
 
         const res = await fetch(base + '/grades', {
           method: 'POST',

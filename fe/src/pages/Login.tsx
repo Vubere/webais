@@ -39,6 +39,7 @@ export default function Login({ title, src }: { title: string, src: string }) {
       f.append('id',form.id.toUpperCase())
       f.append('password', form.password)
       f.append('type', title.toLowerCase())
+      f.append('method','POST')
    
       try {
         const res = await fetch(base+'/authenticate', {

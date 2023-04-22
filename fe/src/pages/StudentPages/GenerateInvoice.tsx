@@ -93,6 +93,7 @@ export default function GenerateInvoice() {
       f.append('invoice_no', invoice)
       f.append('status', 'pending')
       f.append('date', cur_date)
+      f.append('method', 'POST')
 
       const res = await fetch(base+'/invoice', {
         method: 'POST',

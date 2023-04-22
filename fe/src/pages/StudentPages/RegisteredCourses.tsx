@@ -31,17 +31,16 @@ export default function RegisteredCourses() {
 
   const unregisterCourse = (course: Course) => {
     if (Session?.session && user) {
+
+      const formData = new FormData()
+      formData.append('course_id', course.id)
+      formData.append('student_id', user.id)
+      formData.append('semester', Session?.session.current_semester.toString())
+      formData.append('session', Session.session.session)
+      formData.append('method', 'POST')
       fetch(base+'/course_registration', {
-        method: 'DELETE',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          course_id: course.id,
-          student_id: user.id,
-          semester: Session?.session.current_semester,
-          session: Session.session.session
-        })
+        method: 'POST',
+        body: formData
       }).then(res => res.json())
         .then(res => {
           if (res.status == 200) {

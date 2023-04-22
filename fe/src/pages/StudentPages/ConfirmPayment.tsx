@@ -84,6 +84,7 @@ export default function ConfirmPayment() {
       f.append('receipt_number', form.receipt_number)
       f.append('student_id', user?.id)
       f.append('fee_id', id?.toString() as string)
+      f.append('method', "POST")
 
       try {
         let url = base+`/payments`

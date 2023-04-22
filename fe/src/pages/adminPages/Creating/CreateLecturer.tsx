@@ -105,6 +105,8 @@ export default function CreateLecturer() {
         f.append('gender', user.gender)
         f.append('discipline', user.discipline)
         f.append('degreeAcquired', user.degreeAcquired)
+
+        f.append('method', 'POST')
         const res = await fetch(base+'/lecturers', {
           method: 'POST',
           body: f
