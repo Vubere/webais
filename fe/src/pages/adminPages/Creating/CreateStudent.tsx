@@ -172,6 +172,7 @@ export default function CreateUser() {
             body: f
           });
           const data = await res.json();
+          console.log(data)
        
           if (data?.status == 200) {
             alert('Student created successfully')

@@ -89,7 +89,7 @@ export default function Grades() {
           </thead>
           <tbody>
             {
-              courses.map((course) => <GradeRow key={course.course_id} course={course} session={Session?.session?.session} student_id={user.id} />)
+              courses.map((course) => <GradeRow key={course.course_id} course={course} session={session.session} student_id={user.id} />)
             }
           </tbody>
         </table>
@@ -108,6 +108,7 @@ const GradeRow = ({ course, session, student_id }: { course: Course, session: st
       fetch(base + `/grades?student_id=${student_id}&course_id=${course.course_id}&session=${session}`)
         .then(res => res.json())
         .then(data => {
+          console.log(data)
           if(data.fetch=='success'){
             setGrade(data?.result?.info[0])
           }
