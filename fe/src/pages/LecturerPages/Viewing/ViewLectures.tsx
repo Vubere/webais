@@ -24,7 +24,7 @@ export default function ViewLectures() {
   return (
     <div className="p-3 h-[90vh] overflow-y-auto">
       <h3 className="font-[600] text-[#347836] text-[28px] text-center leading-[40px]">Lectures</h3>
-      <section>
+      <section className="w-full overflow-x-auto">
         <table className="shadow-lg bg-white border-separate max-w-[100vw] overflow-auto mx-auto">
           <thead>
             <tr >

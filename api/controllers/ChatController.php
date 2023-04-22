@@ -92,12 +92,16 @@ class ChatController
         $sql = 'INSERT INTO messages (chat_id, user_id, message,  image) VALUES (?, ?, ?, ?)';
         $stmt = $this->db->prepare($sql);
         $stmt->bind_param('ssss', $chat_id, $user_id, $message, $image);
-        $stmt->execute();
-        $this->getHeaders();
-        echo json_encode(['message' => 'Message sent successfully', 'status' => 200, 'ok' => 1]);
+        $res = $stmt->execute();
+        if ($res) {
+          $this->getHeaders();
+          echo json_encode(['message' => 'Message sent successfully', 'status' => 200, 'ok' => 1]);
+        }else{
+          throw new Exception('Error sending message');
+        }
       } catch (Exception $e) {
         $this->getHeaders();
-        echo json_encode(['message' => $e->getMessage(), 'status' => 500, 'ok' => 0]);
+        echo json_encode(['message' => $e->getMessage(), 'status' => 500, 'ok' => 0, 'error'=>$this->db->error]);
       }
     } else {
       $this->getHeaders();
