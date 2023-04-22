@@ -1,13 +1,14 @@
 -- phpMyAdmin SQL Dump
--- version 5.2.0
+-- version 4.9.5
 -- https://www.phpmyadmin.net/
 --
--- Host: 127.0.0.1
--- Generation Time: Apr 21, 2023 at 04:44 PM
--- Server version: 10.4.27-MariaDB
--- PHP Version: 8.2.0
+-- Host: localhost:3306
+-- Generation Time: Apr 22, 2023 at 05:30 AM
+-- Server version: 10.5.16-MariaDB
+-- PHP Version: 7.3.32
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
+SET AUTOCOMMIT = 0;
 START TRANSACTION;
 SET time_zone = "+00:00";
 
@@ -18,7 +19,7 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8mb4 */;
 
 --
--- Database: `webais`
+-- Database: `id20585770_webais`
 --
 
 -- --------------------------------------------------------
@@ -38,14 +39,14 @@ CREATE TABLE `administrators` (
   `dob` timestamp NULL DEFAULT NULL,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
   `password` varchar(255) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Dumping data for table `administrators`
 --
 
 INSERT INTO `administrators` (`id`, `firstName`, `otherNames`, `lastName`, `email`, `phone`, `gender`, `dob`, `created_at`, `password`) VALUES
-('ADMIN-1', 'Victor', 'Chukwuka', 'Ubere', 'victorubere@gmail.com', '09039025289', 'male', '2023-03-09 23:00:00', '2023-03-14 15:59:38', 'admin123');
+('ADMIN-1', 'Jane', 'John', 'Doe', 'janedoe@gmail.com', '07012345678', 'female', '2020-09-03 23:00:00', '2023-03-14 15:59:38', 'admin123');
 
 -- --------------------------------------------------------
 
@@ -62,7 +63,7 @@ CREATE TABLE `annoucements` (
   `time` time NOT NULL,
   `date` date NOT NULL,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- --------------------------------------------------------
 
@@ -73,14 +74,7 @@ CREATE TABLE `annoucements` (
 CREATE TABLE `chat` (
   `id` int(11) NOT NULL,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Dumping data for table `chat`
---
-
-INSERT INTO `chat` (`id`, `created_at`) VALUES
-(1, '2023-04-17 20:03:26');
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- --------------------------------------------------------
 
@@ -93,24 +87,7 @@ CREATE TABLE `courses` (
   `title` varchar(255) NOT NULL,
   `description` varchar(255) DEFAULT NULL,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Dumping data for table `courses`
---
-
-INSERT INTO `courses` (`id`, `title`, `description`, `created_at`) VALUES
-(9, 'Introduction To Computers', 'An introduction to computers and the ecosystem it occupies', '2023-04-19 07:50:42'),
-(10, 'Computer Graphics', 'Images on computers and how they display to the users', '2023-04-19 08:00:47'),
-(11, 'Computer Architecture And Organization', 'A break down of the architectural design of computers and how components work together ', '2023-04-20 19:01:57'),
-(12, 'Computer Architecture And Organization', 'A break down of the architectural design of computers and how components work together ', '2023-04-20 19:01:57'),
-(13, 'Public Health', 'An introduction to public health and how to keep basic hygiene', '2023-04-20 19:06:24'),
-(14, 'Introduction To Programming', 'An introduction to computer programming paradigms', '2023-04-20 19:10:03'),
-(15, 'English Language', 'A basic introduction to English language and its structure', '2023-04-20 19:11:59'),
-(16, 'Mathematics', 'An introduction to algebra', '2023-04-20 19:21:08'),
-(17, 'Engineering Mathematics', 'An introduction to differential equations and its applications', '2023-04-20 19:23:02'),
-(18, 'Engineering Mathematics', 'An introduction to differential equations and its applications', '2023-04-20 19:23:02'),
-(19, 'Mathematics II', 'Logarithm tables', '2023-04-20 19:24:51');
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- --------------------------------------------------------
 
@@ -125,22 +102,7 @@ CREATE TABLE `course_gradings` (
   `session` varchar(255) NOT NULL,
   `grading_open` tinyint(1) NOT NULL,
   `registration_open` tinyint(1) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Dumping data for table `course_gradings`
---
-
-INSERT INTO `course_gradings` (`id`, `table_name`, `department_course_id`, `session`, `grading_open`, `registration_open`) VALUES
-(5, 'results_2021_2022_1_19', 19, '2021/2022', 1, 1),
-(6, 'results_2021_2022_1_20', 20, '2021/2022', 1, 1),
-(7, 'results_2021_2022_1_21', 21, '2021/2022', 1, 1),
-(8, 'results_2021_2022_1_22', 22, '2021/2022', 1, 1),
-(9, 'results_2021_2022_1_23', 23, '2021/2022', 1, 1),
-(10, 'results_2021_2022_1_24', 24, '2021/2022', 1, 1),
-(11, 'results_2021_2022_1_25', 25, '2021/2022', 1, 1),
-(12, 'results_2021_2022_1_26', 26, '2021/2022', 1, 1),
-(13, 'results_2021_2022_1_27', 27, '2021/2022', 1, 1);
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- --------------------------------------------------------
 
@@ -154,22 +116,7 @@ CREATE TABLE `course_registrations` (
   `student_id` varchar(255) NOT NULL,
   `semester` int(11) NOT NULL,
   `session` varchar(255) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Dumping data for table `course_registrations`
---
-
-INSERT INTO `course_registrations` (`id`, `department_course_id`, `student_id`, `semester`, `session`) VALUES
-(1, 19, 'STU-1', 1, '2021/2022'),
-(11, 20, 'STU-1', 1, '2021/2022'),
-(12, 24, 'STU-1', 1, '2021/2022'),
-(13, 23, 'STU-1', 1, '2021/2022'),
-(14, 22, 'STU-1', 1, '2021/2022'),
-(15, 21, 'STU-1', 1, '2021/2022'),
-(16, 25, 'STU-1', 1, '2021/2022'),
-(17, 26, 'STU-1', 1, '2021/2022'),
-(18, 27, 'STU-1', 1, '2021/2022');
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- --------------------------------------------------------
 
@@ -182,14 +129,7 @@ CREATE TABLE `departments` (
   `name` varchar(255) NOT NULL,
   `duration` int(11) NOT NULL,
   `faculty_id` int(11) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Dumping data for table `departments`
---
-
-INSERT INTO `departments` (`id`, `name`, `duration`, `faculty_id`) VALUES
-(1, 'Computer Engineering', 5, 1);
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- --------------------------------------------------------
 
@@ -208,22 +148,7 @@ CREATE TABLE `department_courses` (
   `level` int(11) NOT NULL,
   `assigned_lecturers` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL CHECK (json_valid(`assigned_lecturers`)),
   `course_id` int(11) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Dumping data for table `department_courses`
---
-
-INSERT INTO `department_courses` (`id`, `departments`, `type`, `code`, `units`, `semester`, `session`, `level`, `assigned_lecturers`, `course_id`) VALUES
-(19, '[1]', 'compulsory', 'COE101', 3, 1, '2021/2022', 100, '[{\"id\":\"LECT-1\",\"assigned_departments\":[\"Computer Engineering\"]}]', 9),
-(20, '[1]', 'compulsory', 'COE103', 3, 1, '2021/2022', 100, '[]', 10),
-(21, '[1]', 'compulsory', 'COE105', 4, 1, '2021/2022', 100, '[{\"id\":\"LECT-1\",\"assigned_departments\":[\"Computer Engineering\"]}]', 12),
-(22, '[1]', 'compulsory', 'GST101', 1, 1, '2021/2022', 100, '[{\"id\":\"LECT-1\",\"assigned_departments\":[\"Computer Engineering\"]}]', 13),
-(23, '[1]', 'compulsory', 'CSC104', 2, 1, '2021/2022', 100, '[{\"id\":\"LECT-1\",\"assigned_departments\":[\"Computer Engineering\"]}]', 14),
-(24, '[1]', 'compulsory', 'GST103', 2, 1, '2021/2022', 100, '[{\"id\":\"LECT-1\",\"assigned_departments\":[\"Computer Engineering\"]}]', 15),
-(25, '[1]', 'compulsory', 'MAT101', 2, 1, '2021/2022', 100, '[{\"id\":\"LECT-1\",\"assigned_departments\":[\"Computer Engineering\"]}]', 16),
-(26, '[1]', 'compulsory', 'FEG105', 3, 1, '2021/2022', 100, '[{\"id\":\"LECT-1\",\"assigned_departments\":[\"Computer Engineering\"]}]', 18),
-(27, '[1]', 'elective', 'MATH103', 2, 1, '2021/2022', 100, '[{\"id\":\"LECT-1\",\"assigned_departments\":[\"Computer Engineering\"]}]', 19);
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- --------------------------------------------------------
 
@@ -239,15 +164,7 @@ CREATE TABLE `department_units_distribution` (
   `level` int(11) NOT NULL,
   `min_units` int(11) NOT NULL,
   `max_units` int(11) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Dumping data for table `department_units_distribution`
---
-
-INSERT INTO `department_units_distribution` (`id`, `semester`, `session`, `department_id`, `level`, `min_units`, `max_units`) VALUES
-(6, 1, '2021/2022', 1, 100, 17, 24),
-(7, 1, '2022/2023', 1, 100, 18, 25);
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- --------------------------------------------------------
 
@@ -263,17 +180,7 @@ CREATE TABLE `examinations` (
   `course_id` int(11) NOT NULL,
   `lecturer_id` varchar(255) NOT NULL,
   `venue` varchar(255) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Dumping data for table `examinations`
---
-
-INSERT INTO `examinations` (`id`, `time`, `date`, `duration`, `course_id`, `lecturer_id`, `venue`) VALUES
-(1, '8:00', '2023-04-09', '2', 6, 'LECT-1', 'Computer Engineering Hall'),
-(2, '8:00', '2023-04-01', '2', 8, 'LECT-1', 'COE Exam hall 1'),
-(3, '9:00', '2023-04-28', '2', 26, 'LECT-1', 'Examination Hall'),
-(4, '8:00', '2023-05-05', '2', 22, 'LECT-1', 'Examination Hall');
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- --------------------------------------------------------
 
@@ -284,14 +191,7 @@ INSERT INTO `examinations` (`id`, `time`, `date`, `duration`, `course_id`, `lect
 CREATE TABLE `faculties` (
   `id` int(11) NOT NULL,
   `name` varchar(255) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Dumping data for table `faculties`
---
-
-INSERT INTO `faculties` (`id`, `name`) VALUES
-(1, 'Engineering');
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- --------------------------------------------------------
 
@@ -310,7 +210,7 @@ CREATE TABLE `fees` (
   `fee_status` varchar(255) NOT NULL,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
   `updated_at` timestamp NOT NULL DEFAULT current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- --------------------------------------------------------
 
@@ -326,7 +226,7 @@ CREATE TABLE `fees_paid` (
   `confirmation_number` varchar(255) NOT NULL,
   `invoice_no` varchar(255) NOT NULL,
   `date` varchar(255) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- --------------------------------------------------------
 
@@ -339,7 +239,7 @@ CREATE TABLE `images` (
   `image` longblob NOT NULL,
   `image_name` varchar(255) NOT NULL,
   `image_type` varchar(255) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- --------------------------------------------------------
 
@@ -354,7 +254,7 @@ CREATE TABLE `invoices` (
   `invoice_no` varchar(255) NOT NULL,
   `status` varchar(255) NOT NULL,
   `date` varchar(255) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- --------------------------------------------------------
 
@@ -376,14 +276,7 @@ CREATE TABLE `lecturers` (
   `assigned_courses` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL CHECK (json_valid(`assigned_courses`)),
   `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
   `dob` timestamp NULL DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Dumping data for table `lecturers`
---
-
-INSERT INTO `lecturers` (`id`, `firstName`, `lastName`, `gender`, `email`, `password`, `phone`, `discipline`, `degreeAcquired`, `otherNames`, `assigned_courses`, `created_at`, `dob`) VALUES
-('LECT-1', 'Victor', 'Ubere', 'male', 'victorubere@gmail.com', 'lect123', '09039025289', 'Computer Science', 'M.Sc', 'Chukwuka', '[]', '2023-04-14 08:01:46', '2023-03-31 23:00:00');
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- --------------------------------------------------------
 
@@ -399,20 +292,7 @@ CREATE TABLE `lectures` (
   `course_id` int(11) NOT NULL,
   `lecturer_id` varchar(255) NOT NULL,
   `venue` varchar(255) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Dumping data for table `lectures`
---
-
-INSERT INTO `lectures` (`id`, `time`, `duration`, `day`, `course_id`, `lecturer_id`, `venue`) VALUES
-(3, '8:00', '1', 'monday', 6, 'LECT-1', 'COE Exam hall 1'),
-(4, '8:00', '1', 'monday', 8, 'LECT-1', 'COE Exam hall 1'),
-(5, '8:00', '1', 'monday', 19, 'LECT-1', 'Computer Engineering Hall'),
-(6, '8:00', '1', 'monday', 19, 'LECT-1', 'Computer Engineering Hall'),
-(7, '10:00', '2', 'tuesday', 25, 'LECT-1', 'Engineering hall 1'),
-(8, '11:00', '2', 'thursday', 19, 'LECT-1', 'computer engineering hall 3'),
-(9, '13:00', '2', 'friday', 23, 'LECT-1', 'Computer Engineering Hall 5');
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- --------------------------------------------------------
 
@@ -426,7 +306,7 @@ CREATE TABLE `lecture_schedules` (
   `day` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
   `course_code` varchar(255) NOT NULL,
   `lecturer` varchar(255) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- --------------------------------------------------------
 
@@ -441,16 +321,8 @@ CREATE TABLE `messages` (
   `message` varchar(255) NOT NULL,
   `time_sent` timestamp NOT NULL DEFAULT current_timestamp(),
   `image` varchar(2550) DEFAULT NULL,
-  `seen` tinyint(1) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Dumping data for table `messages`
---
-
-INSERT INTO `messages` (`id`, `chat_id`, `user_id`, `message`, `time_sent`, `image`, `seen`) VALUES
-(1, 1, 'LECT-1', 'Hello, How are you', '2023-04-21 04:35:09', NULL, 1),
-(2, 1, 'STU-1', 'Good afternoon sir', '2023-04-21 14:05:56', NULL, 0);
+  `seen` tinyint(1) NOT NULL DEFAULT 0
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- --------------------------------------------------------
 
@@ -465,7 +337,7 @@ CREATE TABLE `notifications` (
   `details` varchar(255) NOT NULL,
   `title` varchar(255) NOT NULL,
   `targets` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL CHECK (json_valid(`targets`))
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- --------------------------------------------------------
 
@@ -477,15 +349,7 @@ CREATE TABLE `participants` (
   `id` int(11) NOT NULL,
   `user_id` varchar(255) NOT NULL,
   `chat_id` int(11) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Dumping data for table `participants`
---
-
-INSERT INTO `participants` (`id`, `user_id`, `chat_id`) VALUES
-(1, 'STU-1', 1),
-(2, 'LECT-1', 1);
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- --------------------------------------------------------
 
@@ -503,7 +367,7 @@ CREATE TABLE `results_2021_2022_1_7` (
   `attendance` int(11) NOT NULL,
   `grade` varchar(255) NOT NULL,
   `remark` varchar(255) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- --------------------------------------------------------
 
@@ -521,7 +385,7 @@ CREATE TABLE `results_2021_2022_1_8` (
   `attendance` int(11) NOT NULL,
   `grade` varchar(255) NOT NULL,
   `remark` varchar(255) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- --------------------------------------------------------
 
@@ -539,7 +403,7 @@ CREATE TABLE `results_2021_2022_1_9` (
   `attendance` int(11) NOT NULL,
   `grade` varchar(255) NOT NULL,
   `remark` varchar(255) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- --------------------------------------------------------
 
@@ -557,14 +421,7 @@ CREATE TABLE `results_2021_2022_1_19` (
   `attendance` int(11) NOT NULL,
   `grade` varchar(255) NOT NULL,
   `remark` varchar(255) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Dumping data for table `results_2021_2022_1_19`
---
-
-INSERT INTO `results_2021_2022_1_19` (`id`, `student_id`, `session`, `semester`, `ca`, `exam`, `attendance`, `grade`, `remark`) VALUES
-(1, 'STU-1', '2021/2022', '1', 19, 27, 6, 'C', '');
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- --------------------------------------------------------
 
@@ -582,14 +439,7 @@ CREATE TABLE `results_2021_2022_1_20` (
   `attendance` int(11) NOT NULL,
   `grade` varchar(255) NOT NULL,
   `remark` varchar(255) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Dumping data for table `results_2021_2022_1_20`
---
-
-INSERT INTO `results_2021_2022_1_20` (`id`, `student_id`, `session`, `semester`, `ca`, `exam`, `attendance`, `grade`, `remark`) VALUES
-(1, 'STU-1', '2021/2022', '', 0, 0, 0, '', '');
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- --------------------------------------------------------
 
@@ -607,14 +457,7 @@ CREATE TABLE `results_2021_2022_1_21` (
   `attendance` int(11) NOT NULL,
   `grade` varchar(255) NOT NULL,
   `remark` varchar(255) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Dumping data for table `results_2021_2022_1_21`
---
-
-INSERT INTO `results_2021_2022_1_21` (`id`, `student_id`, `session`, `semester`, `ca`, `exam`, `attendance`, `grade`, `remark`) VALUES
-(1, 'STU-1', '2021/2022', '', 12, 19, 4, 'F', '');
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- --------------------------------------------------------
 
@@ -632,14 +475,7 @@ CREATE TABLE `results_2021_2022_1_22` (
   `attendance` int(11) NOT NULL,
   `grade` varchar(255) NOT NULL,
   `remark` varchar(255) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Dumping data for table `results_2021_2022_1_22`
---
-
-INSERT INTO `results_2021_2022_1_22` (`id`, `student_id`, `session`, `semester`, `ca`, `exam`, `attendance`, `grade`, `remark`) VALUES
-(1, 'STU-1', '2021/2022', '', 0, 33, 6, 'F', '');
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- --------------------------------------------------------
 
@@ -657,14 +493,7 @@ CREATE TABLE `results_2021_2022_1_23` (
   `attendance` int(11) NOT NULL,
   `grade` varchar(255) NOT NULL,
   `remark` varchar(255) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Dumping data for table `results_2021_2022_1_23`
---
-
-INSERT INTO `results_2021_2022_1_23` (`id`, `student_id`, `session`, `semester`, `ca`, `exam`, `attendance`, `grade`, `remark`) VALUES
-(1, 'STU-1', '2021/2022', '', 20, 65, 10, 'A', '');
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- --------------------------------------------------------
 
@@ -682,14 +511,7 @@ CREATE TABLE `results_2021_2022_1_24` (
   `attendance` int(11) NOT NULL,
   `grade` varchar(255) NOT NULL,
   `remark` varchar(255) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Dumping data for table `results_2021_2022_1_24`
---
-
-INSERT INTO `results_2021_2022_1_24` (`id`, `student_id`, `session`, `semester`, `ca`, `exam`, `attendance`, `grade`, `remark`) VALUES
-(1, 'STU-1', '2021/2022', '', 18, 30, 17, 'B', '');
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- --------------------------------------------------------
 
@@ -707,14 +529,7 @@ CREATE TABLE `results_2021_2022_1_25` (
   `attendance` int(11) NOT NULL,
   `grade` varchar(255) NOT NULL,
   `remark` varchar(255) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Dumping data for table `results_2021_2022_1_25`
---
-
-INSERT INTO `results_2021_2022_1_25` (`id`, `student_id`, `session`, `semester`, `ca`, `exam`, `attendance`, `grade`, `remark`) VALUES
-(1, 'STU-1', '2021/2022', '', 9, 27, 9, 'D', '');
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- --------------------------------------------------------
 
@@ -732,14 +547,7 @@ CREATE TABLE `results_2021_2022_1_26` (
   `attendance` int(11) NOT NULL,
   `grade` varchar(255) NOT NULL,
   `remark` varchar(255) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Dumping data for table `results_2021_2022_1_26`
---
-
-INSERT INTO `results_2021_2022_1_26` (`id`, `student_id`, `session`, `semester`, `ca`, `exam`, `attendance`, `grade`, `remark`) VALUES
-(1, 'STU-1', '2021/2022', '', 10, 40, 9, 'C', '');
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- --------------------------------------------------------
 
@@ -757,14 +565,25 @@ CREATE TABLE `results_2021_2022_1_27` (
   `attendance` int(11) NOT NULL,
   `grade` varchar(255) NOT NULL,
   `remark` varchar(255) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- --------------------------------------------------------
 
 --
--- Dumping data for table `results_2021_2022_1_27`
+-- Table structure for table `results_2022_2023_1_28`
 --
 
-INSERT INTO `results_2021_2022_1_27` (`id`, `student_id`, `session`, `semester`, `ca`, `exam`, `attendance`, `grade`, `remark`) VALUES
-(1, 'STU-1', '2021/2022', '', 12, 24, 11, 'D', '');
+CREATE TABLE `results_2022_2023_1_28` (
+  `id` int(11) NOT NULL,
+  `student_id` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
+  `session` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
+  `semester` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
+  `ca` int(11) NOT NULL,
+  `exam` int(11) NOT NULL,
+  `attendance` int(11) NOT NULL,
+  `grade` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
+  `remark` varchar(255) COLLATE utf8_unicode_ci NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 -- --------------------------------------------------------
 
@@ -780,15 +599,7 @@ CREATE TABLE `session` (
   `first_semester_end` bigint(20) NOT NULL,
   `second_semester_start` bigint(20) NOT NULL,
   `second_semester_end` bigint(20) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Dumping data for table `session`
---
-
-INSERT INTO `session` (`id`, `session`, `current`, `first_semester_start`, `first_semester_end`, `second_semester_start`, `second_semester_end`) VALUES
-(1, '2021/2022', 0, 1681603200, 1682726400, 1682812800, 1682726400),
-(5, '2022/2023', 1, 1677628800, 1682640000, 1682726400, 1683244800);
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- --------------------------------------------------------
 
@@ -811,15 +622,8 @@ CREATE TABLE `students` (
   `level` int(11) NOT NULL,
   `entrance_session` varchar(255) NOT NULL,
   `graduation_session` varchar(255) NOT NULL,
-  `created_at` int(255) NOT NULL DEFAULT current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Dumping data for table `students`
---
-
-INSERT INTO `students` (`id`, `firstName`, `lastName`, `otherNames`, `email`, `phone`, `password`, `dob`, `gender`, `faculty`, `department`, `level`, `entrance_session`, `graduation_session`, `created_at`) VALUES
-('STU-1', 'Victor', 'Ubere', 'Chukwuka', 'victorubere@gmail.com', '09039025289', 'stu123', '2023-04-01 23:00:00', 'male', '1', '1', 100, '2021/2022', '2026/2027', 2147483647);
+  `created_at` bigint(20) NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Indexes for dumped tables
@@ -1026,6 +830,12 @@ ALTER TABLE `results_2021_2022_1_27`
   ADD PRIMARY KEY (`id`);
 
 --
+-- Indexes for table `results_2022_2023_1_28`
+--
+ALTER TABLE `results_2022_2023_1_28`
+  ADD PRIMARY KEY (`id`);
+
+--
 -- Indexes for table `session`
 --
 ALTER TABLE `session`
@@ -1052,55 +862,55 @@ ALTER TABLE `annoucements`
 -- AUTO_INCREMENT for table `chat`
 --
 ALTER TABLE `chat`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `courses`
 --
 ALTER TABLE `courses`
-  MODIFY `id` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=20;
+  MODIFY `id` int(255) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `course_gradings`
 --
 ALTER TABLE `course_gradings`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `course_registrations`
 --
 ALTER TABLE `course_registrations`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `departments`
 --
 ALTER TABLE `departments`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `department_courses`
 --
 ALTER TABLE `department_courses`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=28;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `department_units_distribution`
 --
 ALTER TABLE `department_units_distribution`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `examinations`
 --
 ALTER TABLE `examinations`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `faculties`
 --
 ALTER TABLE `faculties`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `fees`
@@ -1130,7 +940,7 @@ ALTER TABLE `invoices`
 -- AUTO_INCREMENT for table `lectures`
 --
 ALTER TABLE `lectures`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `lecture_schedules`
@@ -1142,7 +952,7 @@ ALTER TABLE `lecture_schedules`
 -- AUTO_INCREMENT for table `messages`
 --
 ALTER TABLE `messages`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `notifications`
@@ -1154,7 +964,7 @@ ALTER TABLE `notifications`
 -- AUTO_INCREMENT for table `participants`
 --
 ALTER TABLE `participants`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `results_2021_2022_1_7`
@@ -1178,61 +988,67 @@ ALTER TABLE `results_2021_2022_1_9`
 -- AUTO_INCREMENT for table `results_2021_2022_1_19`
 --
 ALTER TABLE `results_2021_2022_1_19`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `results_2021_2022_1_20`
 --
 ALTER TABLE `results_2021_2022_1_20`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `results_2021_2022_1_21`
 --
 ALTER TABLE `results_2021_2022_1_21`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `results_2021_2022_1_22`
 --
 ALTER TABLE `results_2021_2022_1_22`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `results_2021_2022_1_23`
 --
 ALTER TABLE `results_2021_2022_1_23`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `results_2021_2022_1_24`
 --
 ALTER TABLE `results_2021_2022_1_24`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `results_2021_2022_1_25`
 --
 ALTER TABLE `results_2021_2022_1_25`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `results_2021_2022_1_26`
 --
 ALTER TABLE `results_2021_2022_1_26`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `results_2021_2022_1_27`
 --
 ALTER TABLE `results_2021_2022_1_27`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `results_2022_2023_1_28`
+--
+ALTER TABLE `results_2022_2023_1_28`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `session`
 --
 ALTER TABLE `session`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
