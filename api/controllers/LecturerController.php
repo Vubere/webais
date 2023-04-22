@@ -163,7 +163,7 @@ class LecturerController
       }
     }elseif($method=='DELETE'){
       try{
-        $post = $_POST;
+        $post = json_decode(file_get_contents('php://input'), true);
         $id = $post['id'];
         $sql = "DELETE FROM lecturers WHERE id = '$id'";
         $res = $this->conn->prepare($sql);

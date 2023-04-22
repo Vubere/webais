@@ -152,9 +152,8 @@ class AdminController{
         //mysqli_close($this->conn);
       }
     }elseif($_SERVER['REQUEST_METHOD']=='DELETE'){
-      
       try{
-        $post = $_POST;
+        $post = json_decode(file_get_contents('php://input'), true);
         $id = $post['id'];
         $sql = "DELETE FROM administrators WHERE id = '$id'";
         $res = $this->conn->prepare($sql);

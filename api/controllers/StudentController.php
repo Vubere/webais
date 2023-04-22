@@ -134,7 +134,6 @@ class StudentController
           faculty=?,
           department=?,
           level=?,
-          duration=?,
           entrance_session=?,
           graduation_session=?
            WHERE id = '" . $id . "'";
@@ -152,8 +151,8 @@ class StudentController
       $level = $put['level'];
       $duration = $put['duration'];
       $entrance_session = $put['entrance_session'];
-      $graduation_session = (string)((int)explode($entrance_session, '/')[0] + (int)$duration) . '/' . (string)((int)explode($entrance_session, '/')[1] + (int)$duration);
-      $stmt->bind_param("ssssssssssssss", $firstname, $lastname, $othernames, $email, $phone, $password, $dob, $gender, $faculty, $department, $level, $entrance_session, $graduation_session, $id);
+      $graduation_session = (string)((int)explode('/', $entrance_session)[0] + (int)$duration) . '/' . (string)((int)explode('/', $entrance_session)[1] + (int)$duration);
+      $stmt->bind_param("sssssssssssss", $firstname, $lastname, $othernames, $email, $phone, $password, $dob, $gender, $faculty, $department, $level, $entrance_session, $graduation_session);
      
       $res = $stmt->execute();
       if ($res) {

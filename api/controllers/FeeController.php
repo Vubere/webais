@@ -114,8 +114,6 @@ class FeeController
           $this->getHeaders();
           echo json_encode(array('ok'=>0,'message' => 'Fee creation failed'));
         }
-
-
       } catch (Exception $e) {
         $this->getHeaders();
         echo json_encode(array('message' => $e->getMessage()));
@@ -151,7 +149,7 @@ class FeeController
       }
     }elseif($method=='DELETE') {
       try {
-        $post = $_POST;
+        $post = json_decode(file_get_contents('php://input'), true);
         
         $sql = "DELETE FROM fees WHERE id = ?";
      
@@ -219,7 +217,7 @@ class FeeController
     } elseif ($method == 'POST') {
       try {
         $post = $_POST;
-        $sql = "INSERT INTO fees_paid (student_id, fee_id, receipt_number, confirmation_number, invoice_no) VALUES (?, ?, ?, ?, ?)";
+        $sql = "INSERT INTO fees_paid (student_id, fee_id, receipt_number, confirmation_number, invoice_no, date) VALUES (?, ?, ?, ?, ?,?)";
         if(!isset($post['student_id']) || !isset($post['fee_id']) || !isset($post['receipt_number']) || !isset($post['confirmation_number']) || !isset($post['invoice_no'])){
           $this->getHeaders();
           echo json_encode(array('ok'=>0,'message' => 'request is missing some parameters'));
@@ -246,8 +244,9 @@ class FeeController
           echo json_encode(array('ok'=>0,'message' => 'Invalid invoice number'));
           return;
         }
+        $time = time();
         $stmt = $this->conn->prepare($sql);
-        $stmt->bind_param('sssss', $student_id, $fee_id, $receipt_number, $confirmation_number, $invoice_no);
+        $stmt->bind_param('sssssi', $student_id, $fee_id, $receipt_number, $confirmation_number, $invoice_no,$time );
         $res = $stmt->execute();
 
         if ($res) {
@@ -271,7 +270,7 @@ class FeeController
     $method = $_SERVER['REQUEST_METHOD'];
     if($method=='GET'){
       try{
-        $sql = "SELECT f.name, f.session, f.level, f.semester, f.amount, fp.id, fp.receipt_number, fp.confirmation_number, fp.invoice_no, fp.student_id, CONCAT(s.firstName,' ', lastName) as fullName, s.department, s.faculty, d.name as department, fac.name as faculty FROM fees AS f INNER JOIN fees_paid AS fp ON f.id=fp.fee_id INNER JOIN students AS s ON s.id = fp.student_id INNER JOIN departments as d ON d.id = s.department INNER JOIN faculties as fac ON fac.id = s.faculty WHERE 1=1";
+        $sql = "SELECT f.name, f.session, f.level, f.semester, f.amount, fp.id, fp.receipt_number, fp.confirmation_number, fp.invoice_no, fp.student_id, CONCAT(s.firstName,' ', lastName) as fullName, s.department, s.faculty, d.name as department, fac.name as faculty, fp.date FROM fees AS f INNER JOIN fees_paid AS fp ON f.id=fp.fee_id INNER JOIN students AS s ON s.id = fp.student_id INNER JOIN departments as d ON d.id = s.department INNER JOIN faculties as fac ON fac.id = s.faculty WHERE 1=1";
         if(isset($_GET['student_id'])){
           $student_id = $_GET['student_id'];
           $sql .= " AND fp.student_id = $student_id";

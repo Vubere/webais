@@ -143,7 +143,10 @@ class EventsController
       echo json_encode(array('status' => 'success', 'ok' => 1));
     }elseif($method=="DELETE"){
       try{
-        $delete = $_POST;
+        $delete = json_decode(file_get_contents('php://input'), true);
+        if(!isset($delete['id'])){
+          throw new Exception("failed to set lectures id", 1);
+        }
         $sql = "DELETE FROM lectures WHERE id = '".$delete['id']."'";
         $res = $this->conn->query($sql);
         if(!$res){
@@ -153,7 +156,7 @@ class EventsController
         echo json_encode(array('status' => 'success', 'ok' => 1));
       }catch(Exception $e){
         $this->getHeaders();
-        echo json_encode(array('status' => $e->getMessage(), 'ok' => 0));
+        echo json_encode(array('status'=>401,'message' => $e->getMessage(), 'ok' => 0));
       }
     } else {
       $this->getHeaders();
@@ -280,7 +283,17 @@ class EventsController
       $this->getHeaders();
       echo json_encode(array('status' => 'success', 'ok' => 1));
     }elseif($method=='DELETE'){
-
+      $delete = json_decode(file_get_contents('php://input'), true);
+      if(!isset($delete['id'])){
+        throw new Exception("Error Processing Request", 1);
+      }
+      $sql = "DELETE FROM examinations WHERE id='".$delete['id']."'";
+      $res = $this->conn->query($sql);
+      if(!$res){
+        throw new Exception("Error Processing Request", 1);
+      }
+      $this->getHeaders();
+      echo json_encode(array('status' => 'success', 'ok' => 1));
     } else {
       $this->getHeaders();
       echo json_encode(array('status' => 'Method not allowed', 'ok' => 0));

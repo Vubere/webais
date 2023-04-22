@@ -61,7 +61,7 @@ class CgpaController {
       $stmt->execute();
       $dc_result = $stmt->get_result();
       $course = $dc_result->fetch_assoc();
-      $course_unit = $course['units'];
+      $course_unit = isset($course['units'])?$course['units']:0;
       $total_units += $course_unit;
       $sql = "SELECT * FROM $table_name where student_id = ?";
       $stmt = $this->conn->prepare($sql);

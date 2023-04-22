@@ -260,11 +260,12 @@ class StructureController
     $id = $post['id'];
     $name = $post['name'];
     $faculty = $post['faculty_id'];
-    $sql = "UPDATE departments SET name = ?, faculty_id = ? WHERE id = ?";
+    $duration = $post['duration'];
+    $sql = "UPDATE departments SET name = ?, duration=?, faculty_id = ? WHERE id = ?";
     try {
 
       $stmt = $this->conn->prepare($sql);
-      $stmt->bind_param('ssi', $name, $faculty, $id);
+      $stmt->bind_param('sisi', $name, $duration, $faculty, $id);
       $res = $stmt->execute();
       if ($res) {
         $this->getHeaders();

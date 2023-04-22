@@ -236,14 +236,14 @@ class CoursesController
           level = ?,
           assigned_lecturers = ?,
           semester = ?,
-          session = ?,
-          course_id = ?
+          session = ?
         WHERE id = ?";
         $department = json_encode($post['departments']);
         $lecturers = json_encode($post['assigned_lecturers']);
         $stmt = $this->conn->prepare($sql);
-        $stmt->bind_param('sssssssss', $department, $post['type'], $post['code'], $post['level'], $lecturers, $post['semester'], $post['session'], $post['course_id']);
+        $stmt->bind_param('ssssssss', $department, $post['type'], $post['code'], $post['level'], $lecturers, $post['semester'], $post['session'], $post['id']);
         $res = $stmt->execute();
+
 
 
         if ($res) {
@@ -259,12 +259,12 @@ class CoursesController
       }
     } elseif ($method == "DELETE") {
       try {
-        $post = $_POST;
+        $post = json_decode(file_get_contents('php://input'), true);
         $sql = "DELETE FROM department_courses WHERE id = ?";
         $stmt = $this->conn->prepare($sql);
         $stmt->bind_param('s', $post['id']);
-        $stmt->execute();
-        $res = $stmt->get_result();
+        $res = $stmt->execute();
+
         if ($res) {
           $this->getHeaders();
           echo json_encode(array('status' => 200, 'message' => 'successful', 'ok' => 1));
