@@ -69,7 +69,8 @@ export default function AvailableCourses() {
         .then(data => {
           if (data.ok == 1) {
             setPerformance(data.performance)
-
+          }else{
+            throw new Error(data?.message || 'something went wrong')
           }
         })
         .catch(err => {
@@ -281,13 +282,15 @@ export default function AvailableCourses() {
   }
 
   const perform = useMemo(() => {
-    console.log(current_semester)
-    if(performance!=undefined&&current_semester){
+    if(performance!=undefined&&current_semester&&session){
       const temp2 = performance.failed_courses.courses
       let temp = temp2.filter((course: assigned_course) => {
-        let ses = course.session.split('/')
-        let ses2 = session.split('/')
-        
+        if(course==null) return false
+        let ses = course?.session?.split('/')
+        let ses2 = session?.split('/')
+        if(ses&&ses[0]==undefined||ses&&ses2[0]==undefined){
+          return false
+        }
         if ((ses[0] === ses2[0] && ses[1] === ses2[1]) || course.semester != current_semester) {
          
           return false
@@ -298,7 +301,7 @@ export default function AvailableCourses() {
     }else{
       return undefined
     }
-  }, [performance, current_semester])
+  }, [performance, current_semester,session])
 
   return (
     <section className="p-3 h-[90vh] overflow-y-auto pb-20">
