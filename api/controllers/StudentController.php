@@ -75,7 +75,7 @@ class StudentController
           echo json_encode(array('status' => 200, 'message' => 'successful', 'ok' => 1, 'student_info' => array('studentId' => $id, 'password' => $password)));
         } else {
           $this->getHeaders();
-          echo json_encode(array('status' => 400, 'message' => 'failed', 'ok' => 0));
+          echo json_encode(array('status' => 400, 'message' => 'failed', 'ok' => 0, $this->conn->error));
         }
       } catch (Exception $e) {
 

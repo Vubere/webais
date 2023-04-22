@@ -395,13 +395,20 @@ export default function UpdateAssignedCourse() {
 
 
                   return (
-                    <li key={index} className="flex flex-col gap-2">
-                      {h.firstName} {h.lastName}({h.discipline}) :
-                      <p>
-                        {temp.join(', ')}
-                      </p>
-                      <button onClick={() => deleteLect(index)} className=" bg-[#f44] text-[#fff] font-[500] w-[70px] p-1 rounded-[5px]">Delete</button>
-                    </li>)
+                    <>
+                      {h ?
+                        <li  key={index} className="flex flex-col gap-2" >
+                          {h?.firstName
+                          } {h?.lastName}({h?.discipline}) :
+                          <p>
+                            {temp.join(', ')}
+                          </p>
+                          <button onClick={() => deleteLect(index)} className=" bg-[#f44] text-[#fff] font-[500] w-[70px] p-1 rounded-[5px]">Delete</button>
+                        </li>
+                        : null
+                      }
+                    </>
+                  )
                 })}
 
               </ul>
@@ -412,7 +419,7 @@ export default function UpdateAssignedCourse() {
             <select name="id" id="id" value={lecturer.id} onChange={({ target }) => setLecturer({ ...lecturer, id: target.value })} className="w-full h-[40px] rounded-[5px] bg-transparent border border-[#347836] flex items-center focus:outline-none px-2">
               <option value="">Select Lecturer</option>
               {lecturers.map((item, index) => (
-                <option key={index} value={item.id}>{item.firstName} {item.lastName}({item.discipline})</option>
+                <option key={index} value={item.id}>{item?.firstName} {item?.lastName}({item?.discipline})</option>
               ))}
             </select>
             <label htmlFor="ad">Assigned Departments</label>
@@ -439,6 +446,6 @@ export default function UpdateAssignedCourse() {
           <button onClick={delete_course} className="bg-[#700] text-white p-2 m-2 rounded-md w-[50vw]  max-w-[120px]">Delete Course</button>
         </div>
       </section>
-    </div>
+    </div >
   )
 }
