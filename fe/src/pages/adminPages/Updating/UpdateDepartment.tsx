@@ -98,9 +98,10 @@ export default function UpdateDepartment() {
           body: formData
         })
         const result = await res.json()
+        console.log(result)
 
         if (result.status === 'success') {
-          alert('success')
+          alert('successfully updated')
         } else {
           throw new Error(result?.status || 'something went wrong')
         }
@@ -121,7 +122,6 @@ export default function UpdateDepartment() {
         body: formData
       })
       const result = await res.json()
-      
       if (result.status === 'success') {
         alert('success')
         navigate(-1)

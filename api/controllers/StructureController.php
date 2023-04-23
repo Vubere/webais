@@ -239,17 +239,20 @@ class StructureController
         $post = $_POST;
         $sql = "INSERT INTO departments(
           name,
-          faculty_id
+          faculty_id,
+          duration
         ) VALUES (
-          ?,?
+          ?,?,?
         )";
         $stmt = $this->conn->prepare($sql);
         $name = $post['name'];
         $faculty = $post['faculty_id'];
+        $duration = $post['duration'];
         $stmt->bind_param(
           "ss",
           $name,
-          $faculty
+          $faculty,
+          $duration
         );
 
         $res = $stmt->execute();
@@ -281,7 +284,7 @@ class StructureController
       $res = $stmt->execute();
       if ($res) {
         $this->getHeaders();
-        echo json_encode(array('status' => 'success'));
+        echo json_encode(array('status' => 'success', 'ok' => 1, 'message' => 'Department updated successfully'));
       } else {
         $this->getHeaders();
         echo json_encode(array('status' => 'error'));

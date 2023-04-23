@@ -105,8 +105,8 @@ export default function UpdateFee() {
       })
         .then(res => res.json())
         .then(data => {
+          console.log(data)
           if (data?.ok) {
-            reset
             alert('Fee updated successfully')
           } else {
             throw new Error(data?.message || 'Error updating fee')
@@ -162,7 +162,7 @@ export default function UpdateFee() {
 
   return (
     <section className="w-full h-[90vh] content-box overflow-auto pb-[30px]">
-      <h3 className="text-center text-[22px] text-[#346837]">Create Fee</h3>
+      <h3 className="text-center text-[22px] text-[#346837]">Update Fee</h3>
       <form onSubmit={onSubmit} className="flex flex-col items-center gap-2 max-w-[400px] mx-auto">
         <div className="w-full flex flex-col gap-1">
           <label htmlFor="name">Name</label>
@@ -171,7 +171,10 @@ export default function UpdateFee() {
             <option value="">Select Fee</option>
             <option value="registration">Registration</option>
             <option value="accreditation">Accreditation</option>
-            <option value="tuition">Tuition</option>
+            <option value="Tuition">Tuition</option>
+            <option value='Matriculation Gown'>Matriculation Gown</option>
+            <option value='Convocation Gown'>Convocation Gown</option>
+            <option value="Transcript Fee">Transcript Fee</option>
             <option value="library">Library</option>
             <option value="hostel">Hostel</option>
           </select>

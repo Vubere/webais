@@ -725,7 +725,7 @@ class CoursesController
         return true;
       }
     }
-    $sql = "INSERT INTO course_gradings (table_name, department_course_id, session, grading_open, registration_open) VALUES ('" . $name . "', '" . $course_id . "', '" . $session . "', 'false', 'false')";
+    $sql = "INSERT INTO course_gradings (table_name, department_course_id, session, grading_open, registration_open) VALUES ('" . $name . "', '" . $course_id . "', '" . $session . "', 0, 0)";
     $res = $this->conn->query($sql);
     if ($res) {
       return true;

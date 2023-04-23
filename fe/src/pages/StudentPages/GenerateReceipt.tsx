@@ -26,7 +26,12 @@ export default function GenerateReceipt() {
       const data = await res.json()
 
       if (data?.ok) {
-        setReceipt(data.data[0])
+        const d = data.data[0]
+        const date = new Date(Number(d.date)*1000)
+     
+        const date_string = `${date.getDate()}/${date.getMonth() + 1}/${date.getFullYear()}`
+        d.date = date_string
+        setReceipt(d)
       } else {
         throw new Error('Could not generate receipt')
       }

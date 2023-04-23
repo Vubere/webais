@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react"
-import { useParams } from "react-router-dom"
+import { useNavigate, useParams } from "react-router-dom"
 import { base } from "../../../App"
 import { Announcement } from "./ViewAnnouncements"
 
@@ -10,6 +10,7 @@ export default function ViewAnnouncement(){
   const [loading, setLoading] = useState(false)
   
   const {id} = useParams()
+  const navigate = useNavigate()
 
   useEffect(()=>{
     setLoading(true)
@@ -17,7 +18,6 @@ export default function ViewAnnouncement(){
     .then(res=>res.json())
     .then(res=>{
       if(res?.status=='success'){
-
         setAnnouncement(res.annoucements[0])
       }else{
         throw new Error(res?.message||'Something went wrong')
@@ -26,13 +26,43 @@ export default function ViewAnnouncement(){
     }).catch(err=>{
       setError(err)
       setLoading(false)
+      navigate(-1)
     })
   },[id])
+
+  const delete_announcement = async ()=>{
+    const confirm = window.confirm('are you sure you want to delete announcements')
+    if(confirm){
+      setLoading(true)
+      const formData = new FormData()
+      formData.append('id',id as string)
+      formData.append('method','DELETE')
+
+      fetch(base+`/announcements`,{
+        method:'POST',
+        body:formData
+      })
+      .then(res=>res.json())
+      .then(res=>{
+        if(res?.status=='success'){
+          alert('Announcement deleted successfully')
+          navigate(-1)
+        }else{
+          throw new Error(res?.message||'Something went wrong')
+        }
+        setLoading(false)
+      }).catch(err=>{
+        alert(err?.message||'something went wrong')
+        setError(err)
+        setLoading(false)
+      })
+    }
+  }
 
 
 
   return (
-    <section className="p-3 flex items-center flex-col">
+    <section className="p-3 flex items-center flex-col max-w-[400px] flex flex-col items-center mx-auto">
       {
         announcement&&(
           <article className="w-[80vw] max-w-[500px] p-3">
@@ -49,7 +79,7 @@ export default function ViewAnnouncement(){
         )
       }
       <div className="flex w-full justify-end">
-        <button className="bg-[#a00] text-white px-3 py-1 rounded-[5px]">Delete</button>
+        <button className="bg-[#a00] text-white px-3 py-1 rounded-[5px]" onClick={delete_announcement}>Delete</button>
       </div>
     </section>
   )

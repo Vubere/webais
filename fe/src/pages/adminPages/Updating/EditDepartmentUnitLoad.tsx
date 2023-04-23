@@ -30,6 +30,7 @@ export default function EditUnitLoad() {
       fetch(base + '/assign_unit_load?id=' + id)
         .then(res => res.json())
         .then(data => {
+          console.log(data)
           if (data?.ok == 1) {
             setUnitLoad(data?.data[0])
           } else {
@@ -56,6 +57,7 @@ export default function EditUnitLoad() {
     if (validate()) {
       console.log(unitLoad.session)
       const formData = new FormData()
+      formData.append('id', id as string)
       formData.append('department_id', unitLoad.department_id)
       formData.append('session', unitLoad.session)
       formData.append('semester', unitLoad.semester.toString())

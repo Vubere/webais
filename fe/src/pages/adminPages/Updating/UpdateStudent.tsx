@@ -156,9 +156,9 @@ export default function UpdateAdmin() {
   const onSubmit = (e: any) => {
     e.preventDefault()
     if (validate())
-      updateAdmin()
+      updateStudent()
   }
-  const updateAdmin = async () => {
+  const updateStudent = async () => {
     if (id) {
       try {
         let url = base + `/students`

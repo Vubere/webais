@@ -94,6 +94,8 @@ export default function PersonalInfo() {
         formData.append('gender', lecturer.gender)
         formData.append('faculty', lecturer.faculty)
         formData.append('department', lecturer.department)
+        formData.append('degreeAcquired', lecturer.degreeAcquired)
+        formData.append('discipline', lecturer.discipline)
         formData.append('level', lecturer.level)
         formData.append('id', lecturer.id)
         formData.append('confirmPassword', lecturer.confirmPassword)
@@ -106,6 +108,7 @@ export default function PersonalInfo() {
           body: formData
         })
         const data = await res.json()
+        console.log(data)
        
         if(data?.ok){
           alert('Updated successfully')
@@ -168,7 +171,7 @@ export default function PersonalInfo() {
                 </div>    
               </div>
               <div className="flex gap-2">
-                <input type="checkbox" name="showPassword" id="showPassword" onChange={togglePasswordVisibility} />
+                <input type="checkbox"  name="showPassword" id="showPassword" onChange={togglePasswordVisibility} />
                 <p>Toggle Password Visibility</p>
               </div>
               <button className="bg-[#346837] py-2 mt-4 rounded-[4px] text-[#fff]" onClick={updateInfo}>

@@ -12,9 +12,11 @@ export default function PersonalInformation() {
     email: '',
     phone: '',
     password: '',
+    duration: '',
     dob: '',
     gender: '',
     faculty: '',
+    entrance_session: '',
     department: '',
     level: '',
     id: '',
@@ -62,6 +64,8 @@ export default function PersonalInformation() {
       formData.append('gender', form.gender)
       formData.append('faculty', form.faculty)
       formData.append('department', form.department)
+      formData.append('duration', form.duration)
+      formData.append('entrance_session', form.entrance_session)
       formData.append('level', form.level)
       formData.append('id', form.id)
       formData.append('method', 'PUT')
@@ -72,6 +76,7 @@ export default function PersonalInformation() {
         body: formData
       })
       const data = await res.json()
+      console.log(data)
       if(data.ok==1){
         alert('Updated Successfully')
       }else{
@@ -133,6 +138,7 @@ export default function PersonalInformation() {
         .then((res) => {
           if (res.students.length) {
             const { students } = res
+            console.log(students[0])
             setForm({ ...form, ...students[0] })
           }
         })

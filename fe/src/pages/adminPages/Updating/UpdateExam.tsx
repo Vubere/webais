@@ -169,7 +169,8 @@ export default function UpdateLectures() {
   }, [searchLect, lecturers])
   
   const delete_exam = async () => {
-    if(id){
+    const confirm = window.confirm('Are you sure you want to delete this exam?')
+    if(id&&confirm){
       try {
         const formData = new FormData()
         formData.append('id', id.toString())

@@ -242,7 +242,7 @@ export default function AssignCoursesToDepartments() {
 
   const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-
+    
     if (validate()) {
       try {
 
@@ -421,7 +421,7 @@ export default function AssignCoursesToDepartments() {
               {course.assigned_lecturers.map((item, index) => {
                 let temp = item.assigned_departments
                 temp.map((item, index) => {
-                  console.log(departments)
+              
                   const f = departments.find((d) => d.id == item)
                   if (f) {
                     temp[index] = f.name

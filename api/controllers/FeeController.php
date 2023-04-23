@@ -339,7 +339,7 @@ class FeeController
     $method = $_SERVER['REQUEST_METHOD'];
     if ($method == "GET") {
       try {
-        $sql = "SELECT i.id, i.invoice_no, i.status, i.date,i.fee_id, f.name, f.session, f.level, f.semester, f.fee_status, f.amount, f.level FROM invoices AS i INNER JOIN FEES as f ON f.id=i.fee_id WHERE 1=1";
+        $sql = "SELECT i.id, i.invoice_no, i.status, i.date,i.fee_id, f.name, f.session, f.level, f.semester, f.fee_status, f.amount, f.level FROM invoices AS i INNER JOIN fees as f ON f.id=i.fee_id WHERE 1=1";
         if (isset($_GET['student_id'])) {
           $sql .= " AND i.student_id = '" . $_GET['student_id'] . "'";
         }
@@ -350,16 +350,16 @@ class FeeController
           $sql .= " AND i.status = " . $_GET['status'] . "";
         }
 
-        $stmt = $this->conn->prepare($sql);
+        $stmt = $this->conn->query($sql);
 
-        $res = $stmt->execute();
-        if (!$res) {
+        
+        if (!$stmt) {
           throw new Exception("Error Processing Request", 1);
         }
-        $result = $stmt->get_result();
+      
         $data = array();
-        if ($result->num_rows > 0) {
-          while ($row = $result->fetch_assoc()) {
+        if ($stmt->num_rows > 0) {
+          while ($row = $stmt->fetch_assoc()) {
             $data[] = $row;
           }
           $this->getHeaders();

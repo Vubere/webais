@@ -131,7 +131,7 @@ export default function Annoucements() {
         </div>
         <div className="w-full">
           <label htmlFor="type">Type</label>
-          <select name="type" id="type" onChange={onChange} value={form.type} className="w-full h-[40px] rounded-[5px] bg-transparent border border-[#347836] xs:p-2 stbt:p-4 xs:text-[14px] stbt:text-[18px] flex items-center focus:outline-none px-2" >
+          <select name="type" id="type" onChange={onChange} value={form.type} className="w-full h-[40px] rounded-[5px] bg-transparent border border-[#347836]  flex items-center focus:outline-none px-2" >
             <option value="">Select Type</option>
             <option value="1">Announcement</option>
             <option value="2">Event</option>
@@ -151,7 +151,7 @@ export default function Annoucements() {
         </div>
         <div className="w-full">
           <label htmlFor="targets">Targets</label>
-          <select  name="targets" id="targets" onChange={onChange} value={form.targets} className="w-full h-[40px] rounded-[5px] bg-transparent border border-[#347836] xs:p-2 stbt:p-4 xs:text-[14px] stbt:text-[18px] flex items-center focus:outline-none px-2">
+          <select  name="targets" id="targets" onChange={onChange} value={form.targets} className="w-full h-[40px] rounded-[5px] bg-transparent border border-[#347836] flex items-center focus:outline-none px-2">
             <option value="all">All</option>
             <option value="students">Students</option>
             <option value="lecturers">Lecturers</option>

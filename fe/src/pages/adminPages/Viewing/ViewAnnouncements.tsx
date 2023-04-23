@@ -2,7 +2,7 @@ import { useEffect, useState } from "react"
 import { Link } from "react-router-dom"
 import { base } from "../../../App"
 
-
+import * as routes from '../../../constants/routes'
 
 
 export default function ViewAnnouncements() {
@@ -38,8 +38,10 @@ export default function ViewAnnouncements() {
 
 
   return (
-    <section className="h-[90vh] overflow-y-auto p-3">
-
+    <section className="h-[90vh] overflow-y-auto p-3 ">
+      <div className="w-full flex justify-end">
+        <Link to={routes.dashboard+'-'+'admin/'+routes.create_announcement} className="text-[#346837] underline">Post Annoucements</Link>
+      </div>
 
       <h4 className="font-[600] text-[#347836] text-[28px] text-center leading-[40px]">Announcements</h4>
       <div className="body flex flex-col gap-2 justify-center">
@@ -62,8 +64,7 @@ export default function ViewAnnouncements() {
                 <p>{annoucement.content.length > 100 ? annoucement.content.slice(0, 120) + '...' : annoucement.content}</p>
               </div>
               <div>
-                <p ><span>Sent on: </span>{annoucement.date}</p>
-                <p>{annoucement.time}</p>
+               
                 <p><span className="font-[500] inline-block">Sent to:</span> {annoucement.target} at {annoucement.created_at}</p>
               </div>
             </article>)) : <div>No Announcements</div>

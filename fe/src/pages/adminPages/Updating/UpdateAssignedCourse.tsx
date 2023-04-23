@@ -61,8 +61,15 @@ export default function UpdateAssignedCourse() {
         .then(res => res.json())
         .then((data: any) => {
           if (data?.ok) {
-            setAssigned(data.data[0])
-            setSelectedDepartments(data.data[0]?.departments)
+            let d = data.data[0]
+            if (typeof d.assigned_lecturers === 'string') {
+              d.assigned_lecturers = JSON.parse(d.assigned_lecturers)
+            }
+            if (typeof d.departments === 'string') {
+              d.departments = JSON.parse(d.departments)
+            }
+            setAssigned(d)
+            setSelectedDepartments(d?.departments)
             setLoading(false)
           } else {
             throw new Error(data?.message || 'something went wrong')
@@ -116,7 +123,7 @@ export default function UpdateAssignedCourse() {
       formData.append('grading_open', assigned.grading_open.toString())
       formData.append('description', assigned.description)
       formData.append('title', assigned.title)
-      
+
       formData.append('method', 'PUT')
 
       setLoading(true)
@@ -283,7 +290,7 @@ export default function UpdateAssignedCourse() {
     if (window.confirm('Are you sure you want to delete this course?')) {
       setLoading(true)
       const formData = new FormData()
-      formData.append('id', assigned.id.toString())
+      formData.append('id', id as string)
       formData.append('method', 'DELETE')
 
       fetch(base + '/assign_course', {
@@ -294,7 +301,7 @@ export default function UpdateAssignedCourse() {
         .then((data: any) => {
           if (data?.ok) {
             alert('course deleted successfully')
-            navigate(-1)
+           
           } else {
             throw new Error(data?.message || 'something went wrong')
           }
@@ -416,9 +423,9 @@ export default function UpdateAssignedCourse() {
 
 
                   return (
-                    <>
+                    <span key={item}>
                       {h ?
-                        <li  key={index} className="flex flex-col gap-2" >
+                        <li key={index} className="flex flex-col gap-2" >
                           {h?.firstName
                           } {h?.lastName}({h?.discipline}) :
                           <p>
@@ -428,7 +435,7 @@ export default function UpdateAssignedCourse() {
                         </li>
                         : null
                       }
-                    </>
+                    </span>
                   )
                 })}
 

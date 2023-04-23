@@ -25,7 +25,8 @@ export default function FeePayment() {
         if (data.ok) {
           const res = data.data
         
-          const fee = res.filter((item: any) => item.department_id == user.department)
+          const fee = res.filter((item: any) => item.department_id == user.department||item.department_id==0)
+          console.log(user.department)
           if (fee) {
             setFees(fee)
             console.log(fee)
@@ -93,15 +94,15 @@ const FeeRow = ({ fee }: { fee: Fee }) => {
 
   return (
     <tr key={fee.id}>
-      <td className="border px-4 py-2">{fee.name}</td>
-      <td className="border px-4 py-2">{fee.amount}</td>
-      <td className="border px-4 py-2">{department}</td>
-      <td className="border px-4 py-2">{fee.session}</td>
-      <td className="border px-4 py-2">{fee.semester != 0 ? fee.semester : 'all'}</td>
-      <td className="border px-4 py-2">{fee.level}</td>
-      <td className="border px-4 py-2">{fee.fee_status}</td>
+      <td className="border px-4 py-2 capitalize">{fee.name}</td>
+      <td className="border px-4 py-2 capitalize">{fee.amount}</td>
+      <td className="border px-4 py-2 capitalize">{department||'All'}</td>
+      <td className="border px-4 py-2 capitalize">{fee.session}</td>
+      <td className="border px-4 py-2 capitalize">{fee.semester != 0 ? fee.semester : 'all'}</td>
+      <td className="border px-4 py-2 capitalize">{fee.level}</td>
+      <td className="border px-4 py-2 capitalize">{fee.fee_status}</td>
 
-      <td className="border px-4 py-2">
+      <td className="border px-4 py-2 capitalize">
         <Link to={
           `/dashboard-student/${routes.generate_invoice}/${fee.id}`
         } className="bg-[#347836] text-white px-2 py-1 rounded-md block text-center"> Invoice</Link>

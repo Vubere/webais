@@ -17,6 +17,7 @@ export default function AssignedCourses() {
     fetch(base+'/assign_course')
       .then(res => res.json())
       .then((data: any) => {
+        console.log(data)
         if (data?.ok) {
           setCourses(data.data)
           setLoading(false)
@@ -30,7 +31,7 @@ export default function AssignedCourses() {
       })
 
   }, [])
-  const SearchCourses = courses.filter(course => course.title.toLowerCase().includes(search.toLowerCase()) || course.code.toLowerCase().includes(search.toLowerCase()) || course.session.toLowerCase().includes(search.toLowerCase()) || course.assigned_lecturers.toLowerCase().includes(search.toLowerCase()))
+  const SearchCourses = courses?.filter(course => course.title.toLowerCase().includes(search.toLowerCase()) || course.code.toLowerCase().includes(search.toLowerCase()) || course.session.toLowerCase().includes(search.toLowerCase()) || course.assigned_lecturers.toLowerCase().includes(search.toLowerCase()))
   if (loading) {
     return (
       <div>
@@ -64,7 +65,10 @@ export default function AssignedCourses() {
               </tr>
             </thead>
             <tbody>
-              {SearchCourses.map((course) => (
+              {SearchCourses.map((course) => {
+                const department = typeof course.departments == 'string' ? JSON.parse(course.departments) : course.departments
+                
+                return (
                 <tr key={course.id}>
                   <td className="border px-4 py-2">{course.title}</td>
                   <td className="border px-4 py-2">{course.description} </td>
@@ -72,7 +76,7 @@ export default function AssignedCourses() {
                   <td className="border px-4 py-2">{course.units}</td>
                   <td className="border px-4 py-2">{course.type}</td>
                   <td className="border px-4 py-2">{course.level}</td>
-                  <td className="border px-4 py-2">{course.departments.length}</td>
+                  <td className="border px-4 py-2">{department.length}</td>
                   <td className="border px-4 py-2">{course.session}</td>
                   <td className="border px-4 py-2">{course.semester}</td>
                   <td className="border px-4 py-2">{course.registration_open?'open':'closed'}</td>
@@ -83,7 +87,7 @@ export default function AssignedCourses() {
                   </td>
                 </tr>
 
-              ))}
+              )})}
             </tbody>
 
           </table>
