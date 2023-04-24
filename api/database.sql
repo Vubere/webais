@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost:3306
--- Generation Time: Apr 22, 2023 at 05:30 AM
+-- Generation Time: Apr 24, 2023 at 04:32 AM
 -- Server version: 10.5.16-MariaDB
 -- PHP Version: 7.3.32
 
@@ -46,15 +46,15 @@ CREATE TABLE `administrators` (
 --
 
 INSERT INTO `administrators` (`id`, `firstName`, `otherNames`, `lastName`, `email`, `phone`, `gender`, `dob`, `created_at`, `password`) VALUES
-('ADMIN-1', 'Jane', 'John', 'Doe', 'janedoe@gmail.com', '07012345678', 'female', '2020-09-03 23:00:00', '2023-03-14 15:59:38', 'admin123');
+('ADMIN-1', 'Jane', 'John', 'Doe', 'janedoe@gmail.com', '07012345678', 'female', '2014-06-02 00:00:00', '2023-03-14 15:59:38', 'admin123');
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `annoucements`
+-- Table structure for table `announcements`
 --
 
-CREATE TABLE `annoucements` (
+CREATE TABLE `announcements` (
   `id` int(255) NOT NULL,
   `type` varchar(255) NOT NULL,
   `title` varchar(255) NOT NULL,
@@ -402,9 +402,9 @@ ALTER TABLE `administrators`
   ADD PRIMARY KEY (`id`);
 
 --
--- Indexes for table `annoucements`
+-- Indexes for table `announcements`
 --
-ALTER TABLE `annoucements`
+ALTER TABLE `announcements`
   ADD PRIMARY KEY (`id`);
 
 --
@@ -524,6 +524,13 @@ ALTER TABLE `participants`
   ADD PRIMARY KEY (`id`);
 
 --
+-- Indexes for table `session`
+--
+ALTER TABLE `session`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `session` (`session`);
+
+--
 -- Indexes for table `students`
 --
 ALTER TABLE `students`
@@ -534,9 +541,9 @@ ALTER TABLE `students`
 --
 
 --
--- AUTO_INCREMENT for table `annoucements`
+-- AUTO_INCREMENT for table `announcements`
 --
-ALTER TABLE `annoucements`
+ALTER TABLE `announcements`
   MODIFY `id` int(255) NOT NULL AUTO_INCREMENT;
 
 --
