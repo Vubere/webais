@@ -347,7 +347,7 @@ class EventsController
     $method = $_SERVER['REQUEST_METHOD'];
     if ($method == 'GET') {
       try {
-        $sql = "SELECT * FROM annoucements";
+        $sql = "SELECT * FROM announcements";
         if (isset($_GET['id'])) {
           $sql .= " WHERE id='" . $_GET['id'] . "'";
         }
@@ -377,7 +377,7 @@ class EventsController
         $target = $put['targets'];
         $time = $put['time'];
         $date = $put['date'];
-        $sql = "UPDATE annoucements SET type=?, title=?,content=?, target=?, time=?, date=? WHERE id='" . $put['id'] . "'";
+        $sql = "UPDATE announcements SET type=?, title=?,content=?, target=?, time=?, date=? WHERE id='" . $put['id'] . "'";
         $stmt = $this->conn->prepare($sql);
         $stmt->bind_param("ssssss", $type, $title, $content, $target, $time, $date);
 
@@ -390,7 +390,7 @@ class EventsController
       } elseif ($method == 'POST') {
         try {
           $post = $_POST;
-          $sql = "INSERT INTO annoucements(
+          $sql = "INSERT INTO announcements(
           type,
           title,
           content,
@@ -431,7 +431,7 @@ class EventsController
         }
       } elseif ($method == 'DELETE') {
         $delete = $_POST;
-        $sql = "DELETE FROM annoucements WHERE id='" . $delete['id'] . "'";
+        $sql = "DELETE FROM announcements WHERE id='" . $delete['id'] . "'";
         $res = $this->conn->query($sql);
         if (!$res) {
           throw new Exception("Error Processing Request", 1);

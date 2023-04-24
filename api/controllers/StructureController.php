@@ -249,7 +249,7 @@ class StructureController
         $faculty = $post['faculty_id'];
         $duration = $post['duration'];
         $stmt->bind_param(
-          "ss",
+          "sss",
           $name,
           $faculty,
           $duration
@@ -434,8 +434,8 @@ class StructureController
     $sql = "UPDATE faculties SET name = ? WHERE id = ?";
     $stmt = $this->conn->prepare($sql);
     $stmt->bind_param('si', $name, $id);
-    $stmt->execute();
-    $res = $stmt->get_result();
+    $res = $stmt->execute();
+
     if ($res) {
       $response = [
         'status' => 'success',
@@ -459,8 +459,8 @@ class StructureController
     $sql = "DELETE FROM faculties WHERE id = ?";
     $stmt = $this->conn->prepare($sql);
     $stmt->bind_param('i', $id);
-    $stmt->execute();
-    $res = $stmt->get_result();
+    $res = $stmt->execute();
+
     if ($res) {
       $response = [
         'status' => 'success',

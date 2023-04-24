@@ -121,7 +121,7 @@ class StudentController
           echo json_encode(array("status" => 400, "message" => $e->getMessage(), "ok" => 0));
           //mysqli_close($this->conn);
         }
-      } elseif ($_SERVER['REQUEST_METHOD'] == 'PUT') {
+      } elseif ($method == 'PUT') {
 
         $put = $_POST;
         $id = $put['id'];
@@ -166,7 +166,7 @@ class StudentController
           echo json_encode(array('message' => 'failed to update student', 'ok' => 0, 'status' => 'failed'));
         }
 
-      } elseif ($_SERVER['REQUEST_METHOD'] == 'DELETE') {
+      } elseif ($method == 'DELETE') {
         try {
 
           $post = $_POST;
@@ -244,7 +244,7 @@ class StudentController
   {
     $method = $_SERVER['REQUEST_METHOD'];
     if ($method == 'POST') {
-      $post = $_POST;
+      $post = json_decode(file_get_contents('php://input'), true);
       $session = $post['session'];
       $sql = 'SELECT * FROM students WHERE 1=1';
       if (isset($post['department'])) {

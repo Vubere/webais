@@ -93,6 +93,7 @@ export default function ViewAssignedCourse() {
           body: f
         })
         const res = await req.json();
+        console.log(res)
         if (res?.ok == 1) {
           setCourses({ ...courses, grading_open: !!bool } as assigned_course)
           alert(res.message)
@@ -123,6 +124,7 @@ export default function ViewAssignedCourse() {
           body: f
         })
         const res = await req.json();
+        console.log(res)
         if (res.ok == 1) {
           alert(res.message)
           setCourses({ ...courses, registration_open: !!bool} as assigned_course)

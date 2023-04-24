@@ -62,7 +62,7 @@ class GradingController
 
 
             if (isset($_GET['student_id'])) {
-              $sql .= ' WHERE student_id="' . $_GET['student_id'].'"';
+              $sql .= ' WHERE student_id="' . $_GET['student_id'] . '"';
             }
             $stmt = $this->conn->prepare($sql);
             $res = $stmt->execute();

@@ -8,6 +8,7 @@ import { Lecture } from "../adminPages/Viewing/ViewLectures";
 export default function Lectures(){
   const [lectures, setLectures] = useState<Lecture[]>()
   const [errors, setErrors] = useState('')
+  const [loading, setLoading] = useState(true)
 
   const {user} = useContext(UserContext)
   const Session = useContext(SessionContext)
@@ -18,32 +19,21 @@ export default function Lectures(){
       .then(res => res.json())
       .then(result => {
         if(result.status == 'success'){
-          
           setLectures(result.lectures)
         }
+        setLoading(false)
       })
       .catch(err => {
         setErrors(err)
         console.log(err)
+        setLoading(false)
+        alert(err?.message || 'something went wrong')
       })
     }
   },[user, Session])
 
 
-  const formatDateToDMY = (date: string) => {
-    const d = new Date(date)
-    const getNameOfDay = (day: number) => {
-      const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
-      return days[day]
-    }
-    return (
-      <span>
-        {d.getDate()}/{d.getMonth() + 1}/{d.getFullYear()}
-        <span className="block">
-          {getNameOfDay(d.getDay())}
-        </span>
-      </span>)
-  }
+
 
 
   return (
@@ -73,7 +63,7 @@ export default function Lectures(){
                 <td className="border px-4 py-2 capitalize">{lecture.venue}</td>
                 <td className="border px-4 py-2"><Link to={`/dashboard-student/view-course/${lecture.course_id}`} className="underline text-[#346837]">View Course</Link></td>
               </tr>
-            )) : <tr><td colSpan={6}>No lectures</td></tr>:<p>errors</p>}
+            )) : loading ?<tr><td colSpan={6}>loading...</td></tr>: <tr><td colSpan={6}>No lectures</td></tr>:<p>errors</p>}
           </tbody>
         </table>
       </section>

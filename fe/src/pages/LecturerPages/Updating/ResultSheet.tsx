@@ -31,6 +31,7 @@ export default function ResultSheet() {
       fetch(base + '/grades?session=' + sess + '&course_id=' + id)
         .then(res => res.json())
         .then(res => {
+          console.log(res)
           if (res.fetch == 'success') {
             setGrades(res.result.info)
           }

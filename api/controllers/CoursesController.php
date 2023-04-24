@@ -243,6 +243,7 @@ class CoursesController
           departments = ?,
           type = ?,
           code = ?,
+          units = ?,
           level = ?,
           assigned_lecturers = ?,
           semester = ?,
@@ -251,7 +252,7 @@ class CoursesController
           $department = json_encode($post['departments']);
           $lecturers = json_encode($post['assigned_lecturers']);
           $stmt = $this->conn->prepare($sql);
-          $stmt->bind_param('ssssssss', $department, $post['type'], $post['code'], $post['level'], $lecturers, $post['semester'], $post['session'], $post['id']);
+          $stmt->bind_param('sssssssss', $department, $post['type'], $post['code'], $post['units'], $post['level'], $lecturers, $post['semester'], $post['session'], $post['id']);
           $res = $stmt->execute();
 
 
@@ -277,7 +278,7 @@ class CoursesController
 
           if ($res) {
             $this->getHeaders();
-            echo json_encode(array('status' => 200, 'message' => 'successful', 'ok' => 1));
+            echo json_encode(array('status' => 200, 'message' => 'successful', 'ok' => 1, 'id' => $post['id']));
           } else {
             $this->getHeaders();
             echo json_encode(array('status' => 503, 'message' => 'failed to delete data', 'ok' => 0));
@@ -351,7 +352,7 @@ class CoursesController
         $sql .= " AND student_id = '" . $_GET['student_id'] . "'";
       }
       if (isset($_GET['course_id'])) {
-        $sql .= " AND course_id = '" . $_GET['course_id'] . "'";
+        $sql .= " AND department_course_id = '" . $_GET['course_id'] . "'";
       }
       $res = $this->conn->query($sql);
       if ($res) {
@@ -363,35 +364,42 @@ class CoursesController
         echo json_encode(array('status' => 200, 'message' => 'successful', 'ok' => 1, 'data' => $data));
       } else {
         $this->getHeaders();
-        echo json_encode(array('status' => 400, 'message' => 'failed', 'ok' => 0));
+        echo json_encode(array('status' => 400, 'message' => 'failed', 'ok' => 0, 'error' => $this->conn->error));
       }
-    }
-    if ($method == 'POST') {
+    } elseif ($method == 'POST') {
       $method = $_POST['method'];
       if ($method == 'POST') {
         $post = $_POST;
         $sql = "SELECT * FROM course_registrations WHERE student_id = '" . $post['student_id'] . "' AND department_course_id = '" . $post['course_id'] . "' AND semester = '" . $post['semester'] . "' AND session = '" . $post['session'] . "'";
-        $res = $this->conn->query($sql);
-        if ($res) {
-          $row = $res->fetch_assoc();
-          if ($row) {
-            $this->getHeaders();
-            echo json_encode(array('status' => 400, 'message' => 'You have already registered for this course', 'ok' => 0));
-          } else {
-            $this->insert_student_into_result_table($post);
-            $sql = "INSERT INTO course_registrations (student_id, department_course_id, semester, session) VALUES ('" . $post['student_id'] . "', '" . $post['course_id'] . "', '" . $post['semester'] . "', '" . $post['session'] . "')";
-            $res = $this->conn->query($sql);
-            if ($res) {
+        try {
+          $res = $this->conn->query($sql);
+          if ($res) {
+            $row = $res->fetch_assoc();
+            if ($row) {
               $this->getHeaders();
-              echo json_encode(array('status' => 200, 'message' => 'successful', 'ok' => 1));
+              echo json_encode(array('status' => 400, 'message' => 'You have already registered for this course', 'ok' => 0));
             } else {
-              $this->getHeaders();
-              echo json_encode(array('status' => 400, 'message' => 'failed', 'ok' => 0));
+              $rq = $this->insert_student_into_result_table($post);
+              if (!$rq) {
+                throw new Exception('faile to insert student into result sheet');
+              }
+              $sql = "INSERT INTO course_registrations (student_id, department_course_id, semester, session) VALUES ('" . $post['student_id'] . "', '" . $post['course_id'] . "', '" . $post['semester'] . "', '" . $post['session'] . "')";
+              $res = $this->conn->query($sql);
+              if ($res) {
+                $this->getHeaders();
+                echo json_encode(array('status' => 200, 'message' => 'successful', 'ok' => 1));
+              } else {
+                $this->getHeaders();
+                echo json_encode(array('status' => 400, 'message' => 'failed', 'ok' => 0));
+              }
             }
+          } else {
+            $this->getHeaders();
+            echo json_encode(array('status' => 400, 'message' => 'failed', 'ok' => 0));
           }
-        } else {
+        } catch (Exception $e) {
           $this->getHeaders();
-          echo json_encode(array('status' => 400, 'message' => 'failed', 'ok' => 0));
+          echo json_encode(array('status' => 401, 'message' => $e->getMessage(), 'ok' => 0, 'error' => $this->conn->error));
         }
       } elseif ($method == 'DELETE') {
         $delete = $_POST;
@@ -433,11 +441,10 @@ class CoursesController
       $res = $this->conn->query($sql);
 
       if ($res->num_rows == 0) {
-        $sql = 'INSERT INTO ' . $table_name . '(student_id,session, exam, ca, attendance, grade, remark) VALUES ("' . $student_id . '","' . $session . '",0,0,0,"","")';
-        $stmt = $this->conn->prepare($sql);
-        $res = $stmt->execute();
+        $sql = 'INSERT INTO ' . $table_name . '(student_id,session,semester, exam, ca, attendance, grade, remark) VALUES ("' . $student_id . '","' . $session . '","' . $semester . '",0,0,0,"","")';
+        $stmt = $this->conn->query($sql);
 
-        if ($res) {
+        if ($stmt) {
           return true;
         } else {
           return false;
@@ -695,7 +702,7 @@ class CoursesController
         $session_start = explode('/', $session)[0];
         $session_end = explode('/', $session)[1];
         $table_name = 'results_' . $session_start . '_' . $session_end . '_' . $semester . '_' . $course_id;
-        $sql = "CREATE TABLE IF NOT EXISTS " . $table_name . "(id INT(11) NOT NULL AUTO_INCREMENT, student_id VARCHAR(255) NOT NULL, session VARCHAR(255) NOT NULL, semester VARCHAR(255) NOT NULL, ca INT(11) NOT NULL, exam INT(11) NOT NULL, attendance INT(11) NOT NULL, grade VARCHAR(255) NOT NULL, remark VARCHAR(255) NOT NULL, PRIMARY KEY (id))";
+        $sql = "CREATE TABLE IF NOT EXISTS " . $table_name . "(id INT(11) NOT NULL AUTO_INCREMENT, student_id VARCHAR(255) NOT NULL, session VARCHAR(255) NOT NULL, semester VARCHAR(255) NOT NULL DEFAULT '0', ca INT(11) NOT NULL, exam INT(11) NOT NULL, attendance INT(11) NOT NULL, grade VARCHAR(255) NOT NULL, remark VARCHAR(255) NOT NULL, PRIMARY KEY (id))";
         $res = $this->conn->query($sql);
         if (!$res) {
           return false;

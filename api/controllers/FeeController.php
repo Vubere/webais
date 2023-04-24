@@ -135,7 +135,7 @@ class FeeController
           $id = $post['id'];
 
           $stmt = $this->conn->prepare($sql);
-          $stmt->bind_param('siisiisii', $name, $amount, $department_id, $session, $level, $semester, $fee_status, $updated_at, $id);
+          $stmt->bind_param('siisiissi', $name, $amount, $department_id, $session, $level, $semester, $fee_status, $updated_at, $id);
           $res = $stmt->execute();
 
           if ($res) {
@@ -143,7 +143,7 @@ class FeeController
             echo json_encode(array('ok' => 1, 'message' => 'Fee updated successfully'));
           } else {
             $this->getHeaders();
-            echo json_encode(array('ok' => 0, 'message' => 'Fee update failed'));
+            echo json_encode(array('ok' => 0, 'message' => 'Fee update failed', 'error' => $this->conn->error));
           }
         } catch (Exception $e) {
           $this->getHeaders();
@@ -352,11 +352,10 @@ class FeeController
 
         $stmt = $this->conn->query($sql);
 
-        
         if (!$stmt) {
           throw new Exception("Error Processing Request", 1);
         }
-      
+
         $data = array();
         if ($stmt->num_rows > 0) {
           while ($row = $stmt->fetch_assoc()) {
@@ -370,7 +369,7 @@ class FeeController
         }
       } catch (Exception $e) {
         $this->getHeaders();
-        echo json_encode(array('message' => $e->getMessage()));
+        echo json_encode(array('message' => $e->getMessage(), 'error' => $this->conn->error));
       }
     } elseif ($method == 'POST') {
       try {

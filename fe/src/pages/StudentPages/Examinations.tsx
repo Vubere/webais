@@ -18,16 +18,17 @@ export default function Examination() {
     if (Session?.session?.session && user) {
       const userSes = Session.session.session
       const userSem = Session.session.current_semester
-
+      setLoading(true)
       fetch(base + '/student_registered_courses?student_id=' + user.id + '&semester=' + userSem + '&session=' + userSes)
         .then(res => res.json())
         .then(res => {
-          console.log(res)
           if (res.ok = 1) {
             setRegisteredCourses(res.details)
           }
+          setLoading(false)
         }).catch(err => {
-          console.log(err)
+          alert(err?.message || 'something went wrong')
+          setLoading(false)
         })
     }
   }, [Session?.session?.session, user])
@@ -52,20 +53,22 @@ export default function Examination() {
 
   useEffect(() => {
 
-    if (registeredCourses.length)
+    if (registeredCourses.length) {
+      setLoading(true)
       fetch(base + '/exam')
         .then(res => res.json())
         .then(res => {
           if (res.status == 200 && res?.exams?.length > 0) {
-
             setExams(res.exams.filter((exam: any) => registeredCourses.map((course: Course) => course.course_id.toString()).includes(exam.course_id.toString())
             ))
           }
+          setLoading(false)
         }
         ).catch(err => {
-          console.log(err)
+          setLoading(false)
+          alert(err?.message||'something went wrong')
         })
-
+    }
   }, [registeredCourses?.length])
 
   return (
@@ -95,7 +98,7 @@ export default function Examination() {
                 <td className="border px-4 py-2">{lecture.venue}</td>
 
               </tr>
-            )) : <p>No Exams</p>}
+            )) : loading?<tr><td colSpan={5}>loading...</td></tr>:<tr><td colSpan={5}>No exams</td></tr>}
           </tbody>
         </table>
       </div>

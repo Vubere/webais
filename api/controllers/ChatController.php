@@ -63,7 +63,7 @@ class ChatController
   public function send_message()
   {
     $method = $_SERVER['REQUEST_METHOD'];
-    $server_url = 'http://localhost/webais/api/controllers';
+    $server_url = 'https://ng-webais.000webhostapp.com/api/controllers';
     if ($method == 'POST') {
       try {
         $file_location = null;
@@ -161,29 +161,19 @@ class ChatController
         $this->getHeaders();
         echo json_encode(['message' => $e->getMessage(), 'status' => 500, 'ok' => 0]);
       }
-    } elseif ($method == 'POST') {
+    } elseif ($method == 'DELETE') {
       /* delete single message */
-      if (!isset($_POST['message_id'])) {
-        throw new Exception('Message id not set');
-      }
-      $method = $_POST['method'];
-      if ($method == 'DELETE') {
-        try {
-          $message_id = $_POST['message_id'];
-          $sql = 'DELETE FROM messages WHERE id = ?';
-          $stmt = $this->db->prepare($sql);
-          $stmt->bind_param('s', $message_id);
-          $stmt->execute();
-          $this->getHeaders();
-          echo json_encode(['message' => 'Message deleted successfully', 'status' => 200, 'ok' => 1]);
-        } catch (Exception $e) {
-          $this->getHeaders();
-          echo json_encode(['message' => $e->getMessage(), 'status' => 500, 'ok' => 0]);
-        }
-      } else {
+      try {
+        $message_id = $_GET['message_id'];
+        $sql = 'DELETE FROM messages WHERE id = ?';
+        $stmt = $this->db->prepare($sql);
+        $stmt->bind_param('s', $message_id);
+        $stmt->execute();
         $this->getHeaders();
-        echo json_encode(['message' => 'Method not allowed', 'status' => 405, 'ok' => 0]);
-        exit;
+        echo json_encode(['message' => 'Message deleted successfully', 'status' => 200, 'ok' => 1]);
+      } catch (Exception $e) {
+        $this->getHeaders();
+        echo json_encode(['message' => $e->getMessage(), 'status' => 500, 'ok' => 0]);
       }
     } else {
       $this->getHeaders();

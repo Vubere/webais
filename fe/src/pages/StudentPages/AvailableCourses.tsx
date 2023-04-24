@@ -155,7 +155,10 @@ export default function AvailableCourses() {
       }).then(res => res.json())
         .then(data => {
           console.log(data)
+          if(data.ok==1)
           alert('Course registered successfully')
+          else
+          throw new Error(data?.message || 'something went wrong')
         }).catch(err => {
           console.log(err)
           alert('Course registration failed')
@@ -263,6 +266,11 @@ export default function AvailableCourses() {
     setLoading(true)
     if (unmarkedRegCourse.length > 0) {
       unmarkedRegCourse.forEach(course => {
+        const d = availableCourses.find(val => val.id === course.id)
+        if(d?.type=='compulsory'){
+          alert('You cannot unregister a compulsory course')
+          return
+        }
         unregisterCourse(course.id)
       })
     }

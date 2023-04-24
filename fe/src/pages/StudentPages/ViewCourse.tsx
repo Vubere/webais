@@ -26,7 +26,6 @@ export default function ViewSingleCourse() {
     fetch(base+'/assign_course?id=' + id)
       .then((res) => res.json())
       .then(result => {
-        console.log(result)
         if (result.ok == 1) {
           setCourseDetails(result.data[0])
         } else {
@@ -47,71 +46,23 @@ export default function ViewSingleCourse() {
   }, [courseDetails])
 
 
-  const unregisterCourse = (course: course) => {
-    if (Session?.session && user) {
-
-      const formData = new FormData()
-      formData.append('course_id', course.id?.toString() as string)
-      formData.append('student_id', user.id)
-      formData.append('semester', Session.session.current_semester.toString())
-      formData.append('session', Session.session.session)
-      formData.append('method', 'DELETE')
-
-      fetch(base+'/course_registration', {
-        method: 'POST',
-        body: formData
-      }).then(res => res.json())
-        .then(res => {
-          if (res.status == 200) {
-            alert('Course unregistered successfully')
-          }
-        }).catch(err => {
-          console.log(err)
-        })
-    }
-  }
-  const RegisterCourse = (course: assigned_course) => {
-    if(!course.registration_open){
-      console.log(course)
-      alert('Registration is closed for this course')
-      return
-    }
-    if (Session?.session && user) {
-      const f = new FormData()
-      f.append('course_id', course.id?.toString() as string)
-      f.append('student_id', user.id)
-      f.append('semester', Session.session.current_semester.toString())
-      f.append('session', Session.session.session)
-      f.append('method', 'POST')
-
-      fetch(base+'/course_registration', {
-        method: 'POST',
-        body: f
-      }).then(res => res.json())
-        .then(data => {
-          console.log(data)
-          alert('Course registered successfully')
-        }).catch(err => {
-          console.log(err)
-          alert('Course registration failed')
-        })
-    }
-  }
-
   const checkIfRegistered = (course: course) => {
     if (Session?.session && user) {
       fetch(base+'/course_registration?course_id=' + course.id + '&student_id=' + user.id + '&semester=' + Session.session.current_semester + '&session=' + Session.session.session)
 
         .then(res => res.json())
         .then(data => {
-
+          console.log(data)
           if (data.ok == 1) {
-
+            if(data?.data.length>0)
             setRegistered(true)
+            else
+            setRegistered(false)
           } else {
             setRegistered(false)
           }
         }).catch(err => {
+          console.log(err)
           alert('error fetching registration status')
         })
     } else {
@@ -162,26 +113,33 @@ const Lecturers = ({ lecturer }: { lecturer: any }) => {
   const { id, assigned_departments } = lecturer
   const [lecturerDetails, setLecturerDetails] = useState<any>()
   const { user } = useContext(UserContext)
+  const [loading, setLoading] =  useState(false)
 
 
 
 
   useEffect(() => {
+    setLoading(true)
     fetch(base+'/lecturers?id=' + id)
       .then(res => res.json())
       .then(result => {
-        console.log(result)
-        setLecturerDetails(result.lecturer[0])
+        if(result?.lecturer?.length == 0) throw new Error('no lecturer found')
+        else
+        setLecturerDetails(result?.lecturer[0])
+        setLoading(false)
       })
       .catch(err => {
         console.log(err)
+        setLoading(false)
       })
   }, [id])
 
 
   return (
     <li className="m-3">
-      <h5 className="font-[500] text-[#347836] text-[18px]">{lecturerDetails?.firstName} {lecturerDetails?.lastName} ({lecturerDetails?.discipline})</h5>
+      {loading? <p>loading...</p> : null }
+      {lecturerDetails&&
+      <h5 className="font-[500] text-[#347836] text-[18px] underline">{lecturerDetails?.firstName} {lecturerDetails?.lastName} ({lecturerDetails?.discipline})</h5>}
       <div>
         <p>{lecturerDetails?.email}</p>
         <Link to={'/dashboard-student/chat/' + lecturerDetails?.id} className="text-[#346837] font-[600] text-white p-1 px-2 bg-[#346837] rounded my-2 block w-[110px] text-center">Send a message</Link>
@@ -190,7 +148,7 @@ const Lecturers = ({ lecturer }: { lecturer: any }) => {
 
       <h6 className="font-[400] text-[#347836] text-[16px]">Assigned Departments</h6>
       <ul>
-        {assigned_departments.map((item: string) => <li>{item}</li>)}
+        {assigned_departments.map((item: string) => <li key={item}>{item}</li>)}
       </ul>
     </li>
   )

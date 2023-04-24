@@ -171,7 +171,7 @@ class AdminController
           $this->getHeaders();
           echo json_encode(array('status' => 400, 'message' => $e->getMessage(), 'ok' => 0));
         }
-      }else{
+      } else {
         $this->getHeaders();
         echo json_encode(array('message' => 'wrong method'));
       }
