@@ -25,12 +25,10 @@ export default function Dashboard() {
     cgpa: number,
   }>()
 
-
   const fullName = user?.firstName + ' ' + user?.lastName
 
   useEffect(() => {
     if (user && Session?.session?.session && Session?.session.current_semester) {
-
       fetch(base + '/student_lectures?student_id=' + user?.id + '&session=' + Session.session.session + '&semester=' + Session.session.current_semester)
         .then(res => res.json())
         .then(data => {
@@ -80,7 +78,6 @@ export default function Dashboard() {
 
             if (notif.find(n => n.message.includes('unread message(s) from ' + chats + ' conversation(s)'))) return
             setNotif([...notif, { message: 'unread message(s) from ' + chats + ' conversation(s)', count: val }])
-
           }
         })
         .catch(err => console.log(err))
@@ -95,10 +92,15 @@ export default function Dashboard() {
       {user &&
         <>
           <h3 className="font-[600] text-[#347836] text-[28px] text-center leading-[40px] p-3">Welcome, {fullName}</h3>
-          <div className="flex justify-between items-center">
-            <div className="flex items-center ">
-              <h4 className="font-[500] text-[#346837] text-[18px]">Session: {Session?.session?.session||'none ongoing'}</h4>
-              <h4 className="font-[500] text-[#346837] text-[18px] ml-3">Semester: {Session?.session?.current_semester||'none ongoing'}</h4>
+        <div className="flex bmb:justify-between items-center flex-col bmb:flex-row">
+            <div className="w-full ">
+              <h4 className="font-[500] text-[#346837] text-[18px]">Current Session: {Session?.session?.session||'none ongoing'}</h4>
+              <h4 className="font-[500] text-[#346837] text-[18px] ">Semester: {Session?.session?.current_semester||'none ongoing'}</h4>
+            </div>
+            <div className="w-full">
+              <h4 className="font-[500] text-[#346837] text-[18px]">Entrance Session: {user.entrance_session}</h4>
+              <h4 className="font-[500] text-[#346837] text-[18px]">Expected Graduation Session: {user.graduation_session}</h4>
+              
             </div>
           </div>
           <div className="py-2">
