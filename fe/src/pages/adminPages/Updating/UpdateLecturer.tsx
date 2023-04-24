@@ -46,7 +46,7 @@ export default function UpdateLecturer() {
   }
   const updateLecturer = async () => {
     try {
-      
+
 
       let url = base + `/lecturers?id=${id}`
 
@@ -70,9 +70,9 @@ export default function UpdateLecturer() {
       })
 
       const data = await res.json()
-      if(data.ok){
+      if (data.ok) {
         alert('Lecturer updated successfully')
-      }else{
+      } else {
         throw new Error(data?.message || 'Error updating lecturer')
       }
     } catch (err: any) {
@@ -82,7 +82,7 @@ export default function UpdateLecturer() {
   const delete_lecturer = () => {
     const reply = prompt('are you sure you want to delete this Lecturer? Type yes to confirm')
     if (reply?.toLowerCase() !== 'yes') return
-    if(!id){ 
+    if (!id) {
       alert('no lecturer id found')
       return
     }
@@ -110,13 +110,13 @@ export default function UpdateLecturer() {
 
   const dob = useMemo(() => {
     if (form.dob) {
-     /* format to yyyy-mm-dd */
+      /* format to yyyy-mm-dd */
       const date = new Date(form.dob)
       const year = date.getFullYear()
       const month = date.getMonth() + 1
       const day = date.getDate()
       return `${year}-${month < 10 ? '0' + month : month}-${day < 10 ? '0' + day : day}`
-    }else{
+    } else {
       return ''
     }
   }, [form.dob])
@@ -138,7 +138,14 @@ export default function UpdateLecturer() {
         <label htmlFor="discipline">Discipline</label>
         <input type="text" id="discipline" name="discipline" value={form.discipline} onChange={(e) => setForm({ ...form, discipline: e.target.value })} className="text-[#346237] h-[40px] bg-transparent border border-[#346837] rounded-[5px] px-2" />
         <label htmlFor="dA">Degree Acquired</label>
-        <input type="text" id="dA" name="degree" value={form.degreeAcquired} onChange={(e) => setForm({ ...form, degreeAcquired: e.target.value })} className="text-[#346237] h-[40px] bg-transparent border border-[#346837] rounded-[5px] px-2" />
+        <select name='degreeAcquired' id='degreeAcquired' className="w-full h-[40px] rounded-[5px] bg-transparent border border-[#347836]  text-black flex items-center focus:outline-none px-2" value={form.degreeAcquired} onChange={({target})=>setForm(prev=>({...prev, degreeAcquired: target.value }))}>
+          <option value=''>Select Degree</option>
+          <option value='Bachelors'>Bachelors</option>
+          <option value='Masters'>Masters</option>
+          <option value='Ph.D'>Ph.D</option>
+        </select>
+
+
         <label htmlFor="dob">Date of Birth</label>
         <input type="date" id="dob" name="dob" value={dob} onChange={(e) => setForm({ ...form, dob: e.target.value })} className="text-[#346237] h-[40px] bg-transparent border border-[#346837] rounded-[5px] px-2" />
         <label htmlFor="pwd">Password</label>

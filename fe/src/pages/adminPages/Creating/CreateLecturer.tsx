@@ -206,8 +206,8 @@ export default function CreateLecturer() {
             {errors.degreeAcquired && <p className="text-red-500 text-[12px]">{errors.degreeAcquired}</p>}
             <select name='degreeAcquired' id='degreeAcquired' className="w-full h-[40px] rounded-[5px] bg-transparent border border-[#347836]  text-black flex items-center focus:outline-none px-2" value={user.degreeAcquired} onChange={handleChange}>
               <option value=''>Select Degree</option>
-              <option value='B.Sc'>B.Sc</option>
-              <option value='M.Sc'>M.Sc</option>
+              <option value='Bachelors'>Bachelors</option>
+              <option value='Masters'>Masters</option>
               <option value='Ph.D'>Ph.D</option>
             </select>
 

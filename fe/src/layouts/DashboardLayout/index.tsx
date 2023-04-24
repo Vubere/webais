@@ -141,7 +141,7 @@ export default function DashboardLayout({ title, DashboardLinks }: { title: stri
             </div>}
             <Link to={routes.base} className="flex items-center">
               <Icon src={school} className='w-[40px] h-[40px]' />
-              <h1 className="text-[#F5F5F5] text-[20px] font-bold ml-[10px]">WEBAIS</h1>
+              <h1 className="text-[#F5F5F5] text-[20px] font-bold ml-[10px]">Nigerian University</h1>
             </Link>
           </div>
 

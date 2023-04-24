@@ -9,7 +9,7 @@ export default function Header() {
       <Link to="/">
         <h1 className="text-[#fff] font-[700] text-[24px] leading-[24px] md:text-[32px] md:leading-[32px] m-4 font-bold flex items-center p-4 ">
           <Icon src={school_logo} className="w-[40px] h-[40px] md:w-[50px] md:h-[50px] " />
-          WEBAIS
+          Nigerian University
         </h1>
       </Link>
     </header>

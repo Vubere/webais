@@ -110,7 +110,7 @@ const FeeRow = ({ fee }: { fee: Fee }) => {
       <td className="border px-4 py-2">{department}</td>
       <td className="border px-4 py-2">{fee.session}</td>
       <td className="border px-4 py-2">{fee.semester!=0?fee.semester:'all'}</td>
-      <td className="border px-4 py-2">{fee.level}</td>
+      <td className="border px-4 py-2">{fee.level!='0'?fee.level:'all'}</td>
       <td className="border px-4 py-2">{fee.fee_status}</td>
       <td className="border px-4 py-2">{created}</td>
       <td className="border px-4 py-2">{last_updated}</td>

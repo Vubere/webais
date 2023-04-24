@@ -11,6 +11,7 @@ import useFacultiesAndDepartments from "../../hooks/useFacultiesAndDepartments";
 export default function FeePayment() {
   const [fees, setFees] = useState<any[]>([])
   const { departments } = useFacultiesAndDepartments()
+  const [loading, setLoading] = useState(false)
 
 
   const { user } = useContext(UserContext)
@@ -21,18 +22,24 @@ export default function FeePayment() {
     fetch(base+'/fee?student_id='+user.id)
       .then(res => res.json())
       .then(data => {
-        console.log(data)
+        setLoading(true)
         if (data.ok) {
           const res = data.data
-        
-          const fee = res.filter((item: any) => item.department_id == user.department||item.department_id==0)
-          console.log(user.department)
+          const fee = res.filter((item: any) => (item.department_id == user.department||item.department_id==0)&&(item.level==user.level||item.level=='0'))
+          
           if (fee) {
             setFees(fee)
             console.log(fee)
           }
+          setLoading(false)
         }
       })
+      .catch((err)=>{
+        console.log(err)
+        alert(err?.message || 'something went wrong')
+        setLoading(false)
+      })
+
   }, [user, departments])
 
   return (
@@ -99,7 +106,7 @@ const FeeRow = ({ fee }: { fee: Fee }) => {
       <td className="border px-4 py-2 capitalize">{department||'All'}</td>
       <td className="border px-4 py-2 capitalize">{fee.session}</td>
       <td className="border px-4 py-2 capitalize">{fee.semester != 0 ? fee.semester : 'all'}</td>
-      <td className="border px-4 py-2 capitalize">{fee.level}</td>
+      <td className="border px-4 py-2 capitalize">{fee.level!='0'?fee.level:'all'}</td>
       <td className="border px-4 py-2 capitalize">{fee.fee_status}</td>
 
       <td className="border px-4 py-2 capitalize">
