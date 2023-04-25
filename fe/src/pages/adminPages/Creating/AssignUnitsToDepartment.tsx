@@ -8,7 +8,6 @@ import { base } from "../../../App"
 
 export default function AssignUnitsToDepartment() {
   const [distribution, setDistribution] = useState({
-    session: '',
     semester: 0,
     level: '',
     department_id: '',
@@ -16,7 +15,6 @@ export default function AssignUnitsToDepartment() {
     max_units: ''
   })
   const [err, setErr] = useState({
-    session: '',
     department_id: '',
     semester: '',
     level: '',
@@ -31,7 +29,6 @@ export default function AssignUnitsToDepartment() {
 
   const reset_distribution = () => {
     setDistribution({
-      session: '',
       semester: 0,
       level: '',
       department_id: '',
@@ -43,17 +40,13 @@ export default function AssignUnitsToDepartment() {
 
   useEffect(() => {
     if (Session?.session) {
-      setDistribution({ ...distribution, session: Session.session.session, semester: Session.session.current_semester as number })
+      setDistribution({ ...distribution, semester: Session.session.current_semester as number })
     }
   }, [Session?.session])
 
   const validate = () => {
     let isValid = true
     const tempErr = { ...err }
-    if (distribution.session === '') {
-      tempErr.session = 'Session is required'
-      isValid = false
-    }
     if (distribution.semester === 0) {
       tempErr.semester = 'Semester is required'
       isValid = false
@@ -93,7 +86,6 @@ export default function AssignUnitsToDepartment() {
       setErr(tempErr)
       setTimeout(() => {
         setErr({
-          session: '',
           department_id: '',
           level: '',
           semester: '',
@@ -109,9 +101,8 @@ export default function AssignUnitsToDepartment() {
     e.preventDefault()
     if (validate()) {
       console.log(distribution)
-      const { session, department_id, level, semester, min_units, max_units } = distribution
+      const { department_id, level, semester, min_units, max_units } = distribution
       const form = new FormData()
-      form.append('session', session)
       form.append('department_id', department_id)
       form.append('level', level)
       form.append('semester', semester.toString())
@@ -175,18 +166,6 @@ export default function AssignUnitsToDepartment() {
             ))}
           </select>
 
-        </div>
-        <div>
-          <label htmlFor="session">Session *</label>
-          {err.session && <span className="text-red-500 text-[12px]">{err.session}</span>}
-          <select name="session" value={distribution.session} onChange={handleChange} className="w-full h-[40px] rounded-[5px] bg-transparent border border-[#347836]  flex items-center focus:outline-none px-2">
-            <option value="">Select session</option>
-            <option value={`${year + 2}/${year + 3}`}>{`${year + 2}/${year + 3}`}</option>
-            <option value={`${year + 1}/${year + 2}`}>{`${year + 1}/${year + 2}`}</option>
-            <option value={`${year}/${year + 1}`}>{`${year}/${year + 1}`}</option>
-            <option value={`${year - 1}/${year}`}>{`${year - 1}/${year}`}</option>
-            <option value={`${year - 2}/${year - 1}`}>{`${year - 2}/${year - 1}`}</option>
-          </select>
         </div>
         <div className="w-full">
           <label htmlFor="level">Level *</label>

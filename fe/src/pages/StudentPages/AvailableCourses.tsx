@@ -124,6 +124,7 @@ export default function AvailableCourses() {
       fetch(base + `/assign_course?student_id=${user.id}&session=${session}&semester=${current_semester}&level=${user.level}&department_id=${user.department}&faculty=${user.faculty}`)
         .then(res => res.json())
         .then(res => {
+          console.log(res?.data)
           if (res?.data)
             setAvailableCourses(res?.data)
           setLoading(false)
@@ -296,6 +297,7 @@ export default function AvailableCourses() {
       const temp2 = performance.failed_courses.courses
       let temp = temp2.filter((course: assigned_course) => {
         if(course==null) return false
+        console.log(course)
         let ses = course?.session?.split('/')
         let ses2 = session?.split('/')
         if(ses&&ses[0]==undefined||ses&&ses2[0]==undefined){
@@ -441,13 +443,13 @@ const Available_course = ({ course, setMarkedCourse }: { course: avail_course, s
       <input type="checkbox" checked={reg} name="" id="" onChange={onChange} />
 
     </td>
-    <td className="border px-4 py-2">{course.code}</td>
+    <td className="border px-4 py-2">{course.code?.toUpperCase()}</td>
     <td className="border px-4 py-2">{course.title}</td>
     <td className="border px-4 py-2">{course.units}</td>
     <td className="border px-4 py-2">{course.type}</td>
     <td className="border px-4 py-2">{course.semester}</td>
     <td className="border px-4 py-2">{course.registration_open ? 'open' : 'closed'}</td>
-    <td className="border px-4 py-2"><Link to={`/dashboard-student/view-course/${course.course_id}`} className=" text-[#347836] underline font-[500] px-4 py-2 rounded-md">View</Link></td>
+    <td className="border px-4 py-2"><Link to={`/dashboard-student/view-course/${course.id}`} className=" text-[#347836] underline font-[500] px-4 py-2 rounded-md">View</Link></td>
   </tr>)
 }
 

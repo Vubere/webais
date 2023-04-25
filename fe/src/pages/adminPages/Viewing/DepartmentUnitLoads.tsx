@@ -47,7 +47,7 @@ export default function DepartmentUnitLoad() {
   }, [sess])
 
   const filteredUnitLoads = useMemo(() => unitLoads?.filter((unitLoad) => {
-    return unitLoad.department_name.toLowerCase().includes(search.search.toLowerCase()) || unitLoad.level.toLowerCase().includes(search.search.toLowerCase()) || unitLoad.semester.toString().toLowerCase().includes(search.search.toLowerCase()) || unitLoad.session.toLowerCase().includes(search.search.toLowerCase()) || unitLoad.min_units.toString().toLowerCase().includes(search.search.toLowerCase()) || unitLoad.max_units.toString().toLowerCase().includes(search.search.toLowerCase())
+    return unitLoad.department_name.toLowerCase().includes(search.search.toLowerCase()) || unitLoad.level.toLowerCase().includes(search.search.toLowerCase()) || unitLoad.semester.toString().toLowerCase().includes(search.search.toLowerCase()) || unitLoad.min_units.toString().toLowerCase().includes(search.search.toLowerCase()) || unitLoad.max_units.toString().toLowerCase().includes(search.search.toLowerCase())
   }), [unitLoads, search])
 
   const year = new Date().getFullYear()
@@ -91,9 +91,6 @@ export default function DepartmentUnitLoad() {
                         Semester
                       </th>
                       <th className="bg-[#34783644]  border text-left px-4 py-2">
-                        Session
-                      </th>
-                      <th className="bg-[#34783644]  border text-left px-4 py-2">
                         Minimum Units
                       </th>
                       <th className="bg-[#34783644]  border text-left px-4 py-2">
@@ -110,7 +107,7 @@ export default function DepartmentUnitLoad() {
                         <td className="border px-4 py-2">{unitLoad.department_name}</td>
                         <td className="border px-4 py-2">{unitLoad.level}</td>
                         <td className="border px-4 py-2">{unitLoad.semester}</td>
-                        <td className="border px-4 py-2">{unitLoad.session}</td>
+                      
                         <td className="border px-4 py-2">{unitLoad.min_units}</td>
                         <td className="border px-4 py-2">{unitLoad.max_units}</td>
                         <td className="border px-4 py-2">
@@ -141,7 +138,6 @@ export type unitLoads = {
   department_name: string,
   level: string,
   semester: number,
-  session: string,
   min_units: number,
   max_units: number
 }

@@ -8,13 +8,13 @@ export default function Dashboard() {
   const [user, setUser] = useState<any>()
   const { user: u } = useContext(UserContext)
   const {departments,population, faculties} = useFacultiesAndDepartments()
-  const student_number = useRef<number>(0)
+  const [student_number,setStudentNumber] = useState<number>(0)
 
   useEffect(() => {
     if (u) {
       setUser(u)
       
-      student_number.current = population?.reduce((acc:any,cur:any)=>acc+cur.number_of_students,0)    
+      setStudentNumber(population?.reduce((acc:any,cur:any)=>acc+cur.number_of_students,0) ) 
     }
   }, [u, departments, faculties, population])
 
@@ -36,7 +36,7 @@ export default function Dashboard() {
           </div>
           {/* card to show students number */}
           <div className="flex flex-col  text-white items-center gap-[10px] bg-[#346837] px-4 py-2 rounded text-[24px] w-[250px]">
-            {student_number.current}
+            {student_number}
             <p className="text-[14px]">Students</p>
           </div>
         </div>

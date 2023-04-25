@@ -26,7 +26,12 @@ export default function CreateLectures() {
   useEffect(() => {
     fetch(base + '/lecturers')
       .then(res => res.json())
-      .then(data => setLecturers(data.lecturer))
+      .then(data => {
+        if(data.status=='success')
+        setLecturers(data.lecturer)
+        else
+        throw new Error('something went wrong')
+      })
       .catch(err => console.log(err))
   }, [])
   const validate = () => {
@@ -77,7 +82,10 @@ export default function CreateLectures() {
       .then(res => res.json())
       .then(data => {
         console.log(data)
+        if(data.ok==1)
         setCourses(data.data)
+        else
+        throw new Error('something went wrong')
       })
       .catch((err: any) => alert(err?.message || 'something went wrong'))
   }, [])

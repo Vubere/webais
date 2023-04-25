@@ -200,7 +200,7 @@ class StudentController
   {
     $method = $_SERVER['REQUEST_METHOD'];
     if ($method == 'GET') {
-      $sql = 'SELECT s.department, CONCAT(s.firstName," ",s.lastName) as fullName, s.id, s.level, s.entrance_session,dc.id as course_id,  dc.code, dc.units, dc.type, c.title, c.description, dc.semester FROM students as s INNER JOIN department_courses as dc ON dc.departments LIKE CONCAT("%", s.department, "%") INNER JOIN courses as c ON c.id = dc.course_id INNER JOIN course_registrations as cr ON cr.department_course_id = dc.id AND cr.student_id=s.id  WHERE 1=1';
+      $sql = 'SELECT s.department, CONCAT(s.firstName," ",s.lastName) as fullName, s.id, s.level, s.entrance_session,dc.id as course_id,  dc.code, dc.units, dc.type, c.title, c.description, dc.semester FROM students as s INNER JOIN assigned_courses as dc ON dc.departments LIKE CONCAT("%", s.department, "%") INNER JOIN courses as c ON c.id = dc.course_id INNER JOIN course_registrations as cr ON cr.department_course_id = dc.id AND cr.student_id=s.id  WHERE 1=1';
       if (isset($_GET['student_id'])) {
         $sql .= ' AND s.id="' . $_GET['student_id'] . '"';
       }
@@ -208,7 +208,7 @@ class StudentController
         $sql .= ' AND dc.id="' . $_GET['course_id'] . '"';
       }
       if (isset($_GET['session'])) {
-        $sql .= ' AND dc.session="' . $_GET['session'] . '"';
+        $sql .= ' AND cr.session="' . $_GET['session'] . '"';
       }
       if (isset($_GET['semester'])) {
         $sql .= ' AND dc.semester="' . $_GET['semester'] . '"';
@@ -245,6 +245,45 @@ class StudentController
     $method = $_SERVER['REQUEST_METHOD'];
     if ($method == 'POST') {
       $post = json_decode(file_get_contents('php://input'), true);
+      $session = $post['session'];
+      $sql = 'SELECT * FROM students WHERE 1=1';
+      if (isset($post['department'])) {
+        $sql .= ' AND department="' . $post['department'] . '"';
+      }
+      if (isset($post['level'])) {
+        $sql .= ' AND level="' . $post['level'] . '"';
+      }
+      try {
+        $stmt = $this->conn->prepare($sql);
+        $res = $stmt->execute();
+        $result = $stmt->get_result();
+        $students = $result->fetch_all(MYSQLI_ASSOC);
+
+        foreach ($students as $student) {
+          $duration = $student['duration'];
+          $entrance_session = $student['entrance_session'];
+          $graduation_session = $student['graduation_session'];
+          if ($graduation_session == $entrance_session) {
+            return;
+          }
+          $sql = 'UPDATE students SET level="' . ((int) $student['level'] + 100) . '" WHERE id="' . $student['id'] . '"';
+          $stmt = $this->conn->prepare($sql);
+          $res = $stmt->execute();
+        }
+
+      } catch (Exception $e) {
+        $this->getHeaders();
+        echo json_encode(array('message' => $e->getMessage(), 'ok' => 0, 'status' => 'failed', 'line' => $e->getLine()));
+      }
+    } else {
+      $this->getHeaders();
+      echo json_encode(array('message' => 'wrong method', 'ok' => 0, 'status' => 'failed'));
+    }
+  }
+  public function change_student_level(){
+    $method = $_SERVER['REQUEST_METHOD'];
+    if ($method == 'POST') {
+      $post = $_POST;
       $session = $post['session'];
       $sql = 'SELECT * FROM students WHERE 1=1';
       if (isset($post['department'])) {

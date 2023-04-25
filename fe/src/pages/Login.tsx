@@ -48,10 +48,10 @@ export default function Login({ title, src }: { title: string, src: string }) {
 
         })
         const data = await res.json()
-    
 
         if (data?.authenticated) {
           sessionStorage.setItem('user', JSON.stringify(data.user))
+          setUser(data.user)
           setLoading(false)
           if (title.toLowerCase() == 'student') {
             navigate(routes.dashboard + '-' + routes.student)

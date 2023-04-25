@@ -23,11 +23,16 @@ export default function ViewSingleCourse() {
 
   useEffect(() => {
     setLoading(true)
+    if(Session?.session)
     fetch(base+'/assign_course?id=' + id)
       .then((res) => res.json())
       .then(result => {
+        console.log(id, result)
         if (result.ok == 1) {
           setCourseDetails(result.data[0])
+          if(result.data[0]==undefined){
+            throw new Error('course not found')
+          }
         } else {
           throw new Error(result?.message || 'something went wrong')
         }
@@ -38,7 +43,7 @@ export default function ViewSingleCourse() {
         alert(err?.message || 'something went wrong')
         setLoading(false)
       })
-  }, [])
+  }, [Session])
 
   useEffect(() => {
     if (courseDetails == undefined) return

@@ -70,7 +70,7 @@ export default function RegisteredCourses() {
         <tbody>
 
           {registeredCourses.length ? registeredCourses.map((course) => (<tr key={course.course_id}>
-            <td className="border px-4 py-2">{course.code}</td>
+            <td className="border px-4 py-2">{course.code?.toUpperCase()}</td>
             <td className="border px-4 py-2">{course.title}</td>
             <td className="border px-4 py-2">{course.units}</td>
             <td className="border px-4 py-2">{course.semester}</td>

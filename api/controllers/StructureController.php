@@ -89,15 +89,12 @@ class StructureController
     $method = $_SERVER['REQUEST_METHOD'];
     if ($method == 'GET') {
       try {
-        $sql = "SELECT dul.id, dul.min_units, dul.max_units, dul.semester, dul.session, dul.level, d.name as department_name, d.faculty_id, d.id as department_id FROM department_units_distribution as dul INNER JOIN departments as d ON d.id = dul.department_id WHERE 1=1";
+        $sql = "SELECT dul.id, dul.min_units, dul.max_units, dul.semester, dul.level, d.name as department_name, d.faculty_id, d.id as department_id FROM department_units_distribution as dul INNER JOIN departments as d ON d.id = dul.department_id WHERE 1=1";
         if (isset($_GET['id'])) {
           $sql .= " AND dul.id = " . $_GET['id'];
         }
         if (isset($_GET['department_id'])) {
           $sql .= " AND d.id = " . $_GET['department_id'];
-        }
-        if (isset($_GET['session'])) {
-          $sql .= " AND dul.session='" . $_GET['session'] . "'";
         }
         if (isset($_GET['semester'])) {
           $sql .= " AND dul.semester = " . $_GET['semester'];
@@ -132,31 +129,28 @@ class StructureController
           $max_units = $post['max_units'];
           $level = $post['level'];
           $semester = htmlspecialchars($post['semester']);
-          $session = htmlspecialchars($post['session']);
           $sql = "INSERT INTO department_units_distribution(
         department_id,
         min_units,
         max_units,
         level,
-        semester,
-        session
+        semester
       ) VALUES (
-        ?,?,?,?,?,?
+        ?,?,?,?,?
       )";
           $stmt = $this->conn->prepare($sql);
           $stmt->bind_param(
-            "iiiiis",
+            "iiiii",
             $department_id,
             $min_units,
             $max_units,
             $level,
-            $semester,
-            $session
+            $semester
           );
           $res = $stmt->execute();
           if ($res) {
             $this->getHeaders();
-            echo json_encode(array('status' => 'success', 'ok' => 1, $session));
+            echo json_encode(array('status' => 'success', 'ok' => 1));
           } else {
             $this->getHeaders();
             echo json_encode(array('status' => 'error', 'ok' => 0, 'message' => 'Error occured while saving data'));
@@ -173,22 +167,20 @@ class StructureController
           $max_units = $post['max_units'];
           $level = $post['level'];
           $semester = $post['semester'];
-          $session = htmlspecialchars($post['session']);
-          $sql = "UPDATE department_units_distribution SET min_units = ?, max_units = ?, level = ?, semester = ?, session = ? WHERE id = ?";
+          $sql = "UPDATE department_units_distribution SET min_units = ?, max_units = ?, level = ?, semester = ? WHERE id = ?";
           $stmt = $this->conn->prepare($sql);
           $stmt->bind_param(
-            "iiiiss",
+            "iiiii",
             $min_units,
             $max_units,
             $level,
             $semester,
-            $session,
             $id
           );
           $res = $stmt->execute();
           if ($res) {
             $this->getHeaders();
-            echo json_encode(array('status' => 'success', 'ok' => 1, $session));
+            echo json_encode(array('status' => 'success', 'ok' => 1));
           } else {
             $this->getHeaders();
             echo json_encode(array('status' => 'error', 'ok' => 0));

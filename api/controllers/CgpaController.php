@@ -51,14 +51,14 @@ class CgpaController
       $course_id = $row['department_course_id'];
       $session = $row['session'];
       $semester = $row['semester'];
-      $session = explode('/', $session);
-      $result_table_name = $session[0] . '_' . $session[1] . '_' . $semester . '_' . $course_id;
+      $sess = explode('/', $session);
+      $result_table_name = $sess[0] . '_' . $sess[1] . '_' . $semester . '_' . $course_id;
       $table_name = 'results_' . $result_table_name;
       if (!$this->check_if_result_table_exist($table_name)) {
         continue;
       }
 
-      $sql = "SELECT dc.id, dc.departments, dc.type, dc.code, dc.units, dc.semester, dc.session, dc.assigned_lecturers, dc.course_id, c.title, c.description FROM department_courses as dc INNER JOIN courses as c ON dc.course_id = c.id where dc.id = ?";
+      $sql = "SELECT dc.id, dc.departments, dc.type, dc.code, dc.units, dc.semester, dc.assigned_lecturers, dc.course_id, c.title, c.description,cr.session FROM assigned_courses as dc INNER JOIN courses as c ON dc.course_id = c.id INNER JOIN course_registrations as cr ON cr.department_course_id = dc.id AND cr.student_id = '".$student_id."' AND cr.session = '".$session."' WHERE dc.id = ?";
       $stmt = $this->conn->prepare($sql);
       $stmt->bind_param('s', $course_id);
       $stmt->execute();

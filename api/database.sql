@@ -134,10 +134,10 @@ CREATE TABLE `departments` (
 -- --------------------------------------------------------
 
 --
--- Table structure for table `department_courses`
+-- Table structure for table `assigned_courses`
 --
 
-CREATE TABLE `department_courses` (
+CREATE TABLE `assigned_courses` (
   `id` int(11) NOT NULL,
   `departments` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL CHECK (json_valid(`departments`)),
   `type` varchar(255) NOT NULL,
@@ -438,9 +438,9 @@ ALTER TABLE `departments`
   ADD PRIMARY KEY (`id`);
 
 --
--- Indexes for table `department_courses`
+-- Indexes for table `assigned_courses`
 --
-ALTER TABLE `department_courses`
+ALTER TABLE `assigned_courses`
   ADD PRIMARY KEY (`id`);
 
 --
@@ -577,9 +577,9 @@ ALTER TABLE `departments`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT for table `department_courses`
+-- AUTO_INCREMENT for table `assigned_courses`
 --
-ALTER TABLE `department_courses`
+ALTER TABLE `assigned_courses`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --

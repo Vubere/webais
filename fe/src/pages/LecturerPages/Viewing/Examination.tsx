@@ -87,7 +87,7 @@ export default function Examinations() {
                     <td className="border px-4 py-2">{exam.time}</td>
                     <td className="border px-4 py-2">{formatDateToDMY(exam.date)}</td>
                     <td className="border px-4 py-2">{exam.duration}hrs</td>
-                    <td className="border px-4 py-2">{exam.title}({exam.code})</td>
+                    <td className="border px-4 py-2">{exam.title}({exam.code?.toUpperCase()})</td>
                     <td className="border px-4 py-2">{exam.venue}</td>
                   </tr>
                 ))}
@@ -115,7 +115,7 @@ export default function Examinations() {
                     <td className="border px-4 py-2">{exam.time}</td>
                     <td className="border px-4 py-2">{formatDateToDMY(exam.date)}</td>
                     <td className="border px-4 py-2">{exam.duration}hrs</td>
-                    <td className="border px-4 py-2">{exam.title}({exam.code})</td>
+                    <td className="border px-4 py-2">{exam.title}({exam.code?.toUpperCase()})</td>
                     <td className="border px-4 py-2">{exam.venue}</td>
                   </tr>
                 ))}

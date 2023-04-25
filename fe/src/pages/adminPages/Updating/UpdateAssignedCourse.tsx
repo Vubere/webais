@@ -23,8 +23,8 @@ export default function UpdateAssignedCourse() {
     description: '',
     course_id: 0,
     departments: [],
-    semester: 0,
     session: '',
+    semester: 0,
     units: 0,
     code: '',
     type: 'elective',
@@ -40,7 +40,6 @@ export default function UpdateAssignedCourse() {
     units: '',
     departments: '',
     course_id: '',
-    session: '',
     semester: '',
     faculties: '',
     level: '',
@@ -114,7 +113,6 @@ export default function UpdateAssignedCourse() {
       formData.append('units', assigned.units.toString())
       formData.append('departments', JSON.stringify(selectedDepartments))
       formData.append('course_id', assigned.course_id.toString())
-      formData.append('session', assigned.session)
       formData.append('semester', assigned.semester.toString())
       formData.append('level', assigned.level.toString())
       formData.append('assigned_lecturers', JSON.stringify(assigned.assigned_lecturers))
@@ -172,10 +170,6 @@ export default function UpdateAssignedCourse() {
       temp.course_id = 'Course is required'
       valid = false
     }
-    if (assigned.session === '') {
-      temp.session = 'Course session is required'
-      valid = false
-    }
     if (assigned.semester === 0) {
       temp.semester = 'Course semester is required'
       valid = false
@@ -195,7 +189,6 @@ export default function UpdateAssignedCourse() {
           units: '',
           departments: '',
           course_id: '',
-          session: '',
           semester: '',
           faculties: '',
           level: '',
@@ -391,19 +384,6 @@ export default function UpdateAssignedCourse() {
               <option value="1">1</option>
               <option value="2">2</option>
             </select>
-          </div>
-          <div className="w-full">
-            <label htmlFor="session">Session</label>
-            <select name="session" id="session" value={assigned?.session} onChange={onChange} className="w-full h-[40px] rounded-[5px] bg-transparent border border-[#347836] flex items-center focus:outline-none px-2">
-              <option value="">Select Session </option>
-              <option value={`${year + 2}/${year + 3}`}>{`${year + 2}/${year + 3}`}</option>
-              <option value={`${year + 1}/${year + 2}`}>{`${year + 1}/${year + 2}`}</option>
-              <option value={`${year}/${year + 1}`}>{`${year}/${year + 1}`}</option>
-              <option value={`${year - 1}/${year}`}>{`${year - 1}/${year}`}</option>
-              <option value={`${year - 2}/${year - 1}`}>{`${year - 2}/${year - 1}`}</option>
-              <option value={`${year - 3}/${year - 2}`}>{`${year - 3}/${year - 2}`}</option>
-            </select>
-            <p className="red">{errors.session}</p>
           </div>
           <div className="flex flex-col w-full">
             <h3 className="font-[500] text-[18px] text-center text-[#347836]">Assign Lecturers</h3>

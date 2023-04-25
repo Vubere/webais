@@ -32,7 +32,7 @@ export default function ViewLectures() {
       <div className="lectureDetails">
         {lectureDetails && error == '' ? (
           <>
-            <h3 className="uppercase">{lectureDetails.title} ({lectureDetails.code})</h3>
+            <h3 className="uppercase">{lectureDetails.title} ({lectureDetails.code?.toUpperCase()})</h3>
             <Link to={'/dashboard-lecturer/view-courses/'+lectureDetails.course_id}>
               View Course
             </Link>

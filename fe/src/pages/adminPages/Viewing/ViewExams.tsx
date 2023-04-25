@@ -61,7 +61,7 @@ export default function ViewExams() {
                 <td className="border px-4 py-2">{lecture.time}</td>
                 <td className="border px-4 py-2">{formatDateToDMY(lecture.date)}</td>
                 <td className="border px-4 py-2">{lecture.duration}</td>
-                <td className="border px-4 py-2">{lecture.course_code}</td>
+                <td className="border px-4 py-2">{lecture.course_code?.toUpperCase()}</td>
                 <td className="border px-4 py-2">{lecture.lecturer_id}</td>
                 <td className="border px-4 py-2">{lecture.venue}</td>
                 <td className="border px-4 py-2">

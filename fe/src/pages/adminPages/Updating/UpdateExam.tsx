@@ -239,7 +239,7 @@ export default function UpdateLectures() {
             <option value="">Select Course </option>
             {filteredCourses.length ? filteredCourses.map((course: any) => {
               return (
-                <option value={course.id}>{course.code}({course.title})</option>
+                <option value={course.id}>{course.code?.toUpperCase()}({course.title})</option>
               )
             }) : <option value="" className="text-[#a22]">No Course</option>
             }

@@ -130,7 +130,7 @@ export default function ViewSingleCourse() {
               {assigned.map((course) => (
                 <tr key={course.id}>
 
-                  <td className="border px-4 py-2">{course.code}</td>
+                  <td className="border px-4 py-2">{course.code?.toUpperCase()}</td>
                   <td className="border px-4 py-2">{course.units}</td>
                   <td className="border px-4 py-2">{course.type}</td>
                   <td className="border px-4 py-2">{course.level}</td>

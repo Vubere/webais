@@ -24,7 +24,6 @@ export default function AssignCoursesToDepartments() {
     if (Session?.session)
       setCourse({
         ...course,
-        session: Session?.session?.session,
         semester: Session?.session?.current_semester as string,
       })
   }, [Session?.session])
@@ -36,7 +35,6 @@ export default function AssignCoursesToDepartments() {
     type: '',
     code: '',
     units: 0,
-    session: '',
     semester: '',
     level: 0,
     assigned_lecturers: [],
@@ -50,7 +48,6 @@ export default function AssignCoursesToDepartments() {
     type: '',
     code: '',
     units: '',
-    session: '',
     semester: '',
     faculties: '',
     level: '',
@@ -109,7 +106,6 @@ export default function AssignCoursesToDepartments() {
       type: '',
       code: '',
       units: 0,
-      session: '',
       semester: '',
       level: 0,
       assigned_lecturers: [],
@@ -229,7 +225,6 @@ export default function AssignCoursesToDepartments() {
           code: '',
           faculties: '',
           units: '',
-          session: '',
           semester: '',
           level: '',
           assigned_lecturers: '',
@@ -243,7 +238,7 @@ export default function AssignCoursesToDepartments() {
   const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     
-    if (validate()) {
+    if (validate()&&Session?.session?.session) {
       try {
 
         const form = new FormData()
@@ -254,7 +249,7 @@ export default function AssignCoursesToDepartments() {
         form.append('type', course.type)
         form.append('code', course.code)
         form.append('units', course.units.toString())
-        form.append('session', course.session)
+        form.append('session', Session?.session?.session)
         form.append('semester', course.semester)
         form.append('level', course.level.toString())
         form.append('assigned_lecturers', JSON.stringify(course.assigned_lecturers))
@@ -275,6 +270,11 @@ export default function AssignCoursesToDepartments() {
           throw new Error(res?.message || 'error assigning course')
         }
       } catch (err: any) {
+        console.log(err)
+        if(err?.message?.toLowerCase().includes('duplicate')){
+          alert('Course code already exist')
+          return
+        }
         alert(err?.message || 'error assigning course')
       }
     }
@@ -398,19 +398,6 @@ export default function AssignCoursesToDepartments() {
             <option value="2">2</option>
           </select>
         </div>
-        <div className="w-full">
-          <label htmlFor="session">Session</label>
-          <select name="session" id="session" value={course.session} onChange={onChange} className="w-full h-[40px] rounded-[5px] bg-transparent border border-[#347836] flex items-center focus:outline-none px-2">
-            <option value="">Select Session </option>
-            <option value={`${year + 2}/${year + 3}`}>{`${year + 2}/${year + 3}`}</option>
-            <option value={`${year + 1}/${year + 2}`}>{`${year + 1}/${year + 2}`}</option>
-            <option value={`${year}/${year + 1}`}>{`${year}/${year + 1}`}</option>
-            <option value={`${year - 1}/${year}`}>{`${year - 1}/${year}`}</option>
-            <option value={`${year - 2}/${year - 1}`}>{`${year - 2}/${year - 1}`}</option>
-            <option value={`${year - 3}/${year - 2}`}>{`${year - 3}/${year - 2}`}</option>
-          </select>
-          <p className="red">{errors.session}</p>
-        </div>
 
         <div className="flex flex-col w-full">
           <h3 className="font-[500] text-[18px] text-center text-[#347836]">Assign Lecturers</h3>
@@ -481,7 +468,6 @@ type department_course = {
   code: string;
   units: number;
   faculties: string[];
-  session: string;
   semester: string;
   level: number;
   assigned_lecturers: {

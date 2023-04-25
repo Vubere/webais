@@ -122,7 +122,7 @@ const GradeRow = ({ course, session, student_id }: { course: Course, session: st
   return (
     <tr>
       <td className="border px-4 py-2">{course.title}</td>
-      <td className="border px-4 py-2">{course.code}</td>
+      <td className="border px-4 py-2">{course.code?.toUpperCase()}</td>
       <td className="border px-4 py-2">{grade?.attendance || '-'}</td>
       <td className="border px-4 py-2">{grade?.ca || '-'}</td>
       <td className="border px-4 py-2">{grade?.exam || '-'}</td>

@@ -53,7 +53,7 @@ class CoursesController
             $data[] = $row;
           }
           foreach ($data as $row) {
-            $sql = "SELECT * FROM department_courses where course_id=" . $row['id'] . "";
+            $sql = "SELECT * FROM assigned_courses where course_id=" . $row['id'] . "";
             $res = $this->conn->query($sql);
 
             if (!$res) {
@@ -159,7 +159,7 @@ class CoursesController
     $method = $_SERVER['REQUEST_METHOD'];
     if ($method == "GET") {
       try {
-        $sql = "SELECT c.title, c.description, dc.id, dc.course_id, dc.departments, dc.units, dc.semester, dc.session, dc.level, dc.assigned_lecturers, dc.type, dc.code, cg.grading_open, cg.registration_open FROM department_courses AS dc INNER JOIN course_gradings as cg ON dc.id = cg.department_course_id AND dc.session = cg.session INNER JOIN courses AS c ON c.id=dc.course_id WHERE 1=1";
+        $sql = "SELECT c.title, c.description, dc.id, dc.course_id, dc.departments, dc.units, dc.semester, dc.level, dc.assigned_lecturers, dc.type, dc.code, cg.grading_open, cg.registration_open FROM assigned_courses AS dc INNER JOIN course_gradings as cg ON dc.id = cg.department_course_id INNER JOIN courses AS c ON c.id=dc.course_id WHERE 1=1";
         if (isset($_GET['id'])) {
           $sql .= " AND dc.id = '" . $_GET['id'] . "'";
         }
@@ -170,7 +170,7 @@ class CoursesController
           $sql .= ' AND dc.departments LIKE "%' . $_GET['department_id'] . '%"';
         }
         if (isset($_GET['session'])) {
-          $sql .= ' AND dc.session ="' . $_GET['session'] . '"';
+          $sql .= ' AND cg.session ="' . $_GET['session'] . '"';
         }
         if (isset($_GET['semester'])) {
           $sql .= ' AND dc.semester ="' . $_GET['semester'] . '"';
@@ -203,7 +203,7 @@ class CoursesController
       if ($method == 'POST') {
         try {
           $post = $_POST;
-          $sql = "INSERT INTO department_courses(
+          $sql = "INSERT INTO assigned_courses(
           departments,
           type,
           code,
@@ -211,15 +211,14 @@ class CoursesController
           units,
           assigned_lecturers,
           semester,
-          session,
           course_id
-        ) VALUES(?,?,?,?,?,?,?,?,?)";
+        ) VALUES(?,?,?,?,?,?,?,?)";
           $level = (int) $post['level'];
           $course_id = (int) $post['course_id'];
           $semester = (int) $post['semester'];
           $units = (int) $post['units'];
           $stmt = $this->conn->prepare($sql);
-          $stmt->bind_param('sssssssss', $post['departments'], $post['type'], $post['code'], $level, $units, $post['assigned_lecturers'], $semester, $post['session'], $course_id);
+          $stmt->bind_param('ssssssss', $post['departments'], $post['type'], $post['code'], $level, $units, $post['assigned_lecturers'], $semester, $course_id);
           $res = $stmt->execute();
 
           if ($res) {
@@ -239,20 +238,19 @@ class CoursesController
       } elseif ($method == "PUT") {
         try {
           $post = $_POST;
-          $sql = "UPDATE department_courses SET
+          $sql = "UPDATE assigned_courses SET
           departments = ?,
           type = ?,
           code = ?,
           units = ?,
           level = ?,
           assigned_lecturers = ?,
-          semester = ?,
-          session = ?
+          semester = ?
         WHERE id = ?";
           $department = json_encode($post['departments']);
           $lecturers = json_encode($post['assigned_lecturers']);
           $stmt = $this->conn->prepare($sql);
-          $stmt->bind_param('sssssssss', $department, $post['type'], $post['code'], $post['units'], $post['level'], $lecturers, $post['semester'], $post['session'], $post['id']);
+          $stmt->bind_param('ssssssss', $department, $post['type'], $post['code'], $post['units'], $post['level'], $lecturers, $post['semester'],$post['id']);
           $res = $stmt->execute();
 
 
@@ -271,7 +269,7 @@ class CoursesController
       } elseif ($method == "DELETE") {
         try {
           $post = $_POST;
-          $sql = "DELETE FROM department_courses WHERE id = ?";
+          $sql = "DELETE FROM assigned_courses WHERE id = ?";
           $stmt = $this->conn->prepare($sql);
           $stmt->bind_param('s', $post['id']);
           $res = $stmt->execute();
@@ -298,11 +296,6 @@ class CoursesController
   }
 
 
-  public function registered_course()
-  {
-    $method = $_SERVER['REQUEST_METHOD'];
-  }
-
   public function available_course()
   {
     $method = $_SERVER['REQUEST_METHOD'];
@@ -314,7 +307,7 @@ class CoursesController
         echo json_encode(array('status' => 401, 'message' => 'invalid request, student an d course id missing', 'ok' => 0));
         return;
       }
-      $sql = "SELECT dc.id, dc.departments, dc.type, dc.code, dc.semester, dc.session, dc.level, dc.assigned_lecturers, dc.course_id, c.title, c.description, dc.units FROM department_courses AS dc INNER JOIN courses AS c ON dc.course_id = c.id WHERE 1=1 AND dc.session = '" . $get['session'] . "' AND dc.semester = '" . $get['semester'] . "' AND dc.departments LIKE '%" . $get['department_id'] . "%'";
+      $sql = "SELECT dc.id, dc.departments, dc.type, dc.code, dc.semester, dc.level, dc.assigned_lecturers, dc.course_id, c.title, c.description, dc.units FROM assigned_courses AS dc INNER JOIN courses AS c ON dc.course_id = c.id WHERE 1=1 AND dc.semester = '" . $get['semester'] . "' AND dc.departments LIKE '%" . $get['department_id'] . "%'";
 
       if (isset($get['id'])) {
         $sql .= " AND dc.id = '" . $get['id'] . "'";
@@ -647,7 +640,7 @@ class CoursesController
   {
     if ($post) {
       try {
-        $sql = "SELECT * FROM department_courses WHERE session = '" . $post['session'] . "' AND semester = '" . $post['semester'] . "'";
+        $sql = "SELECT * FROM assigned_courses WHERE semester = '" . $post['semester'] . "'";
         $res = $this->conn->query($sql);
         $semester = $post['semester'];
         $session = $post['session'];

@@ -48,7 +48,7 @@ export default function Dashboard() {
             setPerformance(data.performance)
           }
         })
-        .catch(err => console.log(err))
+        .catch(err => console.log(err?.message||'something went wrong'))
     }
   }, [user?.id])
 

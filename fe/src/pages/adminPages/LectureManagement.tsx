@@ -81,7 +81,7 @@ export default function LectureManagement() {
                       <td className="border px-4 py-2">{lecture.time}</td>
                       <td className="border px-4 py-2">{lecture.day}</td>
                       <td className="border px-4 py-2">{lecture.duration}</td>
-                      <td className="border px-4 py-2">{lecture.title}({lecture.code})</td>
+                      <td className="border px-4 py-2">{lecture.title}({lecture.code?.toUpperCase()})</td>
                       <td className="border px-4 py-2">{lecture.lecturer_name}({lecture.discipline})</td>
                       <td className="border px-4 py-2">{lecture.venue}</td>
                       <td className="border px-4 py-2">
