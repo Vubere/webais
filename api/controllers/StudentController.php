@@ -280,11 +280,15 @@ class StudentController
       echo json_encode(array('message' => 'wrong method', 'ok' => 0, 'status' => 'failed'));
     }
   }
-  public function change_student_level(){
+  public function move_to_next_level(){
     $method = $_SERVER['REQUEST_METHOD'];
     if ($method == 'POST') {
       $post = $_POST;
-      $session = $post['session'];
+      if(!isset($post['session'])){
+        $this->getHeaders();
+        echo json_encode(array('message' => 'session is required', 'ok' => 0, 'status' => 'failed'));
+        return;
+      }
       $sql = 'SELECT * FROM students WHERE 1=1';
       if (isset($post['department'])) {
         $sql .= ' AND department="' . $post['department'] . '"';
@@ -297,18 +301,33 @@ class StudentController
         $res = $stmt->execute();
         $result = $stmt->get_result();
         $students = $result->fetch_all(MYSQLI_ASSOC);
-
+        
         foreach ($students as $student) {
-          $duration = $student['duration'];
+          $current_session = $post['session'];
           $entrance_session = $student['entrance_session'];
           $graduation_session = $student['graduation_session'];
           if ($graduation_session == $entrance_session) {
+            $res = true;
             return;
           }
-          $sql = 'UPDATE students SET level="' . ((int) $student['level'] + 100) . '" WHERE id="' . $student['id'] . '"';
-          $stmt = $this->conn->prepare($sql);
-          $res = $stmt->execute();
+          $start_year = (int) explode('/', $entrance_session)[0];
+          $current_year = (int) explode('/', $current_session)[0];
+          $years_stayed =  $current_year - $start_year;
+          $level = (int) $student['level'];
+          $supposed_current_level = ($years_stayed+1)*100;
+          if($supposed_current_level != $level){
+            $sql = 'UPDATE students SET level="' . $supposed_current_level . '" WHERE id="' . $student['id'] . '"';
+            $stmt = $this->conn->prepare($sql);
+            $res = $stmt->execute();
+          }
         }
+        if($res){
+          $this->getHeaders();
+          echo json_encode(array('message' => 'successful', 'ok' => 1));
+        }else{
+          $this->getHeaders();
+          echo json_encode(array('message' => 'failed', 'ok' => 0));
+        } 
 
       } catch (Exception $e) {
         $this->getHeaders();

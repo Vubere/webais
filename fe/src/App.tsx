@@ -60,6 +60,7 @@ const ViewFaculties = lazy(() => import('./pages/adminPages/Viewing/ViewFacultie
 const ViewAnnouncements = lazy(() => import('./pages/adminPages/Viewing/ViewAnnouncements'))
 const ViewSingleAnnouncement = lazy(() => import('./pages/adminPages/Viewing/ViewSingleAnnouncement'))
 const ViewSingleCourse = lazy(() => import('./pages/adminPages/Viewing/ViewSingleCourse'))
+const ViewSessions = lazy(() => import('./pages/adminPages/Viewing/ViewSessions'))
 const ViewFeePayments = lazy(() => import('./pages/adminPages/Viewing/ViewFeePayments'))
 const ViewAssignedCourses = lazy(() => import('./pages/adminPages/Viewing/ViewAssignedCourses'))
 const ViewSingleAssignedCourse = lazy(() => import('./pages/adminPages/Viewing/ViewSingleAssignedCourse'))
@@ -180,6 +181,7 @@ function App() {
                   <Route path={routes.assigned_courses} element={<ViewAssignedCourses />} />
                   <Route path={routes.assigned_courses + '/:id'} element={<ViewSingleAssignedCourse />} />
                   <Route path={routes.unit_distribution} element={<DepartmentUnitLoads />} />
+                  <Route path={'view-sessions'} element={<ViewSessions />} />
 
                   {/* update */}
                   <Route path={`${routes.update_admin}/:id`} element={<UpdateAdmin />} />

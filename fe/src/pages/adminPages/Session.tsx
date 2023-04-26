@@ -3,6 +3,12 @@ import { base } from "../../App";
 
 import { session, SessionContext } from "../../layouts/DashboardLayout";
 import { format, fromUnixTime, getUnixTime } from 'date-fns';
+import { Link } from "react-router-dom";
+
+
+import * as routes from '../../constants/routes';
+
+
 
 export default function Session() {
   const [session, setSession] = useState<session>({
@@ -125,10 +131,10 @@ export default function Session() {
 
     if (validate()) {
       const f = new FormData()
-      const fss = (new Date(session.first_semester_start)).getTime()/1000
-      const fse = (new Date(session.first_semester_end)).getTime()/1000
-      const sss = (new Date(session.second_semester_start)).getTime()/1000
-      const sse = (new Date(session.second_semester_end)).getTime()/1000
+      const fss = (new Date(session.first_semester_start)).getTime() / 1000
+      const fse = (new Date(session.first_semester_end)).getTime() / 1000
+      const sss = (new Date(session.second_semester_start)).getTime() / 1000
+      const sse = (new Date(session.second_semester_end)).getTime() / 1000
 
       f.append('session', session.session)
       f.append('semester', session.current_semester.toString())
@@ -136,9 +142,10 @@ export default function Session() {
       f.append('first_semester_end', fse.toString())
       f.append('second_semester_start', sss.toString())
       f.append('second_semester_end', sse.toString())
+
       const method = globalSessionHandler?.session?.session == session.session ? "PUT" : "POST"
       f.append('method', method)
-     
+
 
       fetch(base + '/session', {
         method: "POST",
@@ -153,16 +160,17 @@ export default function Session() {
               setCurrentData(session)
             }
             alert('succesful')
-          }else{
-            if(result?.error?.toLowerCase()?.includes('duplicate')){
+          } else {
+            if (result?.error?.toLowerCase()?.includes('duplicate')) {
               throw new Error('Session already exists')
+            } else {
+              throw new Error(result.message)
             }
-            throw new Error(result.message)
           }
         })
         .catch((err) => {
           console.log(err)
-          alert(err.message||'An error occured')
+          alert(err.message || 'An error occured')
         })
     }
   }
@@ -177,11 +185,43 @@ export default function Session() {
     })
   }
 
+  const update_students_level = () => {
+    if (globalSessionHandler?.session) {
+      const url = base + '/change_level'
+      const form = new FormData()
+      form.append('session', globalSessionHandler.session.session)
+      console.log(globalSessionHandler.session.session)
+      fetch(url, {
+        method: 'POST',
+        body: form
+      })
+        .then((res) => res.json())
+        .then((result) => {
+          console.log(result)
+          if (result?.ok == 1) {
+            alert('successful')
+          } else {
+            throw new Error(result?.message || 'process failed')
+          }
+        })
+        .catch((err) => {
+          console.log(err)
+          alert(err?.message || 'something went wrong')
+        })
+    }
+  }
+
+
+
 
   return (
     <div className="w-full h-[90vh] content-box overflow-auto pb-[30px] p-3">
+      <div className="flex justify-end items-center">
+        <Link to={routes.dashboard+'-admin'+'/view-sessions' } className="border border-[#346837] rounded px-2 text-white bg-[#346837]">View Sessions</Link>
+      </div>
       <h2 className="text-center font-[600] text-[22px] text-[#346837]"> Change Session/Semester</h2>
-      <p className="text-center font-[400] text-[12px] text-[#643]">Warning, this affects every operation for the current semester/session, make changes with caution.</p>
+
+      <p className="text-center font-[400] text-[12px] text-[#643]">Warning, make sure to update student level at the start of a new session.</p>
       <div className="max-w-[400px] mx-auto w-full p-2">
         <ul className="text-[#346837] font-[400]">
           <li>
@@ -248,11 +288,10 @@ export default function Session() {
       </form>
 
 
-      {/* go to next semester */}
-      {/*    <div className="flex flex-col items-center gap-2 mx-auto w-[60vw] max-w-[300px] mt-3">
-        <button className="w-full h-[40px] rounded-[5px] bg-[#f33] text-white xs:text-[14px] stbt:text-[18px]">End Current Semester</button>
-        <button className="w-full h-[40px] rounded-[5px] bg-[#f33] text-white xs:text-[14px] stbt:text-[18px]">Start Next Semester</button>
-      </div> */}
-    </div>
+      <div className="flex flex-col items-center gap-2 mx-auto w-[60vw] max-w-[300px] mt-3">
+        <button className="w-full h-[40px] rounded-[5px] bg-[#f33] text-white xs:text-[14px] stbt:text-[18px]" onClick={update_students_level}>Manually Update Students Level</button>
+
+      </div>
+    </div >
   )
 }

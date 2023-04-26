@@ -119,7 +119,7 @@ export default function DashboardLayout({ title, DashboardLinks }: { title: stri
           checkSemester()
           setSession(currentData)
         } else {
-          alert('No session found')
+          alert('No ongoing session')
         }
       })
       .catch(err => console.log(err))

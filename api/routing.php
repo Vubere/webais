@@ -48,15 +48,15 @@ $urls = [
   /* session */
   '/webais/api/session' => ['SessionController@session'],
 
+  '/webais/api/change_level' => ['StudentController@move_to_next_level'],
+
   /* result  */
   /*create result table for course  */
   '/webais/api/session_result' => ['CoursesController@session_result'],
   /* toggles registeration for a course */
-  '/webais/api/registration' =>
-  ['CoursesController@registration'],
+  '/webais/api/registration' => ['CoursesController@registration'],
   /*  toggles grading for a course*/
-  '/webais/api/grading' =>
-  ['CoursesController@grading'],
+  '/webais/api/grading' => ['CoursesController@grading'],
 
   /* courses */
   '/webais/api/assign_course'=> ['CoursesController@assign_course_to_departments'],

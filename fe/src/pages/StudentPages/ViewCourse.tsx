@@ -29,7 +29,15 @@ export default function ViewSingleCourse() {
       .then(result => {
         console.log(id, result)
         if (result.ok == 1) {
-          setCourseDetails(result.data[0])
+          let dept = result.data[0]?.departments 
+          let a_l = result.data[0]?.assigned_lecturers 
+          if(typeof dept == 'string'){
+            dept = JSON.parse(dept)
+          }
+          if(typeof a_l =='string'){
+            a_l = JSON.parse(a_l)
+          }
+          setCourseDetails({...result.data[0],departments: dept, assigned_lecturers: a_l})
           if(result.data[0]==undefined){
             throw new Error('course not found')
           }
