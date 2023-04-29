@@ -56,14 +56,12 @@ export default function GenerateInvoice() {
         .then(data => {
           if (data?.ok) {
             const res = data?.data
-            console.log(data)
             if (res.length > 0) {
               const inv = res[0]
               setInvocieDetails(inv)
               invoice_exist.current = true
             }
           } else {
-            console.log('Invoice not generated')
           }
         })
     }
@@ -76,7 +74,6 @@ export default function GenerateInvoice() {
       fetch(base+`/fee?id=${id}`)
         .then(res => res.json())
         .then(data => {
-          console.log(data)
           if (data.ok) {
             const res = data.data
             setFee(res[0])
@@ -105,7 +102,6 @@ export default function GenerateInvoice() {
         alert('Invoice generated successfully')
       }
     } catch (error) {
-      console.log(error)
     }
   }
 

@@ -24,7 +24,6 @@ export default function RegisteredCourses() {
           }
         })
         .catch(err => {
-          console.log(err)
         })
     }
   }, [Session?.session, user])
@@ -48,7 +47,6 @@ export default function RegisteredCourses() {
             setRegisteredCourses(registeredCourses.filter((c) => c.id !== course.id))
           }
         }).catch(err => {
-          console.log(err)
         })
     }
   }

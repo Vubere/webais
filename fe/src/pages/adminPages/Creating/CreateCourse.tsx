@@ -53,7 +53,6 @@ export default function CreateCourse() {
           body: form
         })
         const data = await res.json()
-        console.log(data)
         if (data.ok) {
           setCourse({
             title: '',

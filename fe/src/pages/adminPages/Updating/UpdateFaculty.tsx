@@ -31,11 +31,9 @@ export default function UpdateFaculty() {
       fetch(base + `/department?faculty=${faculty.id}`)
         .then(res => res.json())
         .then(res => {
-          console.log(res)
           setFacultyDepartments(res.data.data)
 
         }).catch(err => {
-          console.log(err)
         })
     }
   }, [faculty.name])
@@ -57,9 +55,7 @@ export default function UpdateFaculty() {
       body: f
     }).then(res => res.json())
       .then(data => {
-        console.log(data)
       }).catch(err => {
-        console.log(err)
       })
   }
   const addDepartment = (e: React.FormEvent<HTMLFormElement>) => {

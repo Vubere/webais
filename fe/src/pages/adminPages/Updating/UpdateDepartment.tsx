@@ -98,7 +98,6 @@ export default function UpdateDepartment() {
           body: formData
         })
         const result = await res.json()
-        console.log(result)
 
         if (result.status === 'success') {
           alert('successfully updated')

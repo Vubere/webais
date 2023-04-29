@@ -90,7 +90,6 @@ export default function Examination() {
         .then(res => res.json())
         .then(res => {
           if (res.status == 200 && res?.exams?.length > 0) {
-            console.log(res)
             setExams(res.exams.filter((exam: any) => registeredCourses.map((course: Course) => course.course_id.toString()).includes(exam.course_id.toString())
             ))
           }

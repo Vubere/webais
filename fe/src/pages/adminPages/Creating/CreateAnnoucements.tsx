@@ -27,9 +27,7 @@ export default function Annoucements() {
 
       .then(res => res.json())
       .then(res => {
-        console.log(res)
       }).catch(err => {
-        console.log(err)
       })
   }, [])
 
@@ -101,7 +99,6 @@ export default function Annoucements() {
         body: f
       }).then(res => res.json())
         .then(data => {
-          console.log(data)
           alert('Announcement added successfully')
           setForm({
             title: '',
@@ -112,10 +109,8 @@ export default function Annoucements() {
             targets: ''
           })
         }).catch(err => {
-          console.log(err)
         })
     }else{
-      console.log(errors)
     }
   }
 

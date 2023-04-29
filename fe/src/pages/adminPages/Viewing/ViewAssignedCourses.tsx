@@ -17,7 +17,6 @@ export default function AssignedCourses() {
     fetch(base+'/assign_course')
       .then(res => res.json())
       .then((data: any) => {
-        console.log(data)
         if (data?.ok) {
           setCourses(data.data)
           setLoading(false)

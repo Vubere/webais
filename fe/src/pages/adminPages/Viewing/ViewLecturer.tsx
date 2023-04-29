@@ -24,7 +24,6 @@ export default function ViewLecturers() {
       throw new Error('something went wrong')
 
     } catch (err) {
-      console.log(err)
     }
   }
   useEffect(() => {

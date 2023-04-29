@@ -185,6 +185,7 @@ export default function CreateUser() {
           body: f
         })
         const auth = await authAdmin.json()
+        console.log(auth)
         if (auth.authenticated) {
           const f = new FormData()
           f.append('type', 'student')
@@ -209,7 +210,6 @@ export default function CreateUser() {
             body: f
           });
           const data = await res.json();
-          console.log(data)
        
           if (data?.status == 200) {
             alert('Student created successfully')

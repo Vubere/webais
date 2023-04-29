@@ -14,7 +14,6 @@ export default function ViewExams() {
     fetch(base+"/exam")
       .then((res) => res.json())
       .then((data) => {
-        console.log(data)
         if (data.ok) {
           setExams(data.exams)
         } else {
@@ -22,7 +21,6 @@ export default function ViewExams() {
         }
       })
       .catch((err) => {
-        console.log(err)
         setErrors('something went wrong')
       })
   }, [])

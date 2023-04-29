@@ -37,7 +37,9 @@ export default function UpdateLectures() {
     fetch(base + '/lecturers')
       .then(res => res.json())
       .then(data => setLecturers(data.lecturer))
-      .catch(err => console.log(err))
+      .catch(err => {
+        
+      })
   }, [])
 
   const { id } = useParams()
@@ -121,14 +123,12 @@ export default function UpdateLectures() {
           body: f
         })
         const data = await res.json()
-        console.log(data)
         if (data.ok) {
           alert('Lecture Updated Successfully')
         } else {
           throw new Error(data?.status || 'something went wrong')
         }
       } catch (err) {
-        console.log(err)
       }
     }
   }
@@ -139,7 +139,6 @@ export default function UpdateLectures() {
         .then((res) => res.json())
         .then((data) => {
           if (data.ok) {
-            console.log(data)
             const l = data.lectures[0]
             if(l==undefined) {
               throw new Error('course not found')

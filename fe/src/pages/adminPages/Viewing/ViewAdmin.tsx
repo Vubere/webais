@@ -11,7 +11,6 @@ export default function ViewAdmin() {
   const [admins, setAdmins] = useState<any>(null)
 
   const { user } = useContext(UserContext)
-  console.log(user)
 
   async function fetchAdmins() {
     try {
@@ -23,7 +22,6 @@ export default function ViewAdmin() {
       setAdmins(data[0])
 
     } catch (err) {
-      console.log(err)
     }
   }
   useEffect(() => {

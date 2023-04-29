@@ -22,7 +22,6 @@ import Errorboundary from './pages/ErrorBoundary'
 
 export const base: string = import.meta.env.VITE_API
 
-console.log(base)
 
 /* lazy imported components */
 const LandingPage = lazy(() => import('./pages/LandingPage'))

@@ -72,7 +72,6 @@ export default function UpdatePersonalInfoAdmin() {
         throw new Error('Error updating profile')
       }
     } catch (err) {
-      console.log(err)
     }
   }
   const validate = () => {

@@ -11,7 +11,6 @@ export default function Messages() {
 
 
   useEffect(() => {
-    console.log(user)
     if (user) {
       if(user?.length){
         chat_url.current = user[0].id[0].toLowerCase()=='s'?'/dashboard-student':'/dashboard-lecturer'
@@ -27,7 +26,6 @@ export default function Messages() {
           }
         })
         .catch(err => {
-          console.log(err)
         })
     }
   }, [user])

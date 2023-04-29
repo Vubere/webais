@@ -50,7 +50,7 @@ export default function CreateLectures() {
           throw new Error(data?.message || 'couldn\'t fetch lecturers')
         }
       })
-      .catch(err => console.log(err))
+      .catch(err => {})
   }, [])
 
   const validate = () => {
@@ -125,13 +125,11 @@ export default function CreateLectures() {
         body: f
       }).then(res => res.json())
         .then(data => {
-          console.log(data)
           if (data.ok) {
             alert('Lecture created successfully')
             reset()
           }
         }).catch(err => {
-          console.log(err)
         })
     }
   }

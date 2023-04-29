@@ -47,7 +47,6 @@ export default function ExaminationManagement() {
     fetch(base + "/exam?session=" + session + "&semester=" + current_semester)
       .then((res) => res.json())
       .then((data) => {
-        console.log(data)
         if (data.ok) {
           setExams(data.exams)
         } else {
@@ -55,7 +54,6 @@ export default function ExaminationManagement() {
         }
       })
       .catch((err) => {
-        console.log(err)
         setErrors('something went wrong')
       })
   }, [session, current_semester])

@@ -26,12 +26,10 @@ export default function ViewCourses() {
       fetch(base + '/assign_course?lecturer_id=' + user.id + '&session=' + sess + '&semester=' + current_semester)
         .then(res => res.json())
         .then(res => {
-          console.log(res)
           if (res.ok = 1) {
             setCourses(res.data)
           }
         }).catch(err => {
-          console.log(err)
         })
     }
   }, [user?.id, sess, current_semester])

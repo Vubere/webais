@@ -61,7 +61,6 @@ export default function Login({ title, src }: { title: string, src: string }) {
             navigate(routes.dashboard + '-' + routes.admin)
           }
         } else {
-          console.log(data)
           throw new Error(data?.message||'something went wrong')
         }
       } catch (err: any) {

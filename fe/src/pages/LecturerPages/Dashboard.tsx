@@ -29,7 +29,6 @@ export default function DashboardPage() {
       fetch(base + `/lectures?lecturer_id=${u.id}`)
         .then(res => res.json())
         .then(data => {
-          console.log(data)
           setLectures(data.lectures)
         })
     }
@@ -61,7 +60,9 @@ export default function DashboardPage() {
 
           }
         })
-        .catch(err => console.log(err))
+        .catch(err =>{
+          
+        })
     }
   }, [user])
 

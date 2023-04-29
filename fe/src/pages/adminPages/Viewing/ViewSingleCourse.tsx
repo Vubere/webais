@@ -40,7 +40,6 @@ export default function ViewSingleCourse() {
       .then(res => res.json())
       .then((data: any) => {
         if (data?.ok) {
-          console.log(data)
           setAssigned(data.data)
           setLoading(false)
         } else {

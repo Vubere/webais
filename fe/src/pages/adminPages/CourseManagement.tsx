@@ -23,7 +23,6 @@ export default function CourseManagement() {
     fetch(base + '/courses')
       .then(res => res.json())
       .then((data: any) => {
-        console.log(data)
         if (data?.ok) {
           setCourses(data.data)
           setLoading(false)

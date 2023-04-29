@@ -29,7 +29,6 @@ export default function EditUnitLoad() {
       fetch(base + '/assign_unit_load?id=' + id)
         .then(res => res.json())
         .then(data => {
-          console.log(data)
           if (data?.ok == 1) {
             setUnitLoad(data?.data[0])
           } else {
@@ -68,7 +67,6 @@ export default function EditUnitLoad() {
         body: formData
       }).then(res => res.json())
         .then(data => {
-          console.log(data)
           if (data?.ok == 1) {
             alert('department load updated successfully')
           } else {
@@ -146,7 +144,6 @@ export default function EditUnitLoad() {
       }).then(res => res.json())
 
         .then(data => {
-          console.log(data)
           if (data?.ok == 1) {
             alert('unit load deleted successfully')
             navigate(-1)

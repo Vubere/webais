@@ -36,7 +36,6 @@ export default function GenerateReceipt() {
         throw new Error('Could not generate receipt')
       }
     } catch (err: any) {
-      console.log(err)
       alert(err?.message || 'Could not generate receipt')
     }
   }

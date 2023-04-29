@@ -27,7 +27,6 @@ export default function Dashboard() {
     unmarked_courses: { number: number, courses: any[] },
     courses: any[]
   }>()
-  console.log(performance)
   const fullName = user?.firstName + ' ' + user?.lastName
 
   useEffect(() => {
@@ -37,7 +36,9 @@ export default function Dashboard() {
         .then(data => {
           setLectures(data.lectures)
         })
-        .catch(err => console.log(err))
+        .catch(err =>{
+          alert(err.message||'something went wrong')
+        })
     }
   }, [user, Session])
 
@@ -46,12 +47,12 @@ export default function Dashboard() {
       fetch(base + '/student_performance?student_id=' + user.id + '&current_session=' + Session?.session?.session + '&current_semester=' + Session?.session?.current_semester)
         .then(res => res.json())
         .then(data => {
-          console.log(data)
           if (data.ok == 1) {
             setPerformance(data.performance)
           }
         })
-        .catch(err => console.log(err?.message || 'something went wrong'))
+        .catch(err => {
+          alert(err?.message || 'something went wrong')})
     }
   }, [user?.id])
 
@@ -82,7 +83,9 @@ export default function Dashboard() {
             setNotif([...notif, { message: 'unread message(s) from ' + chats + ' conversation(s)', count: val }])
           }
         })
-        .catch(err => console.log(err))
+        .catch(err => {
+          
+        })
     }
   }, [user])
 

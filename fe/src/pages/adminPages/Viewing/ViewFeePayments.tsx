@@ -26,7 +26,6 @@ export default function FeePayment() {
         setPayments(data.data)
       }
     } catch (err: any) {
-      console.log(err)
     }
   }
   const filterPayment = payments.filter((payment) => {

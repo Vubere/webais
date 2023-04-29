@@ -110,7 +110,6 @@ export default function Session() {
     }
 
     if (!isValid) {
-      console.log(tempErrors)
       setErrors(tempErrors)
       setTimeout(() => {
         setErrors({
@@ -177,7 +176,6 @@ export default function Session() {
         }
       })
       .catch((err) => {
-        console.log(err)
         alert(err.message || 'An error occured')
       })
   }
@@ -204,7 +202,6 @@ export default function Session() {
       })
         .then((res) => res.json())
         .then((result) => {
-          console.log(result)
           if (result?.ok == 1) {
             alert('successful')
           } else {
@@ -212,7 +209,6 @@ export default function Session() {
           }
         })
         .catch((err) => {
-          console.log(err)
           alert(err?.message || 'something went wrong')
         })
     }

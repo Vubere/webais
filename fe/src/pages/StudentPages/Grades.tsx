@@ -44,7 +44,6 @@ export default function Grades() {
             throw new Error('failed to fetch courses')
           }
         }).catch(err => {
-          console.log(err)
         })
     }
   }, [session.session, session.current_semester])
@@ -108,12 +107,11 @@ const GradeRow = ({ course, session, student_id }: { course: Course, session: st
       fetch(base + `/grades?student_id=${student_id}&course_id=${course.course_id}&session=${session}`)
         .then(res => res.json())
         .then(data => {
-          console.log(data)
           if(data.fetch=='success'){
             setGrade(data?.result?.info[0])
           }
         })
-        .catch(err => console.log(err))
+        .catch(err => {})
     }
   }, [course.id, session, student_id])
 

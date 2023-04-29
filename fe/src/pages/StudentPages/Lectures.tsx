@@ -25,7 +25,6 @@ export default function Lectures(){
       })
       .catch(err => {
         setErrors(err)
-        console.log(err)
         setLoading(false)
         alert(err?.message || 'something went wrong')
       })

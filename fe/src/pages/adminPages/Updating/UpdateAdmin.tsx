@@ -28,10 +28,8 @@ export default function UpdateAdmin() {
       if (data?.admin) {
         setForm({...data.admin, dob: formatDateToYMD(data.admin.dob)})
       }else{
-        console.log(data)
       }
     } catch (err) {
-      console.log(err)
     }
   }
   useEffect(() => {
@@ -68,7 +66,6 @@ export default function UpdateAdmin() {
         throw new Error(data?.message || 'Error updating administrator')
       }
     } catch (err) {
-      console.log(err)
     }
   }
 

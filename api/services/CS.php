@@ -4,7 +4,8 @@ namespace services;
 use services\DB;
 
 
-class CS {
+class CS
+{
 
 
   public $conn = null;
@@ -31,9 +32,7 @@ class CS {
       $result = $this->conn->query($sql);
       if ($result && $result->num_rows > 0) {
         $row = mysqli_fetch_assoc($result);
-        $id = $row['id'];
-        $id = explode('-', $id);
-        $id = $id[1];
+        $id = $row['unique_id'];
         $id = (int) $id;
         $id = $id + 1;
         $id = 'STU-' . $id;
@@ -46,9 +45,8 @@ class CS {
       $result = $this->conn->query($sql);
       if ($result && $result->num_rows > 0) {
         $row = mysqli_fetch_assoc($result);
-        $id = $row['id'];
-        $id = explode('-', $id);
-        $id = $id[1];
+        $id = $row['unique_id'];
+
         $id = (int) $id;
         $id = $id + 1;
         $id = 'ADMIN-' . $id;
@@ -61,9 +59,7 @@ class CS {
       $result = $this->conn->query($sql);
       if ($result && $result->num_rows > 0) {
         $row = mysqli_fetch_assoc($result);
-        $id = $row['id'];
-        $id = explode('-', $id);
-        $id = $id[1];
+        $id = $row['unique_id'];
         $id = (int) $id;
         $id = $id + 1;
         $id = 'LECT-' . $id;

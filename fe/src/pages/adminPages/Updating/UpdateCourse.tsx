@@ -1,11 +1,6 @@
 import React, { useEffect, useState } from 'react'
 
 import { useNavigate, useParams } from 'react-router-dom'
-import { course } from '../Creating/CreateCourse'
-import * as routes from '../../../constants/routes'
-import { MultiSelect, Option } from 'react-multi-select-component'
-import { departments, faculties } from '../../../helpers/schoolStructure'
-import useFacultiesAndDepartments from '../../../hooks/useFacultiesAndDepartments'
 import { base } from '../../../App'
 
 
@@ -20,7 +15,6 @@ export default function UpdateCourse() {
     description: '',
   })
   const { id } = useParams()
-  console.log(errors)
   useEffect(() => {
     if (id) {
       const url = base + '/courses?id=' + id
@@ -108,7 +102,6 @@ export default function UpdateCourse() {
           body: formData
         })
         const data = await res.json()
-        console.log(data)
         if (data.ok) {
           alert('Course deleted successfully')
           navigate(-1)

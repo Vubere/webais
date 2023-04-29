@@ -143,15 +143,12 @@ export default function UpdateAdmin() {
       const res = await fetch(url);
       const data = await res.json()
       if (data.ok == 1) {
-        console.log(data.students)
         const student = data.students[0]
         setForm({ ...student, dob: formatDateToYMD(student.dob) })
 
       } else {
-        console.log(data)
       }
     } catch (err) {
-      console.log(err)
     }
   }
   useEffect(() => {

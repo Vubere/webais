@@ -30,7 +30,6 @@ export default function Message() {
     return () => clearInterval(name)
   }, [id, user])
   useEffect(() => {
-    console.log(lastMessageRef.current)
     if (lastMessageRef.current)
       lastMessageRef.current.scrollIntoView({ behavior: 'smooth' })
   }, [lastMessageRef.current])
@@ -47,7 +46,6 @@ export default function Message() {
           
           if (lastMessage?.id == lastIdRef.current?.lastMessage&&lastMessage?.seen==lastIdRef.current?.seen)
           return
-          console.log('here')
           setMessages(res.messages)
           lastIdRef.current = {
             lastMessage: lastMessage?.id,
@@ -55,7 +53,6 @@ export default function Message() {
           }
         }
       } catch (err) {
-        console.log(err)
       }
 
     }
@@ -86,7 +83,6 @@ export default function Message() {
   const send_message = () => {
     if ((message || image) && id && user) {
       const data = new FormData()
-      console.log(user.id, id)
       data.append('message', message)
       data.append('user_id', user.id)
       data.append('user_type', user.id[0]?.toLowerCase() == 's' ? 'students' : user.id[0]?.toLowerCase() == 'l' ? 'lecturers' : 'administrators')
@@ -104,7 +100,6 @@ export default function Message() {
       })
         .then(res => res.json())
         .then(result => {
-          console.log(result)
           if (result?.ok == 1) {
             setMessage('')
             setImage(undefined)

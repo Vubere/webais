@@ -19,7 +19,6 @@ export default function ViewStudents() {
 
       const res = await fetch(url);
       const data = await res.json()
-      console.log(data)
       if (data.message == 'successful')
         setStudents(data.students)
       else

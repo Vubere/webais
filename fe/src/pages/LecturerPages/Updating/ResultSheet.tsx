@@ -31,12 +31,13 @@ export default function ResultSheet() {
       fetch(base + '/grades?session=' + sess + '&course_id=' + id)
         .then(res => res.json())
         .then(res => {
-          console.log(res)
           if (res.fetch == 'success') {
             setGrades(res.result.info)
           }
         })
-        .catch(err => console.log(err))
+        .catch(err => {
+          
+        })
     }
   }, [session, id])
 
@@ -145,7 +146,6 @@ const Result_row = ({ row, session, course_id, grading }: { row: Result, session
           body: f
         })
         const result = await res.json();
-        console.log(result)
         if (result?.status == 200) {
           alert('result updated successfully')
         }

@@ -41,7 +41,6 @@ function Faculty({ faculty }: { faculty: { name: string, id: string } }) {
       .then(res => setDepartments(res.data.data))
   }, [])
   const dept = useMemo(() => departments.filter((d: any) => d.faculty_id == faculty.id), [departments])
-  console.log(dept)
   const [numberOfStudents, setNumberOfStudents] = useState(0)
   const numberOfDept = dept.length
 

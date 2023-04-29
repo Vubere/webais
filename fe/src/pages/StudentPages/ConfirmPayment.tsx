@@ -24,7 +24,6 @@ export default function ConfirmPayment() {
         .then(data => {
           if (data?.ok) {
             const res = data?.data
-            console.log(data)
             if (res.length > 0) {
               setInvoice(res[0])
             } else {
@@ -64,13 +63,7 @@ export default function ConfirmPayment() {
         return
       }
 
-      console.log({
-        invoice_no: invoice?.invoice_no,
-        confirmation_number: form.confirmation_number,
-        receipt_number: form.receipt_number,
-        student_id: user?.id,
-        fee_id: id,
-      })
+   
       post_payment()
     }
   }

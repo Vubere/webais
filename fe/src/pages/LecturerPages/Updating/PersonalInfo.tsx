@@ -108,7 +108,6 @@ export default function PersonalInfo() {
           body: formData
         })
         const data = await res.json()
-        console.log(data)
        
         if(data?.ok){
           alert('Updated successfully')
@@ -116,7 +115,6 @@ export default function PersonalInfo() {
           throw new Error(data?.message)
         }
       } catch (err:any) {
-        console.log(err)
         alert(err?.message||'An error occured')
       }
     }

@@ -261,7 +261,6 @@ export default function AssignCoursesToDepartments() {
           body: form
         })
         const res = await req.json()
-        console.log(res)
         if(res?.ok==1){
           alert('Course assigned successfully')
           reset()
@@ -270,7 +269,6 @@ export default function AssignCoursesToDepartments() {
           throw new Error(res?.message || 'error assigning course')
         }
       } catch (err: any) {
-        console.log(err)
         if(err?.message?.toLowerCase().includes('duplicate')){
           alert('Course code already exist')
           return

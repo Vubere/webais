@@ -99,7 +99,6 @@ export default function AvailableCourses() {
         })
         .catch(err => {
           alert(err?.message || 'something went wrong')
-          console.log(err)
           setError('Failed to fetch necessary data. Reload page')
         })
     }
@@ -137,7 +136,6 @@ export default function AvailableCourses() {
           }
         })
         .catch(err => {
-          console.log(err)
           alert(err?.message || 'something went wrong')
           setError('Failed to fetch necessary data. Reload page')
         })
@@ -169,7 +167,6 @@ export default function AvailableCourses() {
 
     if (Session?.session && user) {
       const f = new FormData()
-      console.log('start')
       f.append('course_id', id.toString())
       f.append('student_id', user.id)
       f.append('semester', current_semester.toString())
@@ -182,13 +179,10 @@ export default function AvailableCourses() {
         body: f
       }).then(res => res.json())
         .then(data => {
-          console.log(data)
           if (data.ok == 1) {
-            console.log(registered_counter.current)
             registered_counter.current += 1
           }
         }).catch(err => {
-          console.log(err)
 
         })
     }
@@ -294,11 +288,9 @@ export default function AvailableCourses() {
       }).then(res => res.json())
         .then(data => {
           if (data?.ok) {
-            console.log(unregister_counter.current)
             unregister_counter.current += 1
           }
         }).catch(err => {
-          console.log(err)
         })
     }
   }
@@ -357,7 +349,6 @@ export default function AvailableCourses() {
   }, [performance, current_semester, session])
 
 
-  console.log(registeredCourses)
 
   return (
     <section className="p-3 h-[90vh] overflow-y-auto pb-20">

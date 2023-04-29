@@ -17,7 +17,6 @@ export default class Errorboundary extends Component<ErrorboundaryProps, Errorbo
     return { hasError: true };
   }
   componentDidCatch(err: any, errInfo: any) {
-    console.log(err, errInfo)
   }
   render() {
     if (this.state.hasError) {

@@ -122,7 +122,7 @@ export default function DashboardLayout({ title, DashboardLinks }: { title: stri
           alert('No ongoing session')
         }
       })
-      .catch(err => console.log(err))
+      .catch(err => {})
   }, [])
   
   const stat = !!user&&(user.status=='expelled'||user.status=='suspended')

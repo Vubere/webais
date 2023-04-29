@@ -76,7 +76,6 @@ export default function PersonalInformation() {
         body: formData
       })
       const data = await res.json()
-      console.log(data)
       if(data.ok==1){
         alert('Updated Successfully')
       }else{
@@ -138,7 +137,6 @@ export default function PersonalInformation() {
         .then((res) => {
           if (res.students.length) {
             const { students } = res
-            console.log(students[0])
             setForm({ ...form, ...students[0] })
           }
         })

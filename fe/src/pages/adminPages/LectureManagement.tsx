@@ -38,7 +38,6 @@ export default function LectureManagement() {
         }
       })
       .catch((err) => {
-        console.log(err)
         setErrors('something went wrong')
       })
   }, [])

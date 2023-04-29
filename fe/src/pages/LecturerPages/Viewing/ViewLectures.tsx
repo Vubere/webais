@@ -15,7 +15,9 @@ export default function ViewLectures() {
         .then(res => res.json())
         .then(data => {
           setLectures(data.lectures)})
-          .catch(err => console.log(err))
+          .catch(err => {
+            
+          })
 
     }
   }, [user])

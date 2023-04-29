@@ -36,7 +36,7 @@ export default function CreateLectures() {
         else
           throw new Error('something went wrong')
       })
-      .catch(err => console.log(err))
+      .catch(err => {})
   }, [])
 
   const validate = () => {
@@ -86,7 +86,6 @@ export default function CreateLectures() {
     fetch(base + '/assign_course')
       .then(res => res.json())
       .then(data => {
-        console.log(data)
         if (data.ok == 1)
           setCourses(data.data)
         else
@@ -118,7 +117,6 @@ export default function CreateLectures() {
           body: f
         }).then(res => res.json())
           .then(data => {
-            console.log(data)
             if (data.ok) {
               alert('Examination created successfully')
               setExams({
@@ -131,7 +129,6 @@ export default function CreateLectures() {
               })
             }
           }).catch(err => {
-            console.log(err)
           })
       }
     }

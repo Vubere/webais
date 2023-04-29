@@ -21,7 +21,6 @@ export default function ViewLectures() {
         }
       })
       .catch((err) => {
-        console.log(err)
         setErrors('something went wrong')
       })
   }, [])

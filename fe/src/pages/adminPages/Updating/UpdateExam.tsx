@@ -34,7 +34,7 @@ export default function UpdateLectures() {
     fetch(base + '/lecturers')
       .then(res => res.json())
       .then(data => setLecturers(data.lecturer))
-      .catch(err => console.log(err))
+      .catch(err => {})
   }, [])
   useEffect(() => {
     fetch(base + '/assign_course')
@@ -151,7 +151,6 @@ export default function UpdateLectures() {
         }
       })
       .catch((err) => {
-        console.log(err)
         alert(err?.message||'something went wrong')
         navigate(-1)
         setFetchError('something went wrong')

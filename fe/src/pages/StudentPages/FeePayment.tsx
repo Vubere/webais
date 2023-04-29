@@ -29,13 +29,11 @@ export default function FeePayment() {
           
           if (fee) {
             setFees(fee)
-            console.log(fee)
           }
           setLoading(false)
         }
       })
       .catch((err)=>{
-        console.log(err)
         alert(err?.message || 'something went wrong')
         setLoading(false)
       })
@@ -93,7 +91,9 @@ const FeeRow = ({ fee }: { fee: Fee }) => {
           setDepartment(data?.data.data[0].name)
         }
       })
-      .catch(err => console.log(err))
+      .catch(err => {
+        
+      })
   }, [])
 
 

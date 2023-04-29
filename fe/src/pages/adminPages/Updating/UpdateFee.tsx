@@ -105,7 +105,6 @@ export default function UpdateFee() {
       })
         .then(res => res.json())
         .then(data => {
-          console.log(data)
           if (data?.ok) {
             alert('Fee updated successfully')
           } else {

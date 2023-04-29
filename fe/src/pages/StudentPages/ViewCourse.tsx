@@ -27,7 +27,6 @@ export default function ViewSingleCourse() {
     fetch(base+'/assign_course?id=' + id)
       .then((res) => res.json())
       .then(result => {
-        console.log(id, result)
         if (result.ok == 1) {
           let dept = result.data[0]?.departments 
           let a_l = result.data[0]?.assigned_lecturers 
@@ -47,7 +46,6 @@ export default function ViewSingleCourse() {
         setLoading(false)
       })
       .catch(err => {
-        console.log(err)
         alert(err?.message || 'something went wrong')
         setLoading(false)
       })
@@ -65,7 +63,6 @@ export default function ViewSingleCourse() {
 
         .then(res => res.json())
         .then(data => {
-          console.log(data)
           if (data.ok == 1) {
             if(data?.data.length>0)
             setRegistered(true)
@@ -75,7 +72,6 @@ export default function ViewSingleCourse() {
             setRegistered(false)
           }
         }).catch(err => {
-          console.log(err)
           alert('error fetching registration status')
         })
     } else {
@@ -142,7 +138,6 @@ const Lecturers = ({ lecturer }: { lecturer: any }) => {
         setLoading(false)
       })
       .catch(err => {
-        console.log(err)
         setLoading(false)
       })
   }, [id])

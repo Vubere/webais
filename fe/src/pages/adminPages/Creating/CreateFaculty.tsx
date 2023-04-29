@@ -50,7 +50,7 @@ export default function CreateFaculty(){
           navigate('/dashboard-admin/update-faculty/'+data?.id)
         }
       })
-      .catch((err) => console.log(err))
+      .catch((err) => {})
       }
   }
   return(

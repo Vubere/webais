@@ -100,7 +100,6 @@ export default function AssignUnitsToDepartment() {
   const onSubmit: FormEventHandler<HTMLFormElement> = (e) => {
     e.preventDefault()
     if (validate()) {
-      console.log(distribution)
       const { department_id, level, semester, min_units, max_units } = distribution
       const form = new FormData()
       form.append('department_id', department_id)
@@ -115,7 +114,6 @@ export default function AssignUnitsToDepartment() {
         body: form
       }).then(res => res.json())
         .then(data => {
-          console.log(data)
           if (data?.ok == 1) {
             alert('unit load assigned successfully')
             reset_distribution()
