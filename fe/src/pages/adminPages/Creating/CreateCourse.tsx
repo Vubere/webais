@@ -1,4 +1,4 @@
-import { useLayoutEffect, useState } from "react"
+import { useLayoutEffect, useRef, useState } from "react"
 import { departments, faculties } from "../../../helpers/schoolStructure"
 
 import { base } from "../../../App";
@@ -14,6 +14,7 @@ export default function CreateCourse() {
     title: '',
     description: '',
   })
+  const text_ref = useRef(255)
   const validate = () => {
     let temp = { ...errors }
     let isValid = true
@@ -44,29 +45,39 @@ export default function CreateCourse() {
         const form = new FormData()
         form.append('title', course.title)
         form.append('description', course.description)
+
+        form.append('method', 'POST')
         const url = base + '/courses'
         const res = await fetch(url, {
           method: 'POST',
           body: form
         })
         const data = await res.json()
-        console.log(data)
         if (data.ok) {
           setCourse({
             title: '',
             description: '',
           })
           alert('Course created successfully')
-          navigate('/dashboard-admin/assign_course/'+data?.id)
-        }else{
+          navigate('/dashboard-admin/assign_course/' + data?.id)
+        } else {
           throw new Error(data?.message)
         }
-      } catch (err:any) {
+      } catch (err: any) {
         alert(err?.message || 'something went wrong')
       }
     }
   }
-  const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const onChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    if (e.target.name == 'description') {
+      let val = e.target.value
+      if (val.length > 255) {
+        alert('Description can not exceed 255 characters')
+        return
+      }
+      text_ref.current = 255 - val.length
+
+    }
     setCourse({
       ...course,
       [e.target.name]: e.target.value
@@ -85,9 +96,9 @@ export default function CreateCourse() {
         </div>
 
         <div className="w-full">
-          <label htmlFor="description">Description *</label>
+          <label htmlFor="description">Description *</label>({text_ref.current} characters)
           {errors.description && <span className="text-red-500 text-[12px]">{errors.description}</span>}
-          <input type="text" name="description" id="description" value={course.description} onChange={onChange} className="w-full h-[40px] rounded-[5px] bg-transparent border border-[#347836] xs:p-2 stbt:p-4 xs:text-[14px] stbt:text-[18px] flex items-center focus:outline-none px-2" />
+          <textarea name="description" id="description" value={course.description} onChange={onChange} className="w-full h-[80px] rounded-[5px] bg-transparent border border-[#347836] xs:p-2 flex items-center focus:outline-none resize-none" />
         </div>
         <button type="submit" className="bg-[#346837] text-white p-2 m-2 rounded-md w-[80vw] stbt:w-[200px] max-w-[400px]">Create Course</button>
       </form>

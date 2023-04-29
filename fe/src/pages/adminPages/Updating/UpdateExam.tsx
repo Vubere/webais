@@ -34,7 +34,7 @@ export default function UpdateLectures() {
     fetch(base + '/lecturers')
       .then(res => res.json())
       .then(data => setLecturers(data.lecturer))
-      .catch(err => console.log(err))
+      .catch(err => {})
   }, [])
   useEffect(() => {
     fetch(base + '/assign_course')
@@ -97,7 +97,7 @@ export default function UpdateLectures() {
   }
   const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-    if (validate()) {
+    if (validate()&&id) {
       try {
         const f = new FormData()
         f.append('time', exam.time)
@@ -106,21 +106,13 @@ export default function UpdateLectures() {
         f.append('course_id', exam.course_id)
         f.append('lecturer_id', exam.lecturer_id)
         f.append('venue', exam.venue)
+        f.append('id', id.toString())
+        f.append('method', 'PUT')
+
 
         const res = await fetch(base+"/exam", {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            time: exam.time,
-            date: exam.date,
-            duration: exam.duration,
-            course_id: exam.course_id,
-            lecturer_id: exam.lecturer_id,
-            venue: exam.venue,
-            id: id
-          }),
+          method: "POST",
+          body: f
         })
         const data = await res.json()
       
@@ -159,7 +151,6 @@ export default function UpdateLectures() {
         }
       })
       .catch((err) => {
-        console.log(err)
         alert(err?.message||'something went wrong')
         navigate(-1)
         setFetchError('something went wrong')
@@ -177,16 +168,16 @@ export default function UpdateLectures() {
   }, [searchLect, lecturers])
   
   const delete_exam = async () => {
-    if(id){
+    const confirm = window.confirm('Are you sure you want to delete this exam?')
+    if(id&&confirm){
       try {
+        const formData = new FormData()
+        formData.append('id', id.toString())
+        formData.append('method', 'DELETE')
+
         const res = await fetch(base+"/exam", {
-          method: "DELETE",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            id: id
-          }),
+          method: "POST",
+          body: formData
         })
         const data = await res.json()
         if (data.ok) {
@@ -247,7 +238,7 @@ export default function UpdateLectures() {
             <option value="">Select Course </option>
             {filteredCourses.length ? filteredCourses.map((course: any) => {
               return (
-                <option value={course.id}>{course.code}({course.title})</option>
+                <option value={course.id}>{course.code?.toUpperCase()}({course.title})</option>
               )
             }) : <option value="" className="text-[#a22]">No Course</option>
             }

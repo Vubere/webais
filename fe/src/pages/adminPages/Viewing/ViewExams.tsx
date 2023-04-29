@@ -1,18 +1,19 @@
 import { useEffect, useLayoutEffect, useState } from "react"
 import { Link } from "react-router-dom"
 import { base } from "../../../App"
+import { session_row } from "./ViewSessions"
 
 
 export default function ViewExams() {
   const [exams, setExams] = useState<exam[]>([])
   const [errors, setErrors] = useState('')
+  
 
 
   useLayoutEffect(() => {
     fetch(base+"/exam")
       .then((res) => res.json())
       .then((data) => {
-        console.log(data)
         if (data.ok) {
           setExams(data.exams)
         } else {
@@ -20,7 +21,6 @@ export default function ViewExams() {
         }
       })
       .catch((err) => {
-        console.log(err)
         setErrors('something went wrong')
       })
   }, [])
@@ -42,6 +42,7 @@ export default function ViewExams() {
   return (
     <div>
       <h3 className="font-[600] text-[#347836] text-[28px] text-center leading-[40px]">Examinations</h3>
+    
       <section>
         <table className="shadow-lg bg-white border-separate max-w-[100vw] overflow-auto ">
           <thead>
@@ -61,7 +62,7 @@ export default function ViewExams() {
                 <td className="border px-4 py-2">{lecture.time}</td>
                 <td className="border px-4 py-2">{formatDateToDMY(lecture.date)}</td>
                 <td className="border px-4 py-2">{lecture.duration}</td>
-                <td className="border px-4 py-2">{lecture.course_code}</td>
+                <td className="border px-4 py-2">{lecture.course_code?.toUpperCase()}</td>
                 <td className="border px-4 py-2">{lecture.lecturer_id}</td>
                 <td className="border px-4 py-2">{lecture.venue}</td>
                 <td className="border px-4 py-2">

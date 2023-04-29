@@ -39,6 +39,7 @@ export default function Login({ title, src }: { title: string, src: string }) {
       f.append('id',form.id.toUpperCase())
       f.append('password', form.password)
       f.append('type', title.toLowerCase())
+      f.append('method','POST')
    
       try {
         const res = await fetch(base+'/authenticate', {
@@ -47,10 +48,10 @@ export default function Login({ title, src }: { title: string, src: string }) {
 
         })
         const data = await res.json()
-    
 
         if (data?.authenticated) {
           sessionStorage.setItem('user', JSON.stringify(data.user))
+          setUser(data.user)
           setLoading(false)
           if (title.toLowerCase() == 'student') {
             navigate(routes.dashboard + '-' + routes.student)
@@ -60,7 +61,6 @@ export default function Login({ title, src }: { title: string, src: string }) {
             navigate(routes.dashboard + '-' + routes.admin)
           }
         } else {
-          console.log(data)
           throw new Error(data?.message||'something went wrong')
         }
       } catch (err: any) {

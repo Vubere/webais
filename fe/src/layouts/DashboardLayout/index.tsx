@@ -119,12 +119,13 @@ export default function DashboardLayout({ title, DashboardLinks }: { title: stri
           checkSemester()
           setSession(currentData)
         } else {
-          alert('No session found')
+          alert('No ongoing session')
         }
       })
-      .catch(err => console.log(err))
+      .catch(err => {})
   }, [])
   
+  const stat = !!user&&(user.status=='expelled'||user.status=='suspended')
 
   return (
     <SessionContext.Provider value={{ session: session, setSession: setSession }}>
@@ -141,12 +142,12 @@ export default function DashboardLayout({ title, DashboardLinks }: { title: stri
             </div>}
             <Link to={routes.base} className="flex items-center">
               <Icon src={school} className='w-[40px] h-[40px]' />
-              <h1 className="text-[#F5F5F5] text-[20px] font-bold ml-[10px]">WEBAIS</h1>
+              <h1 className="text-[#F5F5F5] text-[20px] font-bold ml-[10px]">Nigerian University</h1>
             </Link>
           </div>
 
         </header>
-        {widthBool || show ? (
+        {(widthBool || show)&&!stat ? (
           <aside ref={ref} className="bg-[#346837] btbt:w-[30vw] max-w-[300px] w-[240px] h-screen absolute left-0 top-[80px] py-4 p-1 overflow-x-auto z-[40]">
             <ul className="flex flex-col gap-[7px]">
               <li className="flex items-center ">

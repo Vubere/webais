@@ -54,7 +54,7 @@ export default function LandingPage() {
             <h2 className="text-[#346837] font-[700] text-[42px] text-center stbt:text-left leading-[45px] btbt:text-[54px] btbt:leading-[60px] font-bold flex items-center w-full">
               Web Based Academic Information System
             </h2>
-            <p className="text-[24px] pt-4 p-3 stbt:p-0 stbt:text-left text-center">A Web Based Academic Information System is a system that handles the details and activities of students and lecturers.</p>
+            <p className="text-[24px] pt-4 p-3 stbt:p-0 stbt:text-left text-center">A Web Based Academic Information System is a system that handles the information and activities of students and lecturers.</p>
             {
               userType == '' ? (
                 <div className="flex flex-col gap-[10px] pt-4 items-center stbt:items-start w-full">

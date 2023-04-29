@@ -40,7 +40,6 @@ export default function ViewSingleCourse() {
       .then(res => res.json())
       .then((data: any) => {
         if (data?.ok) {
-          console.log(data)
           setAssigned(data.data)
           setLoading(false)
         } else {
@@ -60,15 +59,13 @@ export default function ViewSingleCourse() {
     const check = confirm('Are you sure you want to delete this course?');
     if (check) {
       try {
+        const formData = new FormData()
+        formData.append('id', id as string)
+        formData.append('method', 'DELETE')
 
         const req = await fetch(base + '/courses', {
-          method: 'DELETE',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({
-            id: id
-          })
+          method: 'POST',
+          body: formData
         })
         const res = await req.json();
         if (res.ok == 1) {
@@ -132,7 +129,7 @@ export default function ViewSingleCourse() {
               {assigned.map((course) => (
                 <tr key={course.id}>
 
-                  <td className="border px-4 py-2">{course.code}</td>
+                  <td className="border px-4 py-2">{course.code?.toUpperCase()}</td>
                   <td className="border px-4 py-2">{course.units}</td>
                   <td className="border px-4 py-2">{course.type}</td>
                   <td className="border px-4 py-2">{course.level}</td>

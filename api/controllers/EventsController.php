@@ -25,7 +25,7 @@ class EventsController
 
   private function checkIfCourseExist($course_code)
   {
-    $sql = "SELECT * FROM department_courses WHERE code = '$course_code'";
+    $sql = "SELECT * FROM assigned_courses WHERE code = '$course_code'";
     $res = $this->conn->query($sql);
     if ($res) {
       $rows = $res->fetch_assoc();
@@ -46,7 +46,7 @@ class EventsController
     if ($method == 'POST') {
       try {
         $post = $_POST;
-     
+
         $sql = "INSERT INTO lectures(
           time,
           day,
@@ -60,7 +60,7 @@ class EventsController
         $time = $post['time'];
         $day = $post['day'];
         $duration = $post['duration'];
-        $course_id = (int)$post['course_id'];
+        $course_id = (int) $post['course_id'];
         $lecturer_id = $post['lecturer_id'];
         $venue = $post['venue'];
         $stmt = $this->conn->prepare($sql);
@@ -92,20 +92,20 @@ class EventsController
       echo json_encode(array('status' => 'error'));
     }
   }
-  
+
   public function lectures()
   {
     $this->conn;
     $method = $_SERVER['REQUEST_METHOD'];
     if ($method == 'GET') {
       try {
-        $sql = "SELECT lectures.id,lectures.time, lectures.day, lectures.duration, lectures.lecturer_id, lectures.venue, courses.title, department_courses.code, department_courses.id AS course_id, CONCAT(lecturers.firstName, ' ', lecturers.lastName) AS lecturer_name, lecturers.discipline  FROM lectures INNER JOIN department_courses ON lectures.course_id = department_courses.id INNER JOIN courses ON courses.id = department_courses.course_id INNER JOIN lecturers ON lectures.lecturer_id = lecturers.id";
+        $sql = "SELECT lectures.id,lectures.time, lectures.day, lectures.duration, lectures.lecturer_id, lectures.venue, courses.title, assigned_courses.code, assigned_courses.id AS course_id, CONCAT(lecturers.firstName, ' ', lecturers.lastName) AS lecturer_name, lecturers.discipline  FROM lectures INNER JOIN assigned_courses ON lectures.course_id = assigned_courses.id INNER JOIN courses ON courses.id = assigned_courses.course_id INNER JOIN lecturers ON lectures.lecturer_id = lecturers.id";
 
-        if(isset($_GET['id'])){
-          $sql .= " WHERE lectures.id = '".$_GET['id']."'";
+        if (isset($_GET['id'])) {
+          $sql .= " WHERE lectures.id = '" . $_GET['id'] . "'";
         }
-        if(isset($_GET['lecturer_id'])){
-          $sql .= " WHERE lectures.lecturer_id LIKE '".$_GET['lecturer_id']."'";
+        if (isset($_GET['lecturer_id'])) {
+          $sql .= " WHERE lectures.lecturer_id LIKE '" . $_GET['lecturer_id'] . "'";
         }
         $res = $this->conn->query($sql);
         if (!$res) {
@@ -121,42 +121,48 @@ class EventsController
         $this->getHeaders();
         echo json_encode(array('status' => $e->getMessage()));
       }
-    } elseif ($method == 'PUT') {
-      $put = json_decode(file_get_contents('php://input'), true);
-      $sql = "UPDATE lectures SET time=?,day=?,duration=?,course_id=?,lecturer_id=?,venue=? WHERE id='" . $put['id']."'";
-      $time = $put['time'];
-      $day = $put['day'];
-      $duration = $put['duration'];
- 
-      $course_id = $put['course_id'];
-      $stmt = $this->conn->prepare($sql);
-      $lecturer_id = $put['lecturer_id'];
-      $venue = $put['venue'];
-      $stmt->bind_param("ssssss", $time, $day, $duration, $course_id, $lecturer_id, $venue);
+    } elseif ($method == 'POST') {
+      $method = $_POST['method'];
+      if ($method == 'PUT') {
+        $put = $_POST;
+        $sql = "UPDATE lectures SET time=?,day=?,duration=?,course_id=?,lecturer_id=?,venue=? WHERE id='" . $put['id'] . "'";
+        $time = $put['time'];
+        $day = $put['day'];
+        $duration = $put['duration'];
+
+        $course_id = $put['course_id'];
+        $stmt = $this->conn->prepare($sql);
+        $lecturer_id = $put['lecturer_id'];
+        $venue = $put['venue'];
+        $stmt->bind_param("ssssss", $time, $day, $duration, $course_id, $lecturer_id, $venue);
 
 
-      $res = $stmt->execute();
-      if (!$res) {
-        throw new Exception("Error Processing Request", 1);
-      }
-      $this->getHeaders();
-      echo json_encode(array('status' => 'success', 'ok' => 1));
-    }elseif($method=="DELETE"){
-      try{
-        $delete = json_decode(file_get_contents('php://input'), true);
-        if(!isset($delete['id'])){
-          throw new Exception("failed to set lectures id", 1);
-        }
-        $sql = "DELETE FROM lectures WHERE id = '".$delete['id']."'";
-        $res = $this->conn->query($sql);
-        if(!$res){
+        $res = $stmt->execute();
+        if (!$res) {
           throw new Exception("Error Processing Request", 1);
         }
         $this->getHeaders();
         echo json_encode(array('status' => 'success', 'ok' => 1));
-      }catch(Exception $e){
+      } elseif ($method == "DELETE") {
+        try {
+          $delete = $_POST;
+          if (!isset($delete['id'])) {
+            throw new Exception("failed to set lectures id", 1);
+          }
+          $sql = "DELETE FROM lectures WHERE id = '" . $delete['id'] . "'";
+          $res = $this->conn->query($sql);
+          if (!$res) {
+            throw new Exception("Error Processing Request", 1);
+          }
+          $this->getHeaders();
+          echo json_encode(array('status' => 'success', 'ok' => 1));
+        } catch (Exception $e) {
+          $this->getHeaders();
+          echo json_encode(array('status' => 401, 'message' => $e->getMessage(), 'ok' => 0));
+        }
+      } else {
         $this->getHeaders();
-        echo json_encode(array('status'=>401,'message' => $e->getMessage(), 'ok' => 0));
+        echo json_encode(array('status' => 'Method not allowed', 'ok' => 0));
       }
     } else {
       $this->getHeaders();
@@ -171,16 +177,18 @@ class EventsController
     if ($method == 'POST') {
       try {
         $post = $_POST;
-       
+
         $sql = "INSERT INTO examinations(
           time,
           date,
           duration,
           course_id,
           lecturer_id,
-          venue
+          venue,
+          session,
+          semester
         ) VALUES (
-          ?,?,?,?,?,?
+          ?,?,?,?,?,?,?,?
         )";
         $time = $post['time'];
         $date = $post['date'];
@@ -188,16 +196,20 @@ class EventsController
         $course_id = $post['course_id'];
         $lecturer_id = $post['lecturer_id'];
         $venue = $post['venue'];
-        
+        $semester = $post['semester'];
+        $session = $post['session'];
+
         $stmt = $this->conn->prepare($sql);
         $stmt->bind_param(
-          "ssssss",
+          "sssssssi",
           $time,
           $date,
           $duration,
           $course_id,
           $lecturer_id,
-          $venue
+          $venue,
+          $session,
+          $semester
         );
 
         $res = $stmt->execute();
@@ -220,7 +232,7 @@ class EventsController
   }
   private function get_course_code($id)
   {
-    $sql = "SELECT code FROM department_courses WHERE id='" . $id . "'";
+    $sql = "SELECT code FROM assigned_courses WHERE id='" . $id . "'";
     $res = $this->conn->query($sql);
     if (!$res) {
       throw new Exception("Error Processing Request", 1);
@@ -235,24 +247,30 @@ class EventsController
     if ($method == 'GET') {
       try {
 
-        $sql = "SELECT e.time, e.date, e.duration, e.id, e.venue, c.title, dc.id AS course_id, dc.code, l.discipline, CONCAT(l.firstName,' ', l.lastName) as lecturer_name, l.id as lecturer_id FROM examinations as e INNER JOIN department_courses as dc ON e.course_id = dc.id INNER JOIN courses as c ON c.id = dc.course_id INNER JOIN lecturers as l ON e.lecturer_id = l.id";
+        $sql = "SELECT e.time, e.date, e.duration, e.id, e.venue, e.session, e.semester, c.title, dc.id AS course_id, dc.code, l.discipline, CONCAT(l.firstName,' ', l.lastName) as lecturer_name, l.id as lecturer_id FROM examinations as e INNER JOIN assigned_courses as dc ON e.course_id = dc.id INNER JOIN courses as c ON c.id = dc.course_id INNER JOIN lecturers as l ON e.lecturer_id = l.id WHERE 1=1";
 
         if (isset($_GET['id'])) {
-          $sql .= " WHERE e.id='" . $_GET['id'] . "'";
+          $sql .= " AND e.id='" . $_GET['id'] . "'";
         }
         if (isset($_GET['course_id'])) {
-          $sql .= " WHERE e.course_id='" . $_GET['course_id'] . "'";
+          $sql .= " AND e.course_id='" . $_GET['course_id'] . "'";
         }
         if (isset($_GET['lecturer_id'])) {
-          $sql .= " WHERE e.lecturer_id='" . $_GET['lecturer_id'] . "'";
+          $sql .= " AND e.lecturer_id='" . $_GET['lecturer_id'] . "'";
+        }
+        if(isset($_GET['session'])){
+          $sql .= " AND e.session='" . $_GET['session'] . "'";
+        }
+        if(isset($_GET['semester'])){
+          $sql .= " AND e.semester='" . $_GET['semester'] . "'";
         }
         $res = $this->conn->query($sql);
         if (!$res) {
           throw new Exception("Error Processing Request", 1);
         }
         $data = array();
-        while($row = $res->fetch_assoc()){
-          $data[] = $row; 
+        while ($row = $res->fetch_assoc()) {
+          $data[] = $row;
         }
         $this->getHeaders();
         echo json_encode(array('exams' => $data, 'status' => 200, 'ok' => 1));
@@ -260,69 +278,82 @@ class EventsController
         $this->getHeaders();
         echo json_encode(array('status' => $e->getMessage()));
       }
-    } elseif ($method == 'PUT') {
-      $put = json_decode(file_get_contents('php://input'), true);
-      if(!isset($put['id'])){
-        throw new Exception("Error Processing Request", 1);
-      }
+    } elseif ($method == 'POST') {
+      $method = $_POST['method'];
+      if ($method == 'PUT') {
+        $put = $_POST;
+        if (!isset($put['id'])) {
+          throw new Exception("Error Processing Request", 1);
+        }
 
-      $sql = "UPDATE examinations SET time=?,date=?,duration=?,course_id=?,lecturer_id=?,venue=? WHERE id='" . $put['id'] . "'";
-      $time = $put['time'];
-      $date = $put['date'];
-      $duration = $put['duration'];
-      $course_id = $put['course_id'];
+        $sql = "UPDATE examinations SET time=?,date=?,duration=?,course_id=?,lecturer_id=?,venue=? WHERE id='" . $put['id'] . "'";
+        $time = $put['time'];
+        $date = $put['date'];
+        $duration = $put['duration'];
+        $course_id = $put['course_id'];
 
-      $lecturer_id = $put['lecturer_id'];
-      $venue = $put['venue'];
-      $stmt = $this->conn->prepare($sql);
-      $stmt->bind_param("sssiss", $time, $date, $duration, $course_id, $lecturer_id, $venue);
-      $res = $stmt->execute();
-      if (!$res) {
-        throw new Exception("Error Processing Request", 1);
+        $lecturer_id = $put['lecturer_id'];
+        $venue = $put['venue'];
+        $stmt = $this->conn->prepare($sql);
+        $stmt->bind_param("sssiss", $time, $date, $duration, $course_id, $lecturer_id, $venue);
+        $res = $stmt->execute();
+        if (!$res) {
+          throw new Exception("Error Processing Request", 1);
+        }
+        $this->getHeaders();
+        echo json_encode(array('status' => 'success', 'ok' => 1));
+      } elseif ($method == 'DELETE') {
+        $delete = $_POST;
+        if (!isset($delete['id'])) {
+          throw new Exception("Error Processing Request", 1);
+        }
+        $sql = "DELETE FROM examinations WHERE id='" . $delete['id'] . "'";
+        $res = $this->conn->query($sql);
+        if (!$res) {
+          throw new Exception("Error Processing Request", 1);
+        }
+        $this->getHeaders();
+        echo json_encode(array('status' => 'success', 'ok' => 1));
+      } else {
+        $this->getHeaders();
+        echo json_encode(array('status' => 'Method not allowed', 'ok' => 0));
       }
-      $this->getHeaders();
-      echo json_encode(array('status' => 'success', 'ok' => 1));
-    }elseif($method=='DELETE'){
-      $delete = json_decode(file_get_contents('php://input'), true);
-      if(!isset($delete['id'])){
-        throw new Exception("Error Processing Request", 1);
-      }
-      $sql = "DELETE FROM examinations WHERE id='".$delete['id']."'";
-      $res = $this->conn->query($sql);
-      if(!$res){
-        throw new Exception("Error Processing Request", 1);
-      }
-      $this->getHeaders();
-      echo json_encode(array('status' => 'success', 'ok' => 1));
     } else {
       $this->getHeaders();
       echo json_encode(array('status' => 'Method not allowed', 'ok' => 0));
     }
   }
-  public function get_lecturer_assigned_course_exams(){
+  public function get_lecturer_assigned_course_exams()
+  {
     $method = $_SERVER['REQUEST_METHOD'];
-    if($method=='GET'){
-      try{
-        $sql = "SELECT e.time, e.date, e.duration, e.id, e.venue, c.title, dc.id AS course_id, dc.code, l.discipline, CONCAT(l.firstName,' ', l.lastName) as lecturer_name, l.id as lecturer_id FROM examinations as e INNER JOIN department_courses as dc ON e.course_id = dc.id INNER JOIN courses as c ON c.id = dc.course_id INNER JOIN lecturers as l ON e.lecturer_id = l.id";
-        if(isset($_GET['lecturer_id'])){
-          $sql .= " WHERE dc.assigned_lecturers LIKE '%".$_GET['lecturer_id']."%'";
+    if ($method == 'GET') {
+      try {
+        $sql = "SELECT e.time, e.date, e.duration, e.id,  e.venue, c.title, dc.id AS course_id, dc.code, l.discipline, CONCAT(l.firstName,' ', l.lastName) as lecturer_name, l.id as lecturer_id FROM examinations as e INNER JOIN assigned_courses as dc ON e.course_id = dc.id INNER JOIN courses as c ON c.id = dc.course_id INNER JOIN lecturers as l ON e.lecturer_id = l.id";
+        if (isset($_GET['lecturer_id'])) {
+          $sql .= " WHERE dc.assigned_lecturers LIKE '%" . $_GET['lecturer_id'] . "%'";
+        }
+        if(isset($_GET['session'])){
+          $sql .= " AND e.session='" . $_GET['session'] . "'";
+        }
+        if(isset($_GET['semester'])){
+          $sql .= " AND e.semester='" . $_GET['semester'] . "'";
         }
         $res = $this->conn->query($sql);
-        if(!$res){
+        if (!$res) {
           throw new Exception("Error Processing Request", 1);
         }
         $data = array();
-        while($row = $res->fetch_assoc()){
-          $data[] = $row; 
+        while ($row = $res->fetch_assoc()) {
+          $data[] = $row;
         }
         $this->getHeaders();
         echo json_encode(array('exams' => $data, 'status' => 200, 'ok' => 1));
-      }catch(Exception $e){
+      } catch (Exception $e) {
         $this->getHeaders();
         echo json_encode(array('status' => $e->getMessage()));
       }
 
-    }else{
+    } else {
       $this->getHeaders();
       echo json_encode(array('status' => 'Method not allowed', 'ok' => 0));
     }
@@ -334,7 +365,7 @@ class EventsController
     $method = $_SERVER['REQUEST_METHOD'];
     if ($method == 'GET') {
       try {
-        $sql = "SELECT * FROM annoucements";
+        $sql = "SELECT * FROM announcements";
         if (isset($_GET['id'])) {
           $sql .= " WHERE id='" . $_GET['id'] . "'";
         }
@@ -354,28 +385,30 @@ class EventsController
         $this->getHeaders();
         echo json_encode(array('status' => $e->getMessage()));
       }
-    } elseif ($method == 'PUT') {
-      $put = json_decode(file_get_contents('php://input'), true);
-      $type = $put['type'];
-      $title = $put['title'];
-      $content = $put['content'];
-      $target = $put['targets'];
-      $time = $put['time'];
-      $date = $put['date'];
-      $sql = "UPDATE annoucements SET type=?, title=?,content=?, target=?, time=?, date=? WHERE id='" . $put['id'] . "'";
-      $stmt = $this->conn->prepare($sql);
-      $stmt->bind_param("ssssss", $type, $title, $content, $target, $time, $date);
-      
-      $res = $stmt->execute();
-      if (!$res) {
-        throw new Exception("Error Processing Request", 1);
-      }
-      $this->getHeaders();
-      echo json_encode(array('status' => 'success', 'ok' => 1));
     } elseif ($method == 'POST') {
-      try {
-        $post = $_POST;
-        $sql = "INSERT INTO annoucements(
+      $method = $_POST['method'];
+      if ($method == 'PUT') {
+        $put = $_POST;
+        $type = $put['type'];
+        $title = $put['title'];
+        $content = $put['content'];
+        $target = $put['targets'];
+        $time = $put['time'];
+        $date = $put['date'];
+        $sql = "UPDATE announcements SET type=?, title=?,content=?, target=?, time=?, date=? WHERE id='" . $put['id'] . "'";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->bind_param("ssssss", $type, $title, $content, $target, $time, $date);
+
+        $res = $stmt->execute();
+        if (!$res) {
+          throw new Exception("Error Processing Request", 1);
+        }
+        $this->getHeaders();
+        echo json_encode(array('status' => 'success', 'ok' => 1));
+      } elseif ($method == 'POST') {
+        try {
+          $post = $_POST;
+          $sql = "INSERT INTO announcements(
           type,
           title,
           content,
@@ -385,44 +418,48 @@ class EventsController
         ) VALUES (
           ?,?,?,?,?,?
         )";
-        $type = $post['type'];
-        $title = $post['title'];
-        $content = $post['content'];
-        $target = $post['targets'];
-        $time = $post['time'];
-        $date = $post['date'];
-        $stmt = $this->conn->prepare($sql);
-        $stmt->bind_param(
-          "ssssss",
-          $type,
-          $title,
-          $content,
-          $target,
-          $time,
-          $date
-        );
-     
-        $res = $stmt->execute();
-        if ($res) {
+          $type = $post['type'];
+          $title = $post['title'];
+          $content = $post['content'];
+          $target = $post['targets'];
+          $time = $post['time'];
+          $date = $post['date'];
+          $stmt = $this->conn->prepare($sql);
+          $stmt->bind_param(
+            "ssssss",
+            $type,
+            $title,
+            $content,
+            $target,
+            $time,
+            $date
+          );
+
+          $res = $stmt->execute();
+          if ($res) {
+            $this->getHeaders();
+            echo json_encode(array('status' => 'success', 'ok' => 1, 'id' => $stmt->insert_id));
+          } else {
+            throw new Exception("Error Processing Request", 1);
+          }
+          $stmt->close();
+        } catch (Exception $e) {
           $this->getHeaders();
-          echo json_encode(array('status' => 'success', 'ok' => 1, 'id' => $stmt->insert_id));
-        } else {
+          echo json_encode(array('status' => $e->getMessage(), 'ok' => 0));
+        }
+      } elseif ($method == 'DELETE') {
+        $delete = $_POST;
+        $sql = "DELETE FROM announcements WHERE id='" . $delete['id'] . "'";
+        $res = $this->conn->query($sql);
+        if (!$res) {
           throw new Exception("Error Processing Request", 1);
         }
-        $stmt->close();
-      } catch (Exception $e) {
         $this->getHeaders();
-        echo json_encode(array('status' => $e->getMessage(), 'ok' => 0));
+        echo json_encode(array('status' => 'success', 'ok' => 1));
+      } else {
+        $this->getHeaders();
+        echo json_encode(array('status' => 'Method not allowed', 'ok' => 0));
       }
-    } elseif ($method == 'DELETE') {
-      $delete = $_POST;
-      $sql = "DELETE FROM annoucements WHERE id='" . $delete['id'] . "'";
-      $res = $this->conn->query($sql);
-      if (!$res) {
-        throw new Exception("Error Processing Request", 1);
-      }
-      $this->getHeaders();
-      echo json_encode(array('status' => 'success', 'ok' => 1));
     } else {
       $this->getHeaders();
       echo json_encode(array('status' => 'Method not allowed', 'ok' => 0));
@@ -440,8 +477,8 @@ class EventsController
         $session = $_GET['session'];
         $semester = $_GET['semester'];
 
-        $sql = "SELECT lectures.id,lectures.time, lectures.day, lectures.duration, lectures.lecturer_id, lectures.venue, courses.title, department_courses.code, department_courses.id as course_id, CONCAT(lecturers.firstName, ' ', lecturers.lastName,' ', lecturers.degreeAcquired) AS lecturer_name FROM lectures INNER JOIN department_courses ON lectures.course_id = department_courses.id INNER JOIN courses ON department_courses.course_id = courses.id INNER JOIN lecturers ON lectures.lecturer_id = lecturers.id
-         WHERE department_courses.id
+        $sql = "SELECT lectures.id,lectures.time, lectures.day, lectures.duration, lectures.lecturer_id, lectures.venue, courses.title, assigned_courses.code, assigned_courses.id as course_id, CONCAT(lecturers.firstName, ' ', lecturers.lastName,' ', lecturers.degreeAcquired) AS lecturer_name FROM lectures INNER JOIN assigned_courses ON lectures.course_id = assigned_courses.id INNER JOIN courses ON assigned_courses.course_id = courses.id INNER JOIN lecturers ON lectures.lecturer_id = lecturers.id
+         WHERE assigned_courses.id
       IN
       (SELECT department_course_id FROM course_registrations WHERE student_id = '$student_id' AND session = '$session' AND semester = '$semester')";
         $stmt = $this->conn->prepare($sql);

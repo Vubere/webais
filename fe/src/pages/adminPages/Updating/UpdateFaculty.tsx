@@ -1,5 +1,5 @@
 import { ChangeEvent, useEffect, useState } from "react"
-import { Link, useParams } from "react-router-dom"
+import { Link, useNavigate, useParams } from "react-router-dom"
 import { base } from "../../../App"
 
 
@@ -18,6 +18,7 @@ export default function UpdateFaculty() {
     duration: ''
   })
   const { id } = useParams()
+  const navigate = useNavigate()
 
   useEffect(() => {
     fetch(base + `/faculty?id=${id}`)
@@ -30,11 +31,9 @@ export default function UpdateFaculty() {
       fetch(base + `/department?faculty=${faculty.id}`)
         .then(res => res.json())
         .then(res => {
-          console.log(res)
           setFacultyDepartments(res.data.data)
 
         }).catch(err => {
-          console.log(err)
         })
     }
   }, [faculty.name])
@@ -49,15 +48,14 @@ export default function UpdateFaculty() {
     const f = new FormData()
     f.append('name', faculty.name)
     f.append('id', faculty.id)
+    f.append('method', 'PUT')
 
     fetch(base + `/faculty`, {
-      method: 'PUT',
+      method: 'POST',
       body: f
     }).then(res => res.json())
       .then(data => {
-        console.log(data)
       }).catch(err => {
-        console.log(err)
       })
   }
   const addDepartment = (e: React.FormEvent<HTMLFormElement>) => {
@@ -66,13 +64,13 @@ export default function UpdateFaculty() {
     f.append('name', department.name)
     f.append('duration', department.duration)
     f.append('faculty_id', faculty.id)
+    f.append('method', 'POST')
 
     fetch(base + `/department`, {
       method: 'POST',
       body: f
     }).then(res => res.json())
       .then(data => {
-        console.log(data)
         if (data.status == 'success') {
           alert('Department added successfully')
           setFacultyDepartments(prev => [...prev, department])
@@ -81,7 +79,7 @@ export default function UpdateFaculty() {
             name: ''
           })
         } else {
-          throw new Error(data?.message || 'something went wrond')
+          throw new Error(data?.message || 'something went wrong')
         }
       })
       .catch((err: any) => {
@@ -94,6 +92,22 @@ export default function UpdateFaculty() {
       ...department,
       [name]: value
     })
+  }
+  const delete_faculty = async () => {
+    const f = new FormData()
+    f.append('id', faculty.id)
+    f.append('method', 'DELETE')
+    const res = await fetch(base + `/faculty`, {
+      method: 'POST',
+      body: f
+    })
+    const data = await res.json()
+    if (data.status == 'success') {
+      alert('Faculty deleted successfully')
+      navigate(-1)
+    } else {
+      alert(data.message)
+    }
   }
 
   return (
@@ -138,7 +152,7 @@ export default function UpdateFaculty() {
         </form>
         <div className="w-[80vw] max-w-[400px] mx-auto mt-10 flex flex-col items-end" >
           <h4 className="text-[#347836]">Dangerous Operation</h4>
-          <button className="bg-[#990000] px-2 rounded text-white py-2" >Delete Faculty</button>
+          <button className="bg-[#990000] px-2 rounded text-white py-2" onClick={delete_faculty}>Delete Faculty</button>
         </div>
       </div>
     </section>

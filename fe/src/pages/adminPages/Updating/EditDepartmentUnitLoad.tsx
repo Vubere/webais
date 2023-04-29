@@ -1,5 +1,5 @@
 import { FormEventHandler, useEffect, useMemo, useState } from "react"
-import { useParams } from "react-router-dom"
+import { useNavigate, useParams } from "react-router-dom"
 import { base } from "../../../App"
 import { unitLoads } from "../Viewing/DepartmentUnitLoads"
 import useFacultiesAndDepartments from "../../../hooks/useFacultiesAndDepartments"
@@ -9,7 +9,6 @@ import useFacultiesAndDepartments from "../../../hooks/useFacultiesAndDepartment
 export default function EditUnitLoad() {
   const [unitLoad, setUnitLoad] = useState({
     department_id: '',
-    session: '',
     semester: 0,
     level: '',
     min_units: '',
@@ -17,13 +16,13 @@ export default function EditUnitLoad() {
   })
   const [err, setErr] = useState({
     department_id: '',
-    session: '',
     semester: '',
     level: '',
     min_units: '',
     max_units: '',
   })
   const { id } = useParams()
+  const navigate = useNavigate()
 
   useEffect(() => {
     if (id) {
@@ -54,16 +53,20 @@ export default function EditUnitLoad() {
   const onSubmit: FormEventHandler<HTMLFormElement> = (e) => {
     e.preventDefault()
     if (validate()) {
-      console.log(unitLoad.session)
+      const formData = new FormData()
+      formData.append('id', id as string)
+      formData.append('department_id', unitLoad.department_id)
+      formData.append('semester', unitLoad.semester.toString())
+      formData.append('level', unitLoad.level)
+      formData.append('min_units', unitLoad.min_units)
+      formData.append('max_units', unitLoad.max_units)
+      formData.append('method', 'PUT')
+
       fetch(base + '/assign_unit_load', {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(unitLoad)
+        method: 'POST',
+        body: formData
       }).then(res => res.json())
         .then(data => {
-          console.log(data)
           if (data?.ok == 1) {
             alert('department load updated successfully')
           } else {
@@ -80,10 +83,6 @@ export default function EditUnitLoad() {
   const validate = () => {
     let isValid = true
     const tempErr = { ...err }
-    if (unitLoad.session === '') {
-      tempErr.session = 'Session is required'
-      isValid = false
-    }
     if (unitLoad.semester === 0) {
       tempErr.semester = 'Semester is required'
       isValid = false
@@ -118,7 +117,6 @@ export default function EditUnitLoad() {
       setErr(tempErr)
       setTimeout(() => {
         setErr({
-          session: '',
           department_id: '',
           level: '',
           semester: '',
@@ -135,8 +133,32 @@ export default function EditUnitLoad() {
   const dept = useMemo(() => departments?.find(dept => dept.id == unitLoad.department_id), [unitLoad?.department_id, departments])
   const faculty = useMemo(() => faculties?.find(fac => fac.id == dept?.faculty_id), [dept?.faculty_id, faculties])
 
-  const year = new Date().getFullYear()
+  const deleteunitLoad = () => {
+    if (confirm('Are you sure you want to delete this unit load?')) {
+      const formData = new FormData()
+      formData.append('id', id as string)
+      formData.append('method', 'DELETE')
+      fetch(base + '/assign_unit_load', {
+        method: 'POST',
+        body: formData
+      }).then(res => res.json())
 
+        .then(data => {
+          if (data?.ok == 1) {
+            alert('unit load deleted successfully')
+            navigate(-1)
+          } else {
+            throw new Error(data?.message || 'something went wrong')
+          }
+          setLoading(false)
+        })
+        .catch(err => {
+          alert(err?.message || 'something went wrong')
+          setLoading(false)
+        })
+
+    }
+  }
   return (
     <div className="w-full h-[90vh] overflow-y-auto p-3 flex flex-col items-center pb-20">
       <h3 className="w-full text-center font-[700] text-[22px] text-[#346837]">Edit Department Unit Load</h3>
@@ -148,18 +170,7 @@ export default function EditUnitLoad() {
       </div>}
       <div className="w-full flex flex-col items-center">
         <form onSubmit={onSubmit} className="max-w-[400px] w-[80vw]">
-          <div>
-            <label htmlFor="session">Session *</label>
-            {err.session && <span className="text-red-500 text-[12px]">{err.session}</span>}
-            <select name="session" value={unitLoad.session} onChange={handleChange} className="w-full h-[40px] rounded-[5px] bg-transparent border border-[#347836]  flex items-center focus:outline-none px-2">
-              <option value="">Select session</option>
-              <option value={`${year + 2}/${year + 3}`}>{`${year + 2}/${year + 3}`}</option>
-              <option value={`${year + 1}/${year + 2}`}>{`${year + 1}/${year + 2}`}</option>
-              <option value={`${year}/${year + 1}`}>{`${year}/${year + 1}`}</option>
-              <option value={`${year - 1}/${year}`}>{`${year - 1}/${year}`}</option>
-              <option value={`${year - 2}/${year - 1}`}>{`${year - 2}/${year - 1}`}</option>
-            </select>
-          </div>
+       
           <div className="w-full">
             <label htmlFor="level">Level *</label>
             {err.level && <span className="text-red-500 text-[12px]">{err.level}</span>}
@@ -194,6 +205,10 @@ export default function EditUnitLoad() {
           </div>
           <button type="submit" className="bg-[#347836] text-white px-4 py-2 rounded-[5px] mt-4 w-full">Submit</button>
         </form>
+      </div>
+      <div>
+        <h4 className="text-[#f77]">Dangerous Operation</h4>
+        <button onClick={deleteunitLoad} className="bg-[#f77] text-white px-4 py-2 rounded-[5px] mt-4 w-full">Delete Unit Load</button>
       </div>
     </div>
   )

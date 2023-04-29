@@ -11,7 +11,6 @@ export default function Messages() {
 
 
   useEffect(() => {
-    console.log(user)
     if (user) {
       if(user?.length){
         chat_url.current = user[0].id[0].toLowerCase()=='s'?'/dashboard-student':'/dashboard-lecturer'
@@ -27,15 +26,21 @@ export default function Messages() {
           }
         })
         .catch(err => {
-          console.log(err)
         })
     }
   }, [user])
-  console.log(messages)
+
+  let type = ''
+  if (user?.length) {
+    type = user[0].id[0].toLowerCase() == 'l' ? 'student' : 'lecturer'
+  } else {
+    type = user?.id && user?.id[0].toLowerCase() == 'l' ? 'student' : 'lecturer'
+  }
   return (
     <section className="w-full h-[90vh] overflow-y-auto flex flex-col p-4 items-center">
-      <h1>Messages</h1>
+      <h2 className="font-[600] text-[22px] text-[#346837]">Messages</h2>
       <div className="w-full max-w-[500px]">
+        {messages.length==0&&<p> You have not sent messages to anyone... <span>You can send messages to a listed {type} associated with a course.</span></p>}
         {messages.map((message, index) => (
           <Link to={chat_url.current+'/chat/' + message.user_id} key={index} className='border p-2 block'>
             <h3 className="font-bold text-[#347837]">{message.full_name}</h3>

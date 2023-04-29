@@ -25,7 +25,6 @@ export default function ViewPayments() {
           setPayments(data.data)
         }
       } catch (err: any) {
-        console.log(err)
       }
     }
   }

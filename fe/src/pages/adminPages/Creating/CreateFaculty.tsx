@@ -35,6 +35,8 @@ export default function CreateFaculty(){
       const f = new FormData()
       f.append('name', faculty.name)
 
+      f.append('method', 'POST')
+
       fetch(base+'/faculty', {
         method: 'POST',
         body: f
@@ -48,7 +50,7 @@ export default function CreateFaculty(){
           navigate('/dashboard-admin/update-faculty/'+data?.id)
         }
       })
-      .catch((err) => console.log(err))
+      .catch((err) => {})
       }
   }
   return(

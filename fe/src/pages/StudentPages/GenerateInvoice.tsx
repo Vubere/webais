@@ -18,7 +18,7 @@ const generate_invoice_no = (id: string | number) => {
   const second = date.getSeconds()
   const millisecond = date.getMilliseconds()
 
-  return `WEBAIS${id}${year}${month}${day}${hour}${minute}${second}${millisecond.toString().slice(0, 1)}`
+  return `NU${id}${year}${month}${day}${hour}${minute}${second}${millisecond.toString().slice(0, 1)}`
 }
 
 export default function GenerateInvoice() {
@@ -56,14 +56,12 @@ export default function GenerateInvoice() {
         .then(data => {
           if (data?.ok) {
             const res = data?.data
-            console.log(data)
             if (res.length > 0) {
               const inv = res[0]
               setInvocieDetails(inv)
               invoice_exist.current = true
             }
           } else {
-            console.log('Invoice not generated')
           }
         })
     }
@@ -76,7 +74,6 @@ export default function GenerateInvoice() {
       fetch(base+`/fee?id=${id}`)
         .then(res => res.json())
         .then(data => {
-          console.log(data)
           if (data.ok) {
             const res = data.data
             setFee(res[0])
@@ -93,6 +90,7 @@ export default function GenerateInvoice() {
       f.append('invoice_no', invoice)
       f.append('status', 'pending')
       f.append('date', cur_date)
+      f.append('method', 'POST')
 
       const res = await fetch(base+'/invoice', {
         method: 'POST',
@@ -104,7 +102,6 @@ export default function GenerateInvoice() {
         alert('Invoice generated successfully')
       }
     } catch (error) {
-      console.log(error)
     }
   }
 
@@ -118,7 +115,7 @@ export default function GenerateInvoice() {
         {fee && user && session && <div className="w-full flex flex-col flex items-center p-2 pb-20">
           <div className="flex items-center">
             <img src={school_green} className='w-[40px] h-[40px]' />
-            <h1 className="text-[#346837] text-[20px] font-bold ml-[10px]">WEBAIS</h1>
+            <h1 className="text-[#346837] text-[20px] font-bold ml-[10px]">Nigerian University</h1>
           </div>
           <div className="flex flex-row w-full justify-between">
             <div>
@@ -141,8 +138,8 @@ export default function GenerateInvoice() {
                 <li className="flex flex-col text-end">Etranzact Payment Type: <span>{fee.name.toUpperCase()}</span></li>
               </ul>
               <h4 >TO</h4>
-              <p>WEBAIS</p>
-              <p>P.M.B 1xxxx, WEBAIS, Nigeria</p>
+              <p>Nigerian University</p>
+              <p>P.M.B 1xxxx, Nigerian University, Nigeria</p>
               <br />
               <p><span className="font-[600]">Invoice Date: {invoiceDetails.date}</span></p>
             </div>

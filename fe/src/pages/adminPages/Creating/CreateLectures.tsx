@@ -12,7 +12,7 @@ export default function CreateLectures() {
     lecturer_id: '',
     venue: '',
   })
-  
+
   const [search, setSearch] = useState('')
   const [searchLect, setSearchLect] = useState('')
   const [errors, setErrors] = useState({
@@ -28,19 +28,29 @@ export default function CreateLectures() {
   const [lecturers, setLecturers] = useState<any[]>([])
   useEffect(() => {
 
-    fetch(base+'/assign_course')
+    fetch(base + '/assign_course')
       .then(res => res.json())
       .then(data => {
-        console.log(data)
-        setCourses(data.data)})
-      .catch((err:any) => alert(err?.message||'something went wrong'))
+        if (data.ok)
+          setCourses(data.data)
+        else {
+          throw new Error(data?.message || 'couldn\'t fetch courses')
+        }
+      })
+      .catch((err: any) => alert(err?.message || 'something went wrong'))
   }, [])
   useEffect(() => {
 
-    fetch(base+'/lecturers')
+    fetch(base + '/lecturers')
       .then(res => res.json())
-      .then(data => setLecturers(data.lecturer))
-      .catch(err => console.log(err))
+      .then(data => {
+        if (data.status == 'success' && data.lecturer) {
+          setLecturers(data.lecturer)
+        } else {
+          throw new Error(data?.message || 'couldn\'t fetch lecturers')
+        }
+      })
+      .catch(err => {})
   }, [])
 
   const validate = () => {
@@ -76,7 +86,7 @@ export default function CreateLectures() {
         setErrors({
           time: '',
           day: '',
-          duration: '', 
+          duration: '',
           course_id: '',
           lecturer_id: '',
           venue: '',
@@ -108,18 +118,18 @@ export default function CreateLectures() {
       f.append('lecturer_id', lectures.lecturer_id)
       f.append('venue', lectures.venue)
 
-      fetch(base+'/create_lecture', {
+      f.append('method', 'POST')
+
+      fetch(base + '/create_lecture', {
         method: 'POST',
         body: f
       }).then(res => res.json())
         .then(data => {
-          console.log(data)
           if (data.ok) {
             alert('Lecture created successfully')
             reset()
           }
         }).catch(err => {
-          console.log(err)
         })
     }
   }
@@ -130,7 +140,7 @@ export default function CreateLectures() {
     })
   }
   const filteredLecturers = useMemo(() => {
-    return lecturers.filter(i => (i.firstName + ' ' + i.lastName).toLowerCase().includes(searchLect.toLowerCase()) || i.email.toLowerCase().includes(searchLect.toLowerCase() || i.id.toLowerCase().includes(searchLect.toLowerCase())) || i.discipline.toLowerCase().includes(searchLect.toLowerCase()))
+    return lecturers ? lecturers.filter(i => (i.firstName + ' ' + i.lastName).toLowerCase().includes(searchLect.toLowerCase()) || i.email.toLowerCase().includes(searchLect.toLowerCase() || i.id.toLowerCase().includes(searchLect.toLowerCase())) || i.discipline.toLowerCase().includes(searchLect.toLowerCase())) : []
   }, [searchLect, lecturers])
 
   const filteredCourses = useMemo(() => {

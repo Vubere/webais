@@ -1,6 +1,7 @@
-import { useEffect, useMemo, useState } from "react"
+import { useContext, useEffect, useMemo, useState } from "react"
 import { base } from "../../../App"
 import { assigned_course } from "../Viewing/ViewAssignedCourses"
+import { SessionContext } from "../../../layouts/DashboardLayout"
 
 export default function CreateLectures() {
   const [exam, setExams] = useState({
@@ -10,6 +11,7 @@ export default function CreateLectures() {
     course_id: '',
     lecturer_id: '',
     venue: '',
+
   })
   const [courses, setCourses] = useState<assigned_course[]>([])
   const [lecturers, setLecturers] = useState<any[]>([])
@@ -23,12 +25,20 @@ export default function CreateLectures() {
   })
   const [search, setSearch] = useState('')
   const [searchLect, setSearchLect] = useState('')
+  const Session = useContext(SessionContext)
+
   useEffect(() => {
     fetch(base + '/lecturers')
       .then(res => res.json())
-      .then(data => setLecturers(data.lecturer))
-      .catch(err => console.log(err))
+      .then(data => {
+        if (data.status == 'success')
+          setLecturers(data.lecturer)
+        else
+          throw new Error('something went wrong')
+      })
+      .catch(err => {})
   }, [])
+
   const validate = () => {
     let isValid = true
     let tempERR = { ...errors }
@@ -76,8 +86,10 @@ export default function CreateLectures() {
     fetch(base + '/assign_course')
       .then(res => res.json())
       .then(data => {
-        console.log(data)
-        setCourses(data.data)
+        if (data.ok == 1)
+          setCourses(data.data)
+        else
+          throw new Error('something went wrong')
       })
       .catch((err: any) => alert(err?.message || 'something went wrong'))
   }, [])
@@ -85,35 +97,40 @@ export default function CreateLectures() {
 
   const onSubmit = (e: any) => {
     e.preventDefault()
-    const f = new FormData()
-    f.append('time', exam.time)
-    f.append('date', exam.date)
-    f.append('duration', exam.duration)
-    f.append('course_id', exam.course_id)
-    f.append('lecturer_id', exam.lecturer_id)
-    f.append('venue', exam.venue)
+    if (Session?.session) {
 
-    if (validate()) {
-      fetch(base + '/create_exam', {
-        method: 'POST',
-        body: f
-      }).then(res => res.json())
-        .then(data => {
-          console.log(data)
-          if (data.ok) {
-            alert('Examination created successfully')
-            setExams({
-              time: '',
-              date: '',
-              duration: '',
-              course_id: '',
-              lecturer_id: '',
-              venue: '',
-            })
-          }
-        }).catch(err => {
-          console.log(err)
-        })
+      const f = new FormData()
+      f.append('time', exam.time)
+      f.append('date', exam.date)
+      f.append('duration', exam.duration)
+      f.append('course_id', exam.course_id)
+      f.append('lecturer_id', exam.lecturer_id)
+      f.append('venue', exam.venue)
+      f.append('session', Session.session.session)
+      f.append('semester', Session.session.current_semester.toString())
+
+      f.append('method', 'POST')
+
+      if (validate()) {
+        fetch(base + '/create_exam', {
+          method: 'POST',
+          body: f
+        }).then(res => res.json())
+          .then(data => {
+            if (data.ok) {
+              alert('Examination created successfully')
+              setExams({
+                time: '',
+                date: '',
+                duration: '',
+                course_id: '',
+                lecturer_id: '',
+                venue: '',
+              })
+            }
+          }).catch(err => {
+          })
+      }
     }
   }
   const handleChange = (e: any) => {
@@ -136,7 +153,7 @@ export default function CreateLectures() {
     <div className="w-full h-[90vh] content-box overflow-auto pb-[30px]">
       <h3 className="text-center text-[22px] text-[#346837]">Schedule Examinations</h3>
       <form onSubmit={onSubmit} className="flex flex-col items-center gap-2 max-w-[400px] w-[80vw] gap-4 mx-auto">
-
+        
         <div className="w-full">
           <label htmlFor="time">Time</label>
           <select name="time" id="time" value={exam.time} onChange={handleChange}

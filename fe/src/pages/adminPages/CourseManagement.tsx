@@ -23,7 +23,6 @@ export default function CourseManagement() {
     fetch(base + '/courses')
       .then(res => res.json())
       .then((data: any) => {
-        console.log(data)
         if (data?.ok) {
           setCourses(data.data)
           setLoading(false)
@@ -45,7 +44,7 @@ export default function CourseManagement() {
         f.append('session', Session?.session?.session)
         f.append('all', 'true')
         f.append('bool', !!bool?'1':'0')
-
+        f.append('method', 'POST')
         const req = await fetch(base + '/grading', {
           method: 'POST',
           body: f
@@ -72,7 +71,7 @@ export default function CourseManagement() {
         f.append('semester', current_semester.toString())
         f.append('all', 'true')
         f.append('bool', bool.toString())
-
+        f.append('method', 'POST')
         const req = await fetch(base + '/registration', {
           method: 'POST',
           body: f
@@ -91,7 +90,33 @@ export default function CourseManagement() {
     }
   }
 
-
+  const create_result_sheet_for_all_courses = async () => {
+    if (Session?.session) {
+      try {
+        //course_id, session, semester, all:boolean,
+        const { session, current_semester } = Session.session
+        const f = new FormData()
+        f.append('session', session)
+        f.append('semester', current_semester.toString())
+        f.append('all', 'true')
+        f.append('method', 'POST')
+        const req = await fetch(base + '/session_result', {
+          method: 'POST',
+          body: f
+        })
+        const res = await req.json();
+        
+        if (res.ok==1) {
+          alert('Successfully created result sheet for all courses')
+        } else {
+          throw new Error(res.message)
+        }
+      } catch (err: any) {
+        setError(err?.message)
+        alert(err?.message||"Failed to create result sheet for all courses")
+      }
+    }
+  }
 
   return (
     <div className='p-4 h-[90vh] overflow-auto pb-20'>
@@ -168,6 +193,9 @@ export default function CourseManagement() {
             </button>
             <button className='bg-[#aa4444] text-[#fff] text-[14px] p-1 px-2 rounded-[5px] w-[220px] mt-5 m-2' onClick={() => toggle_grading_open(false)}>
               Close Grading For All Courses
+            </button>
+            <button className='bg-[#aa4444] text-[#fff] text-[14px] p-1 px-2 rounded-[5px] w-[220px] mt-5 m-2' onClick={() => create_result_sheet_for_all_courses()}>
+              Create Result Sheet For All Courses
             </button>
           </div>
         </div>

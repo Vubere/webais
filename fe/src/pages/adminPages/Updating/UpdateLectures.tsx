@@ -37,7 +37,9 @@ export default function UpdateLectures() {
     fetch(base + '/lecturers')
       .then(res => res.json())
       .then(data => setLecturers(data.lecturer))
-      .catch(err => console.log(err))
+      .catch(err => {
+        
+      })
   }, [])
 
   const { id } = useParams()
@@ -114,23 +116,19 @@ export default function UpdateLectures() {
         f.append('course_id', lectures.course_id)
         f.append('lecturer_id', lectures.lecturer_id)
         f.append('venue', lectures.venue)
+        f.append('method', 'PUT')
 
         const res = await fetch(base + "/lectures", {
-          method: "PUT",
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({ ...lectures, id })
+          method: "POST",
+          body: f
         })
         const data = await res.json()
-        console.log(data)
         if (data.ok) {
           alert('Lecture Updated Successfully')
         } else {
           throw new Error(data?.status || 'something went wrong')
         }
       } catch (err) {
-        console.log(err)
       }
     }
   }
@@ -141,7 +139,6 @@ export default function UpdateLectures() {
         .then((res) => res.json())
         .then((data) => {
           if (data.ok) {
-            console.log(data)
             const l = data.lectures[0]
             if(l==undefined) {
               throw new Error('course not found')
@@ -164,12 +161,13 @@ export default function UpdateLectures() {
   const delete_lecture = () => {
     const confirm = window.confirm('Are you sure you want to delete this lecture?')
     if (!confirm) return
+    const formData = new FormData()
+    formData.append('id', id?.toString() as string)
+    formData.append('method', 'DELETE')
+
     fetch(base + "/lectures", {
-      method: "DELETE",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ id }),
+      method: "POST",
+      body: formData
     })
       .then((res) => res.json())
       .then((data) => {

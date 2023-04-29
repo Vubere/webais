@@ -23,8 +23,8 @@ export default function UpdateAssignedCourse() {
     description: '',
     course_id: 0,
     departments: [],
-    semester: 0,
     session: '',
+    semester: 0,
     units: 0,
     code: '',
     type: 'elective',
@@ -40,7 +40,6 @@ export default function UpdateAssignedCourse() {
     units: '',
     departments: '',
     course_id: '',
-    session: '',
     semester: '',
     faculties: '',
     level: '',
@@ -61,8 +60,15 @@ export default function UpdateAssignedCourse() {
         .then(res => res.json())
         .then((data: any) => {
           if (data?.ok) {
-            setAssigned(data.data[0])
-            setSelectedDepartments(data.data[0]?.departments)
+            let d = data.data[0]
+            if (typeof d.assigned_lecturers === 'string') {
+              d.assigned_lecturers = JSON.parse(d.assigned_lecturers)
+            }
+            if (typeof d.departments === 'string') {
+              d.departments = JSON.parse(d.departments)
+            }
+            setAssigned(d)
+            setSelectedDepartments(d?.departments)
             setLoading(false)
           } else {
             throw new Error(data?.message || 'something went wrong')
@@ -99,12 +105,29 @@ export default function UpdateAssignedCourse() {
   const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     if (Validate()) {
+
+      const formData = new FormData()
+      formData.append('id', assigned.id.toString())
+      formData.append('code', assigned.code)
+      formData.append('type', assigned.type)
+      formData.append('units', assigned.units.toString())
+      formData.append('departments', JSON.stringify(selectedDepartments))
+      formData.append('course_id', assigned.course_id.toString())
+      formData.append('semester', assigned.semester.toString())
+      formData.append('level', assigned.level.toString())
+      formData.append('assigned_lecturers', JSON.stringify(assigned.assigned_lecturers))
+      formData.append('faculties', JSON.stringify(selectedFaculties))
+      formData.append('registration_open', assigned.registration_open.toString())
+      formData.append('grading_open', assigned.grading_open.toString())
+      formData.append('description', assigned.description)
+      formData.append('title', assigned.title)
+
+      formData.append('method', 'PUT')
+
+      setLoading(true)
       fetch(base + '/assign_course', {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(assigned)
+        method: 'POST',
+        body: formData
       })
         .then(res => res.json())
         .then((data: any) => {
@@ -113,6 +136,7 @@ export default function UpdateAssignedCourse() {
           } else {
             throw new Error(data?.message || 'something went wrong')
           }
+          setLoading(false)
         })
         .catch(err => {
           alert(err?.message || 'failed to fetch assigned courses')
@@ -146,10 +170,6 @@ export default function UpdateAssignedCourse() {
       temp.course_id = 'Course is required'
       valid = false
     }
-    if (assigned.session === '') {
-      temp.session = 'Course session is required'
-      valid = false
-    }
     if (assigned.semester === 0) {
       temp.semester = 'Course semester is required'
       valid = false
@@ -169,7 +189,6 @@ export default function UpdateAssignedCourse() {
           units: '',
           departments: '',
           course_id: '',
-          session: '',
           semester: '',
           faculties: '',
           level: '',
@@ -262,18 +281,20 @@ export default function UpdateAssignedCourse() {
   }
   const delete_course = () => {
     if (window.confirm('Are you sure you want to delete this course?')) {
+      setLoading(true)
+      const formData = new FormData()
+      formData.append('id', id as string)
+      formData.append('method', 'DELETE')
+
       fetch(base + '/assign_course', {
-        method: 'DELETE',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ id: assigned.id })
+        method: 'POST',
+        body: formData
       })
         .then(res => res.json())
         .then((data: any) => {
           if (data?.ok) {
             alert('course deleted successfully')
-            navigate(-1)
+           
           } else {
             throw new Error(data?.message || 'something went wrong')
           }
@@ -364,19 +385,6 @@ export default function UpdateAssignedCourse() {
               <option value="2">2</option>
             </select>
           </div>
-          <div className="w-full">
-            <label htmlFor="session">Session</label>
-            <select name="session" id="session" value={assigned?.session} onChange={onChange} className="w-full h-[40px] rounded-[5px] bg-transparent border border-[#347836] flex items-center focus:outline-none px-2">
-              <option value="">Select Session </option>
-              <option value={`${year + 2}/${year + 3}`}>{`${year + 2}/${year + 3}`}</option>
-              <option value={`${year + 1}/${year + 2}`}>{`${year + 1}/${year + 2}`}</option>
-              <option value={`${year}/${year + 1}`}>{`${year}/${year + 1}`}</option>
-              <option value={`${year - 1}/${year}`}>{`${year - 1}/${year}`}</option>
-              <option value={`${year - 2}/${year - 1}`}>{`${year - 2}/${year - 1}`}</option>
-              <option value={`${year - 3}/${year - 2}`}>{`${year - 3}/${year - 2}`}</option>
-            </select>
-            <p className="red">{errors.session}</p>
-          </div>
           <div className="flex flex-col w-full">
             <h3 className="font-[500] text-[18px] text-center text-[#347836]">Assign Lecturers</h3>
             {errors.assigned_lecturers && <span className="text-red-500 text-[12px]">{errors.assigned_lecturers}</span>}
@@ -395,9 +403,9 @@ export default function UpdateAssignedCourse() {
 
 
                   return (
-                    <>
+                    <span key={item}>
                       {h ?
-                        <li  key={index} className="flex flex-col gap-2" >
+                        <li key={index} className="flex flex-col gap-2" >
                           {h?.firstName
                           } {h?.lastName}({h?.discipline}) :
                           <p>
@@ -407,7 +415,7 @@ export default function UpdateAssignedCourse() {
                         </li>
                         : null
                       }
-                    </>
+                    </span>
                   )
                 })}
 

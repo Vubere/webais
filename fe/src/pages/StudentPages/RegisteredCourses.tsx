@@ -24,24 +24,22 @@ export default function RegisteredCourses() {
           }
         })
         .catch(err => {
-          console.log(err)
         })
     }
   }, [Session?.session, user])
 
   const unregisterCourse = (course: Course) => {
     if (Session?.session && user) {
+
+      const formData = new FormData()
+      formData.append('course_id', course.id)
+      formData.append('student_id', user.id)
+      formData.append('semester', Session?.session.current_semester.toString())
+      formData.append('session', Session.session.session)
+      formData.append('method', 'POST')
       fetch(base+'/course_registration', {
-        method: 'DELETE',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          course_id: course.id,
-          student_id: user.id,
-          semester: Session?.session.current_semester,
-          session: Session.session.session
-        })
+        method: 'POST',
+        body: formData
       }).then(res => res.json())
         .then(res => {
           if (res.status == 200) {
@@ -49,7 +47,6 @@ export default function RegisteredCourses() {
             setRegisteredCourses(registeredCourses.filter((c) => c.id !== course.id))
           }
         }).catch(err => {
-          console.log(err)
         })
     }
   }
@@ -71,7 +68,7 @@ export default function RegisteredCourses() {
         <tbody>
 
           {registeredCourses.length ? registeredCourses.map((course) => (<tr key={course.course_id}>
-            <td className="border px-4 py-2">{course.code}</td>
+            <td className="border px-4 py-2">{course.code?.toUpperCase()}</td>
             <td className="border px-4 py-2">{course.title}</td>
             <td className="border px-4 py-2">{course.units}</td>
             <td className="border px-4 py-2">{course.semester}</td>

@@ -1,9 +1,11 @@
-import { useEffect, useState } from "react"
+import { useContext, useEffect, useState } from "react"
 import { useNavigate, useParams } from "react-router-dom"
 import { base } from "../../../App"
 
 import { formatDateToYMD } from "../../../helpers/formatDate"
 import useFacultiesAndDepartments from "../../../hooks/useFacultiesAndDepartments"
+import { students } from "../Viewing/ViewStudents"
+import { SessionContext } from "../../../layouts/DashboardLayout"
 
 
 export default function UpdateAdmin() {
@@ -14,17 +16,18 @@ export default function UpdateAdmin() {
     lastName: '',
     otherNames: '',
     email: '',
-    duration: '',
     entrance_session: '',
     phone: '',
     dob: '',
+    duration: 0,
     gender: '',
     faculty: '',
     department: '',
     password: '',
     level: '',
     studentId: '',
-    id: ''
+    status: 'undergraduate',
+    id: '',
   })
   const [errors, setErrors] = useState({
     firstName: '',
@@ -43,6 +46,7 @@ export default function UpdateAdmin() {
     studentId: '',
     id: ''
   })
+  const Session = useContext(SessionContext)
   const { faculties, departments, error, loading } = useFacultiesAndDepartments()
   const navigate = useNavigate()
   const validate = () => {
@@ -96,10 +100,7 @@ export default function UpdateAdmin() {
       tempErrors = { ...tempErrors, level: 'Level is required' }
       isValid = false
     }
-    if (form.duration === '') {
-      tempErrors = { ...tempErrors, duration: 'Duration is required' }
-      isValid = false
-    }
+
     if (form.entrance_session === '') {
       tempErrors = { ...tempErrors, entrance_session: 'Entrance session is required' }
       isValid = false
@@ -133,21 +134,21 @@ export default function UpdateAdmin() {
   }
 
 
+
+
+
   const fetchStudent = async () => {
     try {
       let url = base + `/students?id=${id}`
       const res = await fetch(url);
       const data = await res.json()
       if (data.ok == 1) {
-        console.log(data.students)
         const student = data.students[0]
         setForm({ ...student, dob: formatDateToYMD(student.dob) })
 
       } else {
-        console.log(data)
       }
     } catch (err) {
-      console.log(err)
     }
   }
   useEffect(() => {
@@ -155,45 +156,156 @@ export default function UpdateAdmin() {
   }, [])
   const onSubmit = (e: any) => {
     e.preventDefault()
+
+    const formData = new FormData()
+
+    formData.append('firstName', form.firstName)
+    formData.append('lastName', form.lastName)
+    formData.append('otherNames', form.otherNames)
+    formData.append('email', form.email)
+    formData.append('entrance_session', form.entrance_session)
+    formData.append('password', form.password)
+    formData.append('phone', form.phone)
+    formData.append('dob', form.dob)
+    formData.append('gender', form.gender)
+    formData.append('faculty', form.faculty)
+    formData.append('department', form.department)
+    formData.append('duration', form.duration.toString())
+    formData.append('level', form.level)
+    formData.append('studentId', form.studentId)
+    formData.append('id', form.id)
+    formData.append('status', form.status)
+
+    formData.append('method', 'PUT')
     if (validate())
-      updateAdmin()
+      updateStudent(formData)
   }
-  const updateAdmin = async () => {
+
+  const updateStudent = async (formData:any) => {
     if (id) {
       try {
         let url = base + `/students`
-        
 
         const res = await fetch(url, {
-          method: 'PUT',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify(form),
+          method: 'POST',
+          body: formData
         })
         const data = await res.json()
-        if(data.ok){
-          alert(data.message||'Student updated successfully')
-        }else{
-          throw new Error(data.message||'Error updating student')
+        
+        if (data.ok) {
+          alert(data.message || 'Student updated successfully')
+        } else {
+          throw new Error(data.message || 'Error updating student')
         }
-      } catch (err:any) {
-        alert(err.message||'Error updating student')
+      } catch (err: any) {
+        alert(err.message || 'Error updating student')
       }
 
     } else {
       alert('failed to update student')
     }
   }
+  const expel_student = async () => {
+
+    const formData = new FormData()
+
+    formData.append('firstName', form.firstName)
+    formData.append('lastName', form.lastName)
+    formData.append('otherNames', form.otherNames)
+    formData.append('email', form.email)
+    formData.append('entrance_session', form.entrance_session)
+    formData.append('password', form.password)
+    formData.append('phone', form.phone)
+    formData.append('dob', form.dob)
+    formData.append('gender', form.gender)
+    formData.append('faculty', form.faculty)
+    formData.append('department', form.department)
+    formData.append('duration', form.duration.toString())
+    formData.append('level', form.level)
+    formData.append('studentId', form.studentId)
+    formData.append('id', form.id)
+    formData.append('status', 'expelled')
+
+    setForm({...form, status:'expelled'})
+
+    formData.append('method', 'PUT')
+    if (id) {
+      if (validate()){
+        updateStudent(formData)
+      }
+    }
+  }
+  const suspend_student = async () => {
+    if (id) {
+
+      const formData = new FormData()
+
+      formData.append('firstName', form.firstName)
+      formData.append('lastName', form.lastName)
+      formData.append('otherNames', form.otherNames)
+      formData.append('email', form.email)
+      formData.append('entrance_session', form.entrance_session)
+      formData.append('password', form.password)
+      formData.append('phone', form.phone)
+      formData.append('dob', form.dob)
+      formData.append('gender', form.gender)
+      formData.append('faculty', form.faculty)
+      formData.append('department', form.department)
+      formData.append('duration', form.duration.toString())
+      formData.append('level', form.level)
+      formData.append('studentId', form.studentId)
+      formData.append('id', form.id)
+      formData.append('status', 'suspended')
+
+      setForm({ ...form, status: 'suspended' })
+
+
+      formData.append('method', 'PUT')
+      if (validate())
+        updateStudent(formData)
+    }
+  }
+  const reinstate_student = async () => {
+    if (id) {
+
+      const formData = new FormData()
+
+      formData.append('firstName', form.firstName)
+      formData.append('lastName', form.lastName)
+      formData.append('otherNames', form.otherNames)
+      formData.append('email', form.email)
+      formData.append('entrance_session', form.entrance_session)
+      formData.append('password', form.password)
+      formData.append('phone', form.phone)
+      formData.append('dob', form.dob)
+      formData.append('gender', form.gender)
+      formData.append('faculty', form.faculty)
+      formData.append('department', form.department)
+      formData.append('duration', form.duration.toString())
+      formData.append('level', form.level)
+      formData.append('studentId', form.studentId)
+      formData.append('id', form.id)
+      formData.append('status', 'undergraduate')
+      setForm({ ...form, status: 'undergraduate' })
+
+
+      formData.append('method', 'PUT')
+      if (validate())
+        updateStudent(formData)
+    }
+  }
+
   const delete_student = () => {
     const reply = prompt('are you sure you want to delete this Student? Type yes to confirm')
-    if (reply?.toLowerCase() !== 'yes') return
+    if (reply?.toLowerCase() !== 'yes' || !id) return
+
+    const formData = new FormData()
+    formData.append('id', id)
+    formData.append('method', 'DELETE')
+
     fetch(base + '/students?id=' + id, {
-      method: 'DELETE',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({ id: id })
+      method: 'POST',
+      body: formData
     })
       .then(res => res.json())
       .then(data => {
@@ -208,9 +320,11 @@ export default function UpdateAdmin() {
         alert(err?.message || 'Error deleting student')
       })
   }
+
   const departmentFilter = departments?.filter((d) => d.faculty_id == form.faculty)
 
   const year = (new Date()).getFullYear()
+
 
   return (
     <div className="p-4 h-[90vh] overflow-auto flex flex-col items-center w-full">
@@ -280,7 +394,25 @@ export default function UpdateAdmin() {
       </form>
       <div className="w-[80vw] max-w-[400px] mx-auto mt-10 flex flex-col items-end" >
         <h4 className="text-[#347836]">Dangerous Operation</h4>
-        <button className="bg-[#990000] px-2 rounded text-white py-2" onClick={delete_student}>Delete Student</button>
+        <div className="flex flex-col gap-2">
+
+          <button className="bg-[#990000] px-2 rounded text-white py-2" onClick={delete_student}>Delete Student</button>
+          {form.status == 'undergraduate' ?
+            <>
+              <button className="bg-[#990000] px-2 rounded text-white py-2" onClick={expel_student}>Expel Student</button>
+              <button className="bg-[#990000] px-2 rounded text-white py-2" onClick={suspend_student}>Suspend Student</button>
+            </> : null
+          }
+          {form.status=='expelled'?
+          <button className="bg-[#990000] px-2 rounded text-white py-2" onClick={reinstate_student}>Reinstate Student</button>
+          :null
+          }
+          {form.status=='suspended'?
+          <button className="bg-[#990000] px-2 rounded text-white py-2" onClick={reinstate_student}>Reinstate Student</button>
+          :null
+          }
+        </div>
+
       </div>
     </div>
   )

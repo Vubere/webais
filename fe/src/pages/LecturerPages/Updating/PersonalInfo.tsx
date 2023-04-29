@@ -83,12 +83,29 @@ export default function PersonalInfo() {
       try {
         let url = base+`/lecturers`
 
+        const formData = new FormData()
+        formData.append('firstName', lecturer.firstName)
+        formData.append('lastName', lecturer.lastName)
+        formData.append('otherNames', lecturer.otherNames)
+        formData.append('email', lecturer.email)
+        formData.append('phone', lecturer.phone)
+        formData.append('dob', formatDateToYMD(lecturer.dob))
+        formData.append('password', lecturer.password)
+        formData.append('gender', lecturer.gender)
+        formData.append('faculty', lecturer.faculty)
+        formData.append('department', lecturer.department)
+        formData.append('degreeAcquired', lecturer.degreeAcquired)
+        formData.append('discipline', lecturer.discipline)
+        formData.append('level', lecturer.level)
+        formData.append('id', lecturer.id)
+        formData.append('confirmPassword', lecturer.confirmPassword)
+
+        formData.append('method', 'PUT')
+
+
         const res = await fetch(url, {
-          method: 'PUT',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(lecturer),
+          method: 'POST',
+          body: formData
         })
         const data = await res.json()
        
@@ -98,7 +115,6 @@ export default function PersonalInfo() {
           throw new Error(data?.message)
         }
       } catch (err:any) {
-        console.log(err)
         alert(err?.message||'An error occured')
       }
     }
@@ -153,7 +169,7 @@ export default function PersonalInfo() {
                 </div>    
               </div>
               <div className="flex gap-2">
-                <input type="checkbox" name="showPassword" id="showPassword" onChange={togglePasswordVisibility} />
+                <input type="checkbox"  name="showPassword" id="showPassword" onChange={togglePasswordVisibility} />
                 <p>Toggle Password Visibility</p>
               </div>
               <button className="bg-[#346837] py-2 mt-4 rounded-[4px] text-[#fff]" onClick={updateInfo}>

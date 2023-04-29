@@ -86,14 +86,26 @@ export default function UpdateFee() {
     e.preventDefault()
     if (validate()) {
 
+      const formData = new FormData()
+      formData.append('id', fee.id.toString())
+      formData.append('name', fee.name)
+      formData.append('amount', fee.amount.toString())
+      formData.append('department', fee.department)
+      formData.append('session', fee.session)
+      formData.append('semester', fee.semester.toString())
+      formData.append('level', fee.level)
+      formData.append('status', fee.status)
+      formData.append('created', fee.created)
+      formData.append('last_updated', fee.last_updated)
+      formData.append('method', 'PUT')
+
       fetch(base+'/fee', {
-        method: 'PUT',
-        body: JSON.stringify(fee),
+        method: 'POST',
+        body: formData
       })
         .then(res => res.json())
         .then(data => {
           if (data?.ok) {
-            reset
             alert('Fee updated successfully')
           } else {
             throw new Error(data?.message || 'Error updating fee')
@@ -125,12 +137,13 @@ export default function UpdateFee() {
   const delete_fee = () => {
     const reply = prompt('are you sure you want to delete this fee? Type yes to confirm')
     if(reply?.toLowerCase() !== 'yes') return
+
+    const formData = new FormData()
+    formData.append('id', fee.id.toString())
+    formData.append('method', 'DELETE')
     fetch(base+'/fee' , {
-      method: 'DELETE',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({ id: id })
+      method: 'POST',
+      body: formData
     })
       .then(res => res.json())
       .then(data => {
@@ -148,7 +161,7 @@ export default function UpdateFee() {
 
   return (
     <section className="w-full h-[90vh] content-box overflow-auto pb-[30px]">
-      <h3 className="text-center text-[22px] text-[#346837]">Create Fee</h3>
+      <h3 className="text-center text-[22px] text-[#346837]">Update Fee</h3>
       <form onSubmit={onSubmit} className="flex flex-col items-center gap-2 max-w-[400px] mx-auto">
         <div className="w-full flex flex-col gap-1">
           <label htmlFor="name">Name</label>
@@ -157,7 +170,10 @@ export default function UpdateFee() {
             <option value="">Select Fee</option>
             <option value="registration">Registration</option>
             <option value="accreditation">Accreditation</option>
-            <option value="tuition">Tuition</option>
+            <option value="Tuition">Tuition</option>
+            <option value='Matriculation Gown'>Matriculation Gown</option>
+            <option value='Convocation Gown'>Convocation Gown</option>
+            <option value="Transcript Fee">Transcript Fee</option>
             <option value="library">Library</option>
             <option value="hostel">Hostel</option>
           </select>
@@ -214,6 +230,7 @@ export default function UpdateFee() {
             <option value="400">400</option>
             <option value="500">500</option>
             <option value="600">600</option>
+            <option value='0'>All</option>
           </select>
         </div>
         <div className="w-full flex flex-col gap-1">

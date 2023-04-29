@@ -10,13 +10,11 @@ export default function FeeManagement() {
   const [fees, setFees] = useState<Fee[]>([])
   const [errors, setErrors] = useState('')
   const [search, setSearch] = useState('')
-  console.log(fees)
 
   useEffect(() => {
     fetch(base+'/fee')
       .then(res => res.json())
       .then(data => {
-        console.log(data)
         if (data.ok) {
           setFees(data.data)
         } else {
@@ -24,7 +22,6 @@ export default function FeeManagement() {
         }
       })
       .catch((err: any) => {
-        console.log(err)
         setErrors(err?.message || 'something went wrong')
       })
   }, [])
@@ -82,7 +79,6 @@ const FeeRow = ({ fee }: { fee: Fee }) => {
   const [department, setDepartment] = useState('')
   const created = new Date(fee.created_at||'').toLocaleDateString()
   const last_updated = new Date(fee.updated_at||'').toLocaleDateString()
-  console.log(fee)
 
   useEffect(() => {
     if(fee.department_id==0){
@@ -97,7 +93,7 @@ const FeeRow = ({ fee }: { fee: Fee }) => {
           setDepartment(data?.data.data[0].name)
         }
       })
-      .catch(err => console.log(err))
+      .catch(err =>{})
   }, [])
 
 
@@ -110,7 +106,7 @@ const FeeRow = ({ fee }: { fee: Fee }) => {
       <td className="border px-4 py-2">{department}</td>
       <td className="border px-4 py-2">{fee.session}</td>
       <td className="border px-4 py-2">{fee.semester!=0?fee.semester:'all'}</td>
-      <td className="border px-4 py-2">{fee.level}</td>
+      <td className="border px-4 py-2">{fee.level!='0'?fee.level:'all'}</td>
       <td className="border px-4 py-2">{fee.fee_status}</td>
       <td className="border px-4 py-2">{created}</td>
       <td className="border px-4 py-2">{last_updated}</td>

@@ -28,10 +28,8 @@ export default function UpdateAdmin() {
       if (data?.admin) {
         setForm({...data.admin, dob: formatDateToYMD(data.admin.dob)})
       }else{
-        console.log(data)
       }
     } catch (err) {
-      console.log(err)
     }
   }
   useEffect(() => {
@@ -44,11 +42,21 @@ export default function UpdateAdmin() {
   const updateAdmin = async () => {
     try {
       let url = base+`/admins`
-     
+      const formData = new FormData()
+      formData.append('id', form.id)
+      formData.append('firstName', form.firstName)
+      formData.append('lastName', form.lastName)
+      formData.append('otherNames', form.otherNames)
+      formData.append('email', form.email)
+      formData.append('phone', form.phone)
+      formData.append('dob', form.dob)
+      formData.append('password', form.password)
+      formData.append('gender', form.gender)
+      formData.append('method', 'PUT')
 
       const res = await fetch(url, {
-        method: 'PUT',
-        body: JSON.stringify(form),
+        method: 'POST',
+        body: formData,
       })
       const data = await res.json()
       if (data?.ok) {
@@ -58,19 +66,19 @@ export default function UpdateAdmin() {
         throw new Error(data?.message || 'Error updating administrator')
       }
     } catch (err) {
-      console.log(err)
     }
   }
 
   const delete_admin = () => {
     const reply = prompt('are you sure you want to delete this Administrator? Type yes to confirm')
     if (reply?.toLowerCase() !== 'yes') return
+
+    const formData = new FormData()
+    formData.append('id', form.id)
+    formData.append('method', 'DELETE')
     fetch(base+'/admins?id=' + id, {
-      method: 'DELETE',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({ id: id })
+      method: 'POST',
+      body: formData
     })
       .then(res => res.json())
       .then(data => {

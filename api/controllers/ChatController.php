@@ -63,7 +63,7 @@ class ChatController
   public function send_message()
   {
     $method = $_SERVER['REQUEST_METHOD'];
-    $server_url = 'http://localhost/webais/api/controllers';
+    $server_url = 'https://ng-webais.000webhostapp.com/api/controllers';
     if ($method == 'POST') {
       try {
         $file_location = null;
@@ -96,12 +96,12 @@ class ChatController
         if ($res) {
           $this->getHeaders();
           echo json_encode(['message' => 'Message sent successfully', 'status' => 200, 'ok' => 1]);
-        }else{
+        } else {
           throw new Exception('Error sending message');
         }
       } catch (Exception $e) {
         $this->getHeaders();
-        echo json_encode(['message' => $e->getMessage(), 'status' => 500, 'ok' => 0, 'error'=>$this->db->error]);
+        echo json_encode(['message' => $e->getMessage(), 'status' => 500, 'ok' => 0, 'error' => $this->db->error]);
       }
     } else {
       $this->getHeaders();

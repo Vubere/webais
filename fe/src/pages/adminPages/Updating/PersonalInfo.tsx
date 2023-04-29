@@ -46,12 +46,21 @@ export default function UpdatePersonalInfoAdmin() {
     try {
       let url = base+ `/admins`
 
+      const formData = new FormData()
+      formData.append('id', user.id)
+      formData.append('firstName', user.firstName)
+      formData.append('lastName', user.lastName)
+      formData.append('otherNames', user.otherNames)
+      formData.append('email', user.email)
+      formData.append('phone', user.phone)
+      formData.append('dob', user.dob)
+      formData.append('password', user.password)
+      formData.append('gender', user.gender)
+      formData.append('method', 'PUT')
+
       const res = await fetch(url, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(user),
+        method: 'POST',
+        body: formData,
       })
       const data = await res.json()
 
@@ -63,7 +72,6 @@ export default function UpdatePersonalInfoAdmin() {
         throw new Error('Error updating profile')
       }
     } catch (err) {
-      console.log(err)
     }
   }
   const validate = () => {

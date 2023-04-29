@@ -49,7 +49,8 @@ export default function ViewSingleCourse() {
             if (res.data.length == 0)
               throw new Error('course not found')
             let data = res.data[0] as assigned_course
-         
+            if(typeof data.departments == 'string')
+            data.departments = JSON.parse(data.departments)
             setCourse(data)
           }
           setLoading(false)
@@ -106,7 +107,7 @@ export default function ViewSingleCourse() {
             </div>
             <div className="flex flex-col items-center">
               <h4 className="font-[700] text-[#347836] text-[22px]">Assigned Departments</h4>
-              {!!course?.departments && course.departments.map((asDept: string) => (
+              {!!course?.departments?.length && course.departments.map((asDept: string) => (
                 <AssignedDepartment key={asDept} id={asDept} departments={departments} students={students} />
               ))}
             </div>

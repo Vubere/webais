@@ -87,6 +87,7 @@ export default function CreateFee() {
       f.append('last_updated', fee.last_updated)
       f.append('id', fee.id.toString())
       
+      f.append('method', 'POST')
 
       fetch(base+'/fee', {
         method: 'POST',
@@ -195,6 +196,7 @@ export default function CreateFee() {
             <option value="400">400</option>
             <option value="500">500</option>
             <option value="600">600</option>
+            <option value="0">All</option>
           </select>
         </div>
         <div className="w-full flex flex-col gap-1">

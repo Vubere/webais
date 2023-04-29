@@ -39,11 +39,11 @@ class AuthController
         $post = $_POST;
         $type = '';
 
-        if (isset($post['type'])&&$post['type'] == 'admin') {
+        if (isset($post['type']) && $post['type'] == 'admin') {
           $type = 'administrators';
-        } elseif (isset($post['type']) &&$post['type'] == 'student') {
+        } elseif (isset($post['type']) && $post['type'] == 'student') {
           $type = 'students';
-        } elseif (isset($post['type']) &&$post['type'] == 'lecturer') {
+        } elseif (isset($post['type']) && $post['type'] == 'lecturer') {
           $type = 'lecturers';
         } else {
           $this->getHeaders();

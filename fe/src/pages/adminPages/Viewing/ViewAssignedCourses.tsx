@@ -30,7 +30,7 @@ export default function AssignedCourses() {
       })
 
   }, [])
-  const SearchCourses = courses.filter(course => course.title.toLowerCase().includes(search.toLowerCase()) || course.code.toLowerCase().includes(search.toLowerCase()) || course.session.toLowerCase().includes(search.toLowerCase()) || course.assigned_lecturers.toLowerCase().includes(search.toLowerCase()))
+  const SearchCourses = courses?.filter(course => course.title.toLowerCase().includes(search.toLowerCase()) || course.code.toLowerCase().includes(search.toLowerCase()) || course.assigned_lecturers.toLowerCase().includes(search.toLowerCase()))
   if (loading) {
     return (
       <div>
@@ -56,7 +56,6 @@ export default function AssignedCourses() {
                 <th className="bg-[#34783644] border text-left px-4 py-2">Type</th>
                 <th className="bg-[#34783644] border text-left px-4 py-2">Level</th>
                 <th className="bg-[#34783644] border text-left px-4 py-2">Departments</th>
-                <th className="bg-[#34783644] border text-left px-4 py-2">Session</th>
                 <th className="bg-[#34783644] border text-left px-4 py-2">Semester</th>
                 <th className="bg-[#34783644] border text-left px-4 py-2">Registration</th>
                 <th className="bg-[#34783644] border text-left px-4 py-2">Grading</th>
@@ -64,16 +63,18 @@ export default function AssignedCourses() {
               </tr>
             </thead>
             <tbody>
-              {SearchCourses.map((course) => (
+              {SearchCourses.map((course) => {
+                const department = typeof course.departments == 'string' ? JSON.parse(course.departments) : course.departments
+                
+                return (
                 <tr key={course.id}>
                   <td className="border px-4 py-2">{course.title}</td>
                   <td className="border px-4 py-2">{course.description} </td>
-                  <td className="border px-4 py-2">{course.code}</td>
+                  <td className="border px-4 py-2">{course.code?.toUpperCase()}</td>
                   <td className="border px-4 py-2">{course.units}</td>
                   <td className="border px-4 py-2">{course.type}</td>
                   <td className="border px-4 py-2">{course.level}</td>
-                  <td className="border px-4 py-2">{course.departments.length}</td>
-                  <td className="border px-4 py-2">{course.session}</td>
+                  <td className="border px-4 py-2">{department.length}</td>
                   <td className="border px-4 py-2">{course.semester}</td>
                   <td className="border px-4 py-2">{course.registration_open?'open':'closed'}</td>
                   <td className="border px-4 py-2">{course.grading_open?'open':'closed'}</td>
@@ -83,7 +84,7 @@ export default function AssignedCourses() {
                   </td>
                 </tr>
 
-              ))}
+              )})}
             </tbody>
 
           </table>
@@ -99,8 +100,8 @@ export interface assigned_course {
   code: string,
   title: string,
   description: string,
-  session: string,
   semester: number,
+  session: string,
   level: number,
   departments: string[],
   units: number,

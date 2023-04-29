@@ -25,7 +25,15 @@ export default function ViewAssignedCourse() {
         .then((data: any) => {
 
           if (data?.ok) {
-            setCourses(data.data[0])
+            let d = data.data[0]
+            if(typeof d.assigned_lecturers === 'string'){
+              d.assigned_lecturers = JSON.parse(d.assigned_lecturers)
+            }
+            if(typeof d.departments === 'string'){
+              d.departments = JSON.parse(d.departments)
+            }
+            setCourses(d)
+
             setLoading(false)
           }
         })
@@ -50,6 +58,7 @@ export default function ViewAssignedCourse() {
         f.append('semester', semester.toString())
         f.append('all', 'true')
         f.append('course_id', id as string)
+        f.append('method', 'POST')
 
         const req = await fetch(base + '/session_result', {
           method: 'POST',
@@ -77,6 +86,7 @@ export default function ViewAssignedCourse() {
         f.append('all', 'false')
         f.append('bool', bool ? '1' : '0')
         f.append('course_id', id as string)
+        f.append('method', "POST")
 
         const req = await fetch(base + '/grading', {
           method: 'POST',
@@ -106,6 +116,7 @@ export default function ViewAssignedCourse() {
         f.append('all', 'false')
         f.append('bool', bool ? '1' : '0')
         f.append('course_id', id as string)
+        f.append('method', "POST")
 
         const req = await fetch(base + '/registration', {
           method: 'POST',
@@ -130,15 +141,12 @@ export default function ViewAssignedCourse() {
     const check = confirm('Are you sure you want to delete this course?');
     if (check) {
       try {
-
-        const req = await fetch(base + '/courses', {
-          method: 'DELETE',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({
-            id: id
-          })
+        const formData = new FormData()
+        formData.append('id', id as string)
+        formData.append('method', 'DELETE')
+        const req = await fetch(base + '/assign_course', {
+          method: 'POST',
+          body: formData
         })
         const res = await req.json();
         if (res.ok == 1) {
@@ -176,14 +184,13 @@ export default function ViewAssignedCourse() {
             <li className="text-[#346837] capitalize"> <span className="font-[600] ">Type</span>: {courses.type}</li>
             <li className="text-[#346837]"> <span className="font-[600] ">Level</span>: {courses.level}</li>
             <li className="text-[#346837]"> <span className="font-[600] ">Semester</span>: {courses.semester}</li>
-            <li className="text-[#346837]"> <span className="font-[600] ">Session</span>: {courses.session}</li>
-            <li className="text-[#346837]"> <span className="block font-[600] text-[18px] text-[#346837]">Departments</span>{courses.departments.length == 0 && <p>No departments</p>} {courses.departments.map((dept: any, i) => (
+            <li className="text-[#346837]"> <span className="block font-[600] text-[18px] text-[#346837]">Departments</span>{courses?.departments?.length == 0 && <p>No departments</p>} {courses.departments.length>0&&courses.departments.map((dept: any, i) => (
               <Departments i={i} key={dept} dept={dept} departments={departments} faculties={faculties} />
             ))}</li>
 
 
           </ul>
-          <div className="w-full max-w-[400px] mx-auto"> <span className=" block font-[600] text-[18px] text-[#346837]">Lecturers</span> {courses.assigned_lecturers.length == 0 && <p>No assigned lecturers</p>}{courses.assigned_lecturers.map((d: any, i: number) => <Lecturers key={d.id} i={i} lecturer={d} />)}</div>
+          <div className="w-full max-w-[400px] mx-auto"> <span className=" block font-[600] text-[18px] text-[#346837]">Lecturers</span> {courses.assigned_lecturers.length == 0 && <p>No assigned lecturers</p>}{courses?.assigned_lecturers?.length>0&&courses.assigned_lecturers.map((d: any, i: number) => <Lecturers key={d.id} i={i} lecturer={d} />)}</div>
           <div className="mx-auto flex- items-center justify-center w-full">
             <button className='bg-[#347836] text-[#fff] text-[14px] p-1 px-2 rounded-[5px] w-[100px] mt-5 m-2 mx-auto block'>
               <Link to={routes.dashboard + '-' + 'admin' + '/' + routes.update_assigned_course + '/' + courses.id}>

@@ -26,12 +26,16 @@ export default function GenerateReceipt() {
       const data = await res.json()
 
       if (data?.ok) {
-        setReceipt(data.data[0])
+        const d = data.data[0]
+        const date = new Date(Number(d.date)*1000)
+     
+        const date_string = `${date.getDate()}/${date.getMonth() + 1}/${date.getFullYear()}`
+        d.date = date_string
+        setReceipt(d)
       } else {
         throw new Error('Could not generate receipt')
       }
     } catch (err: any) {
-      console.log(err)
       alert(err?.message || 'Could not generate receipt')
     }
   }
@@ -47,10 +51,10 @@ export default function GenerateReceipt() {
               <div className="left">
                 <div className="flex items-center">
                   <img src={school_green} className='w-[40px] h-[40px]' />
-                  <h1 className="text-[#346837] text-[20px] font-bold ml-[10px]">WEBAIS</h1>
+                  <h1 className="text-[#346837] text-[20px] font-bold ml-[10px]">Nigerian University</h1>
                 </div>
-                <p>WEBAIS</p>
-                <p>P.M.B 1xxxx, WEBAIS, Nigeria</p>
+                <p>Nigerian University</p>
+                <p>P.M.B 1xxxx, Nigerian University, Nigeria</p>
                 <br />
               </div>
               <div className="flex flex-col items-end w-[50%]">
