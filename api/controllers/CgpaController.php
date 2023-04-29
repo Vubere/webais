@@ -133,7 +133,11 @@ class CgpaController
     $stmt->execute();
     $result = $stmt->get_result();
     if($result->num_rows>1){
-      return $result->fetch_all();
+      $data = [];
+      while($row = $result->fetch_assoc()){
+        $data[] = $row;
+      }
+      return $data;
     }else{
       return false;
     }

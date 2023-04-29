@@ -159,7 +159,7 @@ class CoursesController
     $method = $_SERVER['REQUEST_METHOD'];
     if ($method == "GET") {
       try {
-        $sql = "SELECT c.title, c.description, dc.id, dc.course_id, dc.departments, dc.units, dc.semester, dc.level, dc.assigned_lecturers, dc.type, dc.code, cg.grading_open, cg.registration_open FROM assigned_courses AS dc INNER JOIN course_gradings as cg ON dc.id = cg.department_course_id INNER JOIN courses AS c ON c.id=dc.course_id WHERE 1=1";
+        $sql = "SELECT c.title, c.description, dc.id, dc.course_id, dc.level, dc.departments, dc.units, dc.semester, dc.level, dc.assigned_lecturers, dc.type, dc.code, cg.grading_open, cg.registration_open FROM assigned_courses AS dc INNER JOIN course_gradings as cg ON dc.id = cg.department_course_id INNER JOIN courses AS c ON c.id=dc.course_id WHERE 1=1";
         if (isset($_GET['id'])) {
           $sql .= " AND dc.id = '" . $_GET['id'] . "'";
         }
@@ -177,6 +177,9 @@ class CoursesController
         }
         if (isset($_GET['lecturer_id'])) {
           $sql .= ' AND dc.assigned_lecturers LIKE "%' . $_GET['lecturer_id'] . '%"';
+        }
+        if (isset($_GET['level'])) {
+          $sql .= ' AND dc.level ="' . $_GET['level'] . '"';
         }
         $stmt = $this->conn->prepare($sql);
         $stmt->execute();
@@ -392,7 +395,7 @@ class CoursesController
           }
         } catch (Exception $e) {
           $this->getHeaders();
-          echo json_encode(array('status' => 401, 'message' => $e->getMessage(), 'ok' => 0, 'error' => $this->conn->error));
+          echo json_encode(array('status' => 401, 'message' => $e->getMessage(), 'ok' => 0, 'error' => $this->conn->error, 'line'=> $e->getLine()));
         }
       } elseif ($method == 'DELETE') {
         $delete = $_POST;
@@ -653,13 +656,13 @@ class CoursesController
             $session_start = explode('/', $session)[0];
             $session_end = explode('/', $session)[1];
             $table_name = 'results_' . $session_start . '_' . $session_end . '_' . $semester . '_' . $course_id;
-            $sql = "CREATE TABLE IF NOT EXISTS " . $table_name . " (id INT(11) NOT NULL AUTO_INCREMENT, student_id VARCHAR(255) NOT NULL, session VARCHAR(255) NOT NULL, ca INT(11) NOT NULL, exam INT(11) NOT NULL, attendance INT(11) NOT NULL, grade VARCHAR(255) NOT NULL, remark VARCHAR(255) NOT NULL, PRIMARY KEY (id))";
+            $sql = "CREATE TABLE IF NOT EXISTS " . $table_name . " (id INT(11) NOT NULL AUTO_INCREMENT, student_id VARCHAR(255) NOT NULL, session VARCHAR(255) NOT NULL, semester VARCHAR(255) NOT NULL DEFAULT '0', ca INT(11) NOT NULL, exam INT(11) NOT NULL, attendance INT(11) NOT NULL, grade VARCHAR(255) NOT NULL, remark VARCHAR(255) NOT NULL, PRIMARY KEY (id))";
 
             $res2 = $this->conn->query($sql);
 
             $this->saveCourseGradingTableName($table_name, $course_id, $session);
           }
-          if ($res) {
+          if ($res2) {
             $this->getHeaders();
             echo json_encode(array('status' => 200, 'message' => 'successful', 'ok' => 1));
           } else {

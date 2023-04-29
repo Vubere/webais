@@ -99,6 +99,7 @@ export default function AvailableCourses() {
         })
         .catch(err => {
           alert(err?.message || 'something went wrong')
+          console.log(err)
           setError('Failed to fetch necessary data. Reload page')
         })
     }
@@ -136,6 +137,7 @@ export default function AvailableCourses() {
           }
         })
         .catch(err => {
+          console.log(err)
           alert(err?.message || 'something went wrong')
           setError('Failed to fetch necessary data. Reload page')
         })
@@ -148,7 +150,6 @@ export default function AvailableCourses() {
       fetch(base + `/assign_course?student_id=${user.id}&session=${session}&semester=${current_semester}&level=${user.level}&department_id=${user.department}&faculty=${user.faculty}`)
         .then(res => res.json())
         .then(res => {
-          console.log(res?.data)
           if (res?.data)
             setAvailableCourses(res?.data)
           setLoading(false)
@@ -168,9 +169,11 @@ export default function AvailableCourses() {
 
     if (Session?.session && user) {
       const f = new FormData()
+      console.log('start')
       f.append('course_id', id.toString())
       f.append('student_id', user.id)
       f.append('semester', current_semester.toString())
+
       f.append('session', session)
       f.append('method', "POST")
 
@@ -179,7 +182,7 @@ export default function AvailableCourses() {
         body: f
       }).then(res => res.json())
         .then(data => {
-
+          console.log(data)
           if (data.ok == 1) {
             console.log(registered_counter.current)
             registered_counter.current += 1
@@ -255,19 +258,27 @@ export default function AvailableCourses() {
       }
       return false
     })
-    setLoading(true)
-    temp.forEach(course => {
-      RegisterCourse({ id: course.id, reg: course.registration_open })
+    const temp2 = perform.filter(course => {
+      const f = markedCourse.find(val => val.id === course.id && val.reg)
+      if (f) {
+        return true
+      }
+      return false
     })
-    
+
+    setLoading(true)
+    const to_reg = [...temp, ...temp2]
+
+    to_reg.forEach(course => {
+      RegisterCourse({ id: course.id, reg: true })
+    })
+
     setTimeout(() => {
       alert(registered_counter.current + ' courses registered successfully')
       registered_counter.current = 0
     }, 1000)
     setLoading(false)
   }
-
-  const year = new Date().getFullYear()
 
   const unregisterCourse = (id: number | string) => {
     if (session && user) {
@@ -327,7 +338,7 @@ export default function AvailableCourses() {
       const temp2 = performance.failed_courses.courses
       let temp = temp2.filter((course: assigned_course) => {
         if (course == null) return false
-        console.log(course)
+
         let ses = course?.session?.split('/')
         let ses2 = session?.split('/')
         if (ses && ses[0] == undefined || ses && ses2[0] == undefined) {
@@ -341,9 +352,12 @@ export default function AvailableCourses() {
       })
       return temp
     } else {
-      return undefined
+      return []
     }
   }, [performance, current_semester, session])
+
+
+  console.log(registeredCourses)
 
   return (
     <section className="p-3 h-[90vh] overflow-y-auto pb-20">
@@ -359,7 +373,7 @@ export default function AvailableCourses() {
 
             {ses && ses.map((s) => {
               return (
-                <option value={s.session}>{s.session}</option>
+                <option key={s.session} value={s.session}>{s.session}</option>
               )
             })}
           </select>
@@ -434,7 +448,7 @@ export default function AvailableCourses() {
                 <tbody>
 
                   {perform.map((course: any) => {
-                    return <Available_course key={course.id + 'f'} course={course} setMarkedCourse={setMarkedCourseFunction} />
+                    return <Available_course key={course.id + 'f'} type={'carry over'} course={course} setMarkedCourse={setMarkedCourseFunction} />
                   })}
                 </tbody>
               </table>
@@ -451,20 +465,42 @@ export default function AvailableCourses() {
   )
 }
 
-const Available_course = ({ course, setMarkedCourse }: { course: avail_course, setMarkedCourse: any }) => {
+const Available_course = ({ course, setMarkedCourse, type }: { course: avail_course, setMarkedCourse: any, type?: string }) => {
 
   const [reg, setReg] = useState(false)
+  const Session = useContext(SessionContext)
+  const [registration_open, setRegistration_open] = useState(false)
 
   useEffect(() => {
     if (course.registered) {
       setReg(!!course.registered)
     }
   }, [course.registered])
+  useEffect(() => {
+    if (course.registration_open) {
+      setRegistration_open(!!course.registration_open)
+    }
+    if (type == 'carry over' && Session?.session) {
+      fetch(base + '/assign_course?id=' + course.id + '&session=' + Session.session.session)
+        .then(res => res.json())
+        .then(res => {
+          if (res.ok == 1) {
+            const course = res.data[0]
+            setRegistration_open(course.registration_open)
+          }
+        })
+    }
+  }, [course.registration_open, Session?.session])
 
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (!registration_open) {
+      alert('Registration is closed for this course')
+      return
+    }
     setReg(e.target.checked)
     setMarkedCourse(course, e.target.checked)
   }
+
 
 
 
@@ -479,7 +515,7 @@ const Available_course = ({ course, setMarkedCourse }: { course: avail_course, s
     <td className="border px-4 py-2">{course.units}</td>
     <td className="border px-4 py-2">{course.type}</td>
     <td className="border px-4 py-2">{course.semester}</td>
-    <td className="border px-4 py-2">{course.registration_open ? 'open' : 'closed'}</td>
+    <td className="border px-4 py-2">{registration_open ? 'open' : 'closed'}</td>
     <td className="border px-4 py-2"><Link to={`/dashboard-student/view-course/${course.id}`} className=" text-[#347836] underline font-[500] px-4 py-2 rounded-md">View</Link></td>
   </tr>)
 }
