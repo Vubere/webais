@@ -74,9 +74,9 @@ function Warning() {
       .then(data => {
 
         if (data.ok == 1) {
-          const dul = data.data
+          const du = data.data
           const temp = departments.filter((dep: any) => {
-            const d = dul.find((d: any) => d.department_id === dep.id)
+            const d = du.find((d: any) => d.department_id === dep.id)
             if (!d) {
               return true
             } else {
