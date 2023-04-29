@@ -5,6 +5,7 @@ use Exception;
 use services\DB;
 use services\CS;
 
+
 class StudentController
 {
   public $conn = null;
@@ -27,7 +28,7 @@ class StudentController
     $this->conn;
     $method = $_SERVER['REQUEST_METHOD'];
     if ($_SERVER['REQUEST_METHOD'] == 'GET') {
-      $sql = 'SELECT d.name as department_name, d.duration, f.name as faculty_name, s.firstName, s.lastName, s.otherNames, s.level, s.password, s.phone, s.email, s.gender, s.faculty, s.department, s.id, s.dob, s.entrance_session, s.graduation_session FROM students as s INNER JOIN departments AS d ON s.department = d.id INNER JOIN faculties as f ON f.id = s.faculty WHERE 1=1';
+      $sql = 'SELECT d.name as department_name, d.duration, f.name as faculty_name, s.firstName, s.lastName, s.otherNames, s.level, s.password, s.phone, s.email, s.gender, s.faculty, s.department, s.id, s.dob, s.entrance_session, s.graduation_session, s.status FROM students as s INNER JOIN departments AS d ON s.department = d.id INNER JOIN faculties as f ON f.id = s.faculty WHERE 1=1';
       if (isset($_GET['id'])) {
         $sql .= ' AND s.id="' . $_GET['id'] . '"';
       }
@@ -99,8 +100,8 @@ class StudentController
           $duration = $post['duration'];
           $entrance_session = $post['entrance_session'];
           $year = explode('/', $entrance_session)[0];
-          $graduation_year = (int) $year + (int) $duration;
-          $graduation_year2 = (int) $year + (int) $duration + 1;
+          $graduation_year = (int) $year + (int) $duration-1;
+          $graduation_year2 = (int) $year + (int) $duration ;
           $graduation_session = '' . $graduation_year . '/' . $graduation_year2;
 
           $stmt = $this->conn->prepare($sql);
@@ -138,7 +139,8 @@ class StudentController
           department=?,
           level=?,
           entrance_session=?,
-          graduation_session=?
+          graduation_session=?,
+          status=?
            WHERE id = '" . $id . "'";
         $stmt = $this->conn->prepare($sql);
         $firstname = $put['firstName'];
@@ -155,7 +157,8 @@ class StudentController
         $duration = $put['duration'];
         $entrance_session = $put['entrance_session'];
         $graduation_session = (string) ((int) explode('/', $entrance_session)[0] + (int) $duration) . '/' . (string) ((int) explode('/', $entrance_session)[1] + (int) $duration);
-        $stmt->bind_param("sssssssssssss", $firstname, $lastname, $othernames, $email, $phone, $password, $dob, $gender, $faculty, $department, $level, $entrance_session, $graduation_session);
+        $status = $put['status'];
+        $stmt->bind_param("ssssssssssssss", $firstname, $lastname, $othernames, $email, $phone, $password, $dob, $gender, $faculty, $department, $level, $entrance_session, $graduation_session, $status);
 
         $res = $stmt->execute();
         if ($res) {
@@ -280,16 +283,17 @@ class StudentController
       echo json_encode(array('message' => 'wrong method', 'ok' => 0, 'status' => 'failed'));
     }
   }
-  public function move_to_next_level(){
+  public function move_to_next_level()
+  {
     $method = $_SERVER['REQUEST_METHOD'];
     if ($method == 'POST') {
       $post = $_POST;
-      if(!isset($post['session'])){
+      if (!isset($post['session'])) {
         $this->getHeaders();
         echo json_encode(array('message' => 'session is required', 'ok' => 0, 'status' => 'failed'));
         return;
       }
-      $sql = 'SELECT * FROM students WHERE 1=1';
+      $sql = 'SELECT s.id, s.firstName, s.lastName, s.email, s.phone, s.dob, s.gender, s.faculty, s.department, s.level, s.status, s.entrance_session, s.graduation_session, d.duration FROM students as s INNER JOIN departments as d ON s.department=d.id WHERE 1=1 AND (s.status = "undergraduate " OR s.status = "spill over") ';
       if (isset($post['department'])) {
         $sql .= ' AND department="' . $post['department'] . '"';
       }
@@ -301,33 +305,45 @@ class StudentController
         $res = $stmt->execute();
         $result = $stmt->get_result();
         $students = $result->fetch_all(MYSQLI_ASSOC);
-        
+
         foreach ($students as $student) {
+
           $current_session = $post['session'];
           $entrance_session = $student['entrance_session'];
-          $graduation_session = $student['graduation_session'];
-          if ($graduation_session == $entrance_session) {
-            $res = true;
-            return;
-          }
           $start_year = (int) explode('/', $entrance_session)[0];
           $current_year = (int) explode('/', $current_session)[0];
-          $years_stayed =  $current_year - $start_year;
+          $years_stayed = $current_year - $start_year + 1;
           $level = (int) $student['level'];
-          $supposed_current_level = ($years_stayed+1)*100;
-          if($supposed_current_level != $level){
+          $supposed_current_level = $years_stayed  * 100;
+          $duration = $student['duration'];
+          $max_year_that_student_can_stay = 100 * (int) $duration;
+          if ($supposed_current_level > $max_year_that_student_can_stay) {
+            $check = $this->check_if_student_is_eligible_to_graduate((string)$student['id']);
+       
+            if ($check['eligible']) {
+              $sql = 'UPDATE students SET status="graduate" WHERE id="' . $student['id'] . '"';
+              $res = $this->conn->query($sql);
+              continue;
+            }else{
+              $sql = 'UPDATE students SET status="spill over" WHERE id="' . $student['id'] . '"';
+              $res = $this->conn->query($sql);
+              continue;
+            }
+          }
+          if ($supposed_current_level != $level) {
+            
             $sql = 'UPDATE students SET level="' . $supposed_current_level . '" WHERE id="' . $student['id'] . '"';
             $stmt = $this->conn->prepare($sql);
             $res = $stmt->execute();
           }
         }
-        if($res){
+        if ($res) {
           $this->getHeaders();
-          echo json_encode(array('message' => 'successful', 'ok' => 1));
-        }else{
+          echo json_encode(array('message' => 'successful', 'ok' => 1, 'data'=>$students));
+        } else {
           $this->getHeaders();
           echo json_encode(array('message' => 'failed', 'ok' => 0));
-        } 
+        }
 
       } catch (Exception $e) {
         $this->getHeaders();
@@ -336,6 +352,21 @@ class StudentController
     } else {
       $this->getHeaders();
       echo json_encode(array('message' => 'wrong method', 'ok' => 0, 'status' => 'failed'));
+    }
+  }
+  public function check_if_student_is_eligible_to_graduate(string $stu_id)
+  {
+    $class = 'Api\controllers\CgpaController';
+    $obj = new $class();
+    $res = $obj->calculate_cgpa($stu_id);
+    $failed_courses = $res['failed_courses'];
+    if ($failed_courses['number'] > 0) {
+      $arr = ['eligible' => false, 'number_of_failed_courses' => $failed_courses['number'], 'failed_courses' => $failed_courses['courses'], 'ok' => 1, 'message' => 'elgibility status fetched successfully'];
+
+      return $arr;
+    } else {
+      $arr = ['eligible' => true, 'number_of_failed_courses' => $failed_courses['number'], 'failed_courses' => $failed_courses['courses'], 'ok' => 1, 'message' => 'elgibility status fetched successfully'];
+      return $arr;
     }
   }
 }

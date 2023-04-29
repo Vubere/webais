@@ -188,7 +188,6 @@ export default function ViewAssignedCourse() {
             <li className="text-[#346837] capitalize"> <span className="font-[600] ">Type</span>: {courses.type}</li>
             <li className="text-[#346837]"> <span className="font-[600] ">Level</span>: {courses.level}</li>
             <li className="text-[#346837]"> <span className="font-[600] ">Semester</span>: {courses.semester}</li>
-            <li className="text-[#346837]"> <span className="font-[600] ">Session</span>: {courses.session}</li>
             <li className="text-[#346837]"> <span className="block font-[600] text-[18px] text-[#346837]">Departments</span>{courses?.departments?.length == 0 && <p>No departments</p>} {courses.departments.length>0&&courses.departments.map((dept: any, i) => (
               <Departments i={i} key={dept} dept={dept} departments={departments} faculties={faculties} />
             ))}</li>

@@ -102,6 +102,7 @@ $urls = [
 
  /* cgpa and failed courses */
   '/webais/api/student_performance' => ['CgpaController@student_performance'],
+  '/webais/api/student_result' => ['StudentController@check_if_student_is_eligible_to_graduate'],
 ];
 
 //check if routes available

@@ -106,7 +106,10 @@ export interface User {
   email: string,
   firstName: string,
   lastName: string,
+  otherNames: string,
   phone: string,
   password: string,
   createdAt: string,
+  dob: string,
+  gender: string
 }

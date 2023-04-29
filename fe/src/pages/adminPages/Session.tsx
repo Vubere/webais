@@ -146,33 +146,40 @@ export default function Session() {
       const method = globalSessionHandler?.session?.session == session.session ? "PUT" : "POST"
       f.append('method', method)
 
+      send_request(f)
 
-      fetch(base + '/session', {
-        method: "POST",
-        body: f
-      })
-        .then((res) => res.json())
-        .then((result) => {
-          console.log(result)
-          if (result.status == 'success') {
-            if (globalSessionHandler) {
-              globalSessionHandler.setSession(session)
-              setCurrentData(session)
-            }
-            alert('succesful')
-          } else {
-            if (result?.error?.toLowerCase()?.includes('duplicate')) {
-              throw new Error('Session already exists')
-            } else {
-              throw new Error(result.message)
-            }
-          }
-        })
-        .catch((err) => {
-          console.log(err)
-          alert(err.message || 'An error occured')
-        })
     }
+  }
+  const send_request = (f: any) => {
+    fetch(base + '/session', {
+      method: "POST",
+      body: f
+    })
+      .then((res) => res.json())
+      .then((result) => {
+        if (result.status == 'success') {
+          if (globalSessionHandler) {
+            globalSessionHandler.setSession(session)
+            setCurrentData(session)
+          }
+          alert('succesful')
+        } else {
+          if (result?.error?.toLowerCase()?.includes('duplicate')) {
+            const con = confirm('Session already exists. Do you want to update it?')
+            if (con) {
+              f.delete('method')
+              f.append('method', 'PUT')
+              send_request(f)
+            }
+          } else {
+            throw new Error(result.message)
+          }
+        }
+      })
+      .catch((err) => {
+        console.log(err)
+        alert(err.message || 'An error occured')
+      })
   }
   const year = new Date().getFullYear()
 
@@ -190,7 +197,7 @@ export default function Session() {
       const url = base + '/change_level'
       const form = new FormData()
       form.append('session', globalSessionHandler.session.session)
-      console.log(globalSessionHandler.session.session)
+
       fetch(url, {
         method: 'POST',
         body: form
@@ -217,7 +224,7 @@ export default function Session() {
   return (
     <div className="w-full h-[90vh] content-box overflow-auto pb-[30px] p-3">
       <div className="flex justify-end items-center">
-        <Link to={routes.dashboard+'-admin'+'/view-sessions' } className="border border-[#346837] rounded px-2 text-white bg-[#346837]">View Sessions</Link>
+        <Link to={routes.dashboard + '-admin' + '/view-sessions'} className="border border-[#346837] rounded px-2 text-white bg-[#346837]">View Sessions</Link>
       </div>
       <h2 className="text-center font-[600] text-[22px] text-[#346837]"> Change Session/Semester</h2>
 
@@ -253,6 +260,8 @@ export default function Session() {
           {errors.session && <p className="text-[#f00] text-[10px] font-[400]">{errors.session}</p>}
           <select name="session" id="session" value={session.session} onChange={onChange} className="w-full h-[40px] rounded-[5px] bg-transparent border border-[#347836] flex items-center focus:outline-none px-2">
             <option value="">Select Session </option>
+            <option value={`${year + 4}/${year + 5}`}>{`${year + 4}/${year + 5}`}</option>
+            <option value={`${year + 3}/${year + 4}`}>{`${year + 3}/${year + 4}`}</option>
             <option value={`${year + 2}/${year + 3}`}>{`${year + 2}/${year + 3}`}</option>
             <option value={`${year + 1}/${year + 2}`}>{`${year + 1}/${year + 2}`}</option>
             <option value={`${year}/${year + 1}`}>{`${year}/${year + 1}`}</option>
@@ -284,13 +293,10 @@ export default function Session() {
           <input type="date" value={session.second_semester_end} onChange={onChange} name="second_semester_end" id="send" className="w-full h-[40px] rounded-[5px] bg-transparent border border-[#347836] flex items-center focus:outline-none px-2" />
         </div>
         <button type="submit" className="w-full h-[40px] rounded-[5px] bg-[#347836] text-white xs:text-[14px] stbt:text-[18px]">Submit</button>
-
       </form>
 
-
       <div className="flex flex-col items-center gap-2 mx-auto w-[60vw] max-w-[300px] mt-3">
-        <button className="w-full h-[40px] rounded-[5px] bg-[#f33] text-white xs:text-[14px] stbt:text-[18px]" onClick={update_students_level}>Manually Update Students Level</button>
-
+        <button className="w-full h-[40px] rounded-[5px] bg-[#f33] text-white xs:text-[14px] stbt:text-[18px]" onClick={update_students_level}>Update Students Level</button>
       </div>
     </div >
   )

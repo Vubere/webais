@@ -3,7 +3,7 @@ import { base } from "../../../App"
 import { session } from "../../../layouts/DashboardLayout"
 
 
-type session_row = session & {current:1|0, id:string}
+export type session_row = session & {current:1|0, id:string}
 
 const months = ['January', 'Febuary', 'March','April','May', 'June', 'July','August', 'September', 'October',"November", 'December']
 

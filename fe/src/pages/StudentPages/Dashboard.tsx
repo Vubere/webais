@@ -48,7 +48,7 @@ export default function Dashboard() {
             setPerformance(data.performance)
           }
         })
-        .catch(err => console.log(err?.message||'something went wrong'))
+        .catch(err => console.log(err?.message || 'something went wrong'))
     }
   }, [user?.id])
 
@@ -92,15 +92,21 @@ export default function Dashboard() {
       {user &&
         <>
           <h3 className="font-[600] text-[#347836] text-[28px] text-center leading-[40px] p-3">Welcome, {fullName}</h3>
-        <div className="flex bmb:justify-between items-center flex-col bmb:flex-row">
+          <div>
+            <ul className="text-[#346837] text-[18px]">
+              <li>Level: {user.level}</li>
+              <li className="capitalize">Status: {user.status}</li>
+            </ul>
+          </div>
+          <div className="flex bmb:justify-between items-center flex-col bmb:flex-row">
             <div className="w-full ">
-              <h4 className="font-[500] text-[#346837] text-[18px]">Current Session: {Session?.session?.session||'none ongoing'}</h4>
-              <h4 className="font-[500] text-[#346837] text-[18px] ">Semester: {Session?.session?.current_semester||'none ongoing'}</h4>
+              <h4 className="font-[500] text-[#346837] text-[18px]">Current Session: {Session?.session?.session || 'none ongoing'}</h4>
+              <h4 className="font-[500] text-[#346837] text-[18px] ">Semester: {Session?.session?.current_semester || 'none ongoing'}</h4>
             </div>
             <div className="w-full">
               <h4 className="font-[500] text-[#346837] text-[18px]">Entrance Session: {user.entrance_session}</h4>
-              <h4 className="font-[500] text-[#346837] text-[18px]">Expected Graduation Session: {user.graduation_session}</h4>
-              
+              <h4 className="font-[500] text-[#346837] text-[18px]">Graduation Session: {user.graduation_session}</h4>
+
             </div>
           </div>
           <div className="py-2">
@@ -121,42 +127,47 @@ export default function Dashboard() {
             </div>
           </div>
 
-          <h4 className="font-[500] text-[#346837] text-[18px]">Lectures Today</h4>
-          <div className="w-full overflow-y-auto">
+          {user&&(user.status=='undergraduate'||user.status=='spill over')?<>
+            <h4 className="font-[500] text-[#346837] text-[18px]">Lectures Today</h4>
+            <div className="w-full overflow-y-auto">
 
-            {TodayLectures.length > 0 ? (
-              <section>
-                <table className="table-auto w-full overflow-auto">
-                  <thead>
-                    <tr>
-                      <th className="bg-[#34783644]  border text-left px-4 py-2">Time</th>
-                      <th className="bg-[#34783644] border text-left px-4 py-2">Day</th>
-                      <th className="bg-[#34783644] border text-left px-4 py-2">Duration</th>
-                      <th className="bg-[#34783644] border text-left px-4 py-2">Course</th>
-                      {/*   <th className="bg-[#34783644] border text-left px-4 py-2">Lecturer ID</th> */}
-                      <th className="bg-[#34783644] border text-left px-4 py-2">Venue</th>
-                      {/* <th className="bg-[#34783644] border text-left px-4 py-2">Action</th> */}
-                    </tr>
-                  </thead>
-                  <tbody>
+              {TodayLectures.length > 0 ? (
+                <section>
+                  <table className="table-auto w-full overflow-auto">
+                    <thead>
+                      <tr>
+                        <th className="bg-[#34783644]  border text-left px-4 py-2">Time</th>
+                        <th className="bg-[#34783644] border text-left px-4 py-2">Day</th>
+                        <th className="bg-[#34783644] border text-left px-4 py-2">Duration</th>
+                        <th className="bg-[#34783644] border text-left px-4 py-2">Course</th>
+                        {/*   <th className="bg-[#34783644] border text-left px-4 py-2">Lecturer ID</th> */}
+                        <th className="bg-[#34783644] border text-left px-4 py-2">Venue</th>
+                        {/* <th className="bg-[#34783644] border text-left px-4 py-2">Action</th> */}
+                      </tr>
+                    </thead>
+                    <tbody>
 
-                    {TodayLectures.map((lecture: any) => (
-                      <tr key={lecture.id}>
-                        <td className="border px-4 py-2">{lecture.time}</td>
-                        <td className="border px-4 py-2">{lecture.day}</td>
-                        <td className="border px-4 py-2">{lecture.duration}hr(s)</td>
-                        <td className="border px-4 py-2 capitalize">{lecture.title}({lecture.code.toUpperCase()})</td>
-                        {/* <td className="border px-4 py-2">{lecture.lecturer_id}</td> */}
-                        <td className="border px-4 py-2">{lecture.venue}</td>
-                      </tr>))}
-                  </tbody>
-                </table>
-              </section>
-            ) : <p>No lectures today</p>
-            }
-          </div>
-
-
+                      {TodayLectures.map((lecture: any) => (
+                        <tr key={lecture.id}>
+                          <td className="border px-4 py-2">{lecture.time}</td>
+                          <td className="border px-4 py-2">{lecture.day}</td>
+                          <td className="border px-4 py-2">{lecture.duration}hr(s)</td>
+                          <td className="border px-4 py-2 capitalize">{lecture.title}({lecture.code.toUpperCase()})</td>
+                          {/* <td className="border px-4 py-2">{lecture.lecturer_id}</td> */}
+                          <td className="border px-4 py-2">{lecture.venue}</td>
+                        </tr>))}
+                    </tbody>
+                  </table>
+                </section>
+              ) : <p>No lectures today</p>
+              }
+            </div>
+          </>: user&&user.status=='graduate'?
+          <div>
+              <h3 className="text-center p-3 font-[600] text-[18px] text-[#346837]">Congrats you succesfully made it through</h3>
+          </div>:
+          <div className="text-[f44]">{user.status}</div>
+          }
         </>
       }
     </section>

@@ -184,9 +184,11 @@ class EventsController
           duration,
           course_id,
           lecturer_id,
-          venue
+          venue,
+          session,
+          semester
         ) VALUES (
-          ?,?,?,?,?,?
+          ?,?,?,?,?,?,?,?
         )";
         $time = $post['time'];
         $date = $post['date'];
@@ -194,16 +196,20 @@ class EventsController
         $course_id = $post['course_id'];
         $lecturer_id = $post['lecturer_id'];
         $venue = $post['venue'];
+        $semester = $post['semester'];
+        $session = $post['session'];
 
         $stmt = $this->conn->prepare($sql);
         $stmt->bind_param(
-          "ssssss",
+          "sssssssi",
           $time,
           $date,
           $duration,
           $course_id,
           $lecturer_id,
-          $venue
+          $venue,
+          $session,
+          $semester
         );
 
         $res = $stmt->execute();
@@ -241,16 +247,22 @@ class EventsController
     if ($method == 'GET') {
       try {
 
-        $sql = "SELECT e.time, e.date, e.duration, e.id, e.venue, c.title, dc.id AS course_id, dc.code, l.discipline, CONCAT(l.firstName,' ', l.lastName) as lecturer_name, l.id as lecturer_id FROM examinations as e INNER JOIN assigned_courses as dc ON e.course_id = dc.id INNER JOIN courses as c ON c.id = dc.course_id INNER JOIN lecturers as l ON e.lecturer_id = l.id";
+        $sql = "SELECT e.time, e.date, e.duration, e.id, e.venue, e.session, e.semester, c.title, dc.id AS course_id, dc.code, l.discipline, CONCAT(l.firstName,' ', l.lastName) as lecturer_name, l.id as lecturer_id FROM examinations as e INNER JOIN assigned_courses as dc ON e.course_id = dc.id INNER JOIN courses as c ON c.id = dc.course_id INNER JOIN lecturers as l ON e.lecturer_id = l.id WHERE 1=1";
 
         if (isset($_GET['id'])) {
-          $sql .= " WHERE e.id='" . $_GET['id'] . "'";
+          $sql .= " AND e.id='" . $_GET['id'] . "'";
         }
         if (isset($_GET['course_id'])) {
-          $sql .= " WHERE e.course_id='" . $_GET['course_id'] . "'";
+          $sql .= " AND e.course_id='" . $_GET['course_id'] . "'";
         }
         if (isset($_GET['lecturer_id'])) {
-          $sql .= " WHERE e.lecturer_id='" . $_GET['lecturer_id'] . "'";
+          $sql .= " AND e.lecturer_id='" . $_GET['lecturer_id'] . "'";
+        }
+        if(isset($_GET['session'])){
+          $sql .= " AND e.session='" . $_GET['session'] . "'";
+        }
+        if(isset($_GET['semester'])){
+          $sql .= " AND e.semester='" . $_GET['semester'] . "'";
         }
         $res = $this->conn->query($sql);
         if (!$res) {
@@ -316,9 +328,15 @@ class EventsController
     $method = $_SERVER['REQUEST_METHOD'];
     if ($method == 'GET') {
       try {
-        $sql = "SELECT e.time, e.date, e.duration, e.id, e.venue, c.title, dc.id AS course_id, dc.code, l.discipline, CONCAT(l.firstName,' ', l.lastName) as lecturer_name, l.id as lecturer_id FROM examinations as e INNER JOIN assigned_courses as dc ON e.course_id = dc.id INNER JOIN courses as c ON c.id = dc.course_id INNER JOIN lecturers as l ON e.lecturer_id = l.id";
+        $sql = "SELECT e.time, e.date, e.duration, e.id,  e.venue, c.title, dc.id AS course_id, dc.code, l.discipline, CONCAT(l.firstName,' ', l.lastName) as lecturer_name, l.id as lecturer_id FROM examinations as e INNER JOIN assigned_courses as dc ON e.course_id = dc.id INNER JOIN courses as c ON c.id = dc.course_id INNER JOIN lecturers as l ON e.lecturer_id = l.id";
         if (isset($_GET['lecturer_id'])) {
           $sql .= " WHERE dc.assigned_lecturers LIKE '%" . $_GET['lecturer_id'] . "%'";
+        }
+        if(isset($_GET['session'])){
+          $sql .= " AND e.session='" . $_GET['session'] . "'";
+        }
+        if(isset($_GET['semester'])){
+          $sql .= " AND e.semester='" . $_GET['semester'] . "'";
         }
         $res = $this->conn->query($sql);
         if (!$res) {

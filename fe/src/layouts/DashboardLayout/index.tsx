@@ -125,6 +125,7 @@ export default function DashboardLayout({ title, DashboardLinks }: { title: stri
       .catch(err => console.log(err))
   }, [])
   
+  const stat = !!user&&(user.status=='expelled'||user.status=='suspended')
 
   return (
     <SessionContext.Provider value={{ session: session, setSession: setSession }}>
@@ -146,7 +147,7 @@ export default function DashboardLayout({ title, DashboardLinks }: { title: stri
           </div>
 
         </header>
-        {widthBool || show ? (
+        {(widthBool || show)&&!stat ? (
           <aside ref={ref} className="bg-[#346837] btbt:w-[30vw] max-w-[300px] w-[240px] h-screen absolute left-0 top-[80px] py-4 p-1 overflow-x-auto z-[40]">
             <ul className="flex flex-col gap-[7px]">
               <li className="flex items-center ">

@@ -35,7 +35,7 @@ class CgpaController
     header("Access-Control-Allow-Methods: GET, POST, PUT, OPTIONS, DELETE");
     header('Content-Type: application/json charset-UTF-8');
   }
-  private function calculate_cgpa(string $student_id, $current_session)
+  public function calculate_cgpa(string $student_id)
   {
     $sql = "SELECT * FROM course_registrations where student_id = ?";
     $stmt = $this->conn->prepare($sql);
@@ -114,14 +114,10 @@ class CgpaController
     $method = $_SERVER['REQUEST_METHOD'];
     if ($method == 'GET') {
       try {
-        if (!isset($_GET['current_session'])) {
-          throw new Exception('Current session is required');
-        }
         if (!isset($_GET['student_id'])) {
           throw new Exception('Student id is required');
         }
-        $current_session = $_GET['current_session'];
-        $cgpa = $this->calculate_cgpa($_GET['student_id'], $current_session);
+        $cgpa = $this->calculate_cgpa($_GET['student_id']);
 
         $this->getHeaders();
         echo json_encode(['performance' => $cgpa, 'ok' => 1]);

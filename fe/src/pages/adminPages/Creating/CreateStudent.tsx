@@ -2,6 +2,7 @@ import { useContext, useEffect, useState } from "react"
 import { base, UserContext } from "../../../App"
 import useFacultiesAndDepartments from "../../../hooks/useFacultiesAndDepartments"
 import { SessionContext } from "../../../layouts/DashboardLayout"
+import { session_row } from "../Viewing/ViewSessions"
 
 export default function CreateUser() {
   const [user, setUser] = useState({
@@ -34,12 +35,45 @@ export default function CreateUser() {
     level: '',
     studentId: '',
   })
+  const [ses_loading, set_ses_loading] = useState(true)
+  const [session, setSession] = useState('')
+  const [current_semester, setCurrentSemester] = useState<number | string>(0)
   const Session = useContext(SessionContext)
   const [password, setPassword] = useState('')
+  const { user: admin } = useContext(UserContext)
   const [passwordErr, setPasswordErr] = useState('')
   const { faculties, departments, error, loading } = useFacultiesAndDepartments()
+  const [ses, setSes] = useState<session_row[]>()
 
-  const { user: admin } = useContext(UserContext)
+
+  useEffect(() => {
+    fetch(base + '/session')
+      .then(res => res.json())
+      .then(data => {
+        if (data.ok == 1) {
+          set_ses_loading(false)
+          setSes(data.data)
+
+
+        } else {
+          throw new Error(data.message || 'something went wrong')
+        }
+      })
+      .catch(err => {
+        alert(err.message || 'something went wrong')
+        set_ses_loading(false)
+      })
+  }, [])
+  useEffect(() => {
+    if (Session?.session) {
+      setSession(Session.session.session)
+      setCurrentSemester(Session.session.current_semester)
+    }
+
+  }, [Session])
+
+  
+
 
   useEffect(() => {
     if (Session?.session) {
@@ -284,12 +318,11 @@ export default function CreateUser() {
           {errors.entrance_session && <p className="text-[#f00] text-[10px] font-[400]">{errors.entrance_session}</p>}
           <select name="entrance_session" id="session" value={user.entrance_session} onChange={handleChange} className="w-full h-[40px] rounded-[5px] bg-transparent border border-[#347836] flex items-center focus:outline-none px-2">
             <option value="">Select Session </option>
-            <option value={`${year + 2}/${year + 3}`}>{`${year + 2}/${year + 3}`}</option>
-            <option value={`${year + 1}/${year + 2}`}>{`${year + 1}/${year + 2}`}</option>
-            <option value={`${year}/${year + 1}`}>{`${year}/${year + 1}`}</option>
-            <option value={`${year - 1}/${year}`}>{`${year - 1}/${year}`}</option>
-            <option value={`${year - 2}/${year - 1}`}>{`${year - 2}/${year - 1}`}</option>
-            <option value={`${year - 3}/${year - 2}`}>{`${year - 3}/${year - 2}`}</option>
+            {ses && ses.map((s) => {
+              return (
+                <option key={s.session} value={s.session}>{s.session}</option>
+              )
+            })}
           </select>
           <p className="red">{errors.entrance_session}</p>
         </div>
