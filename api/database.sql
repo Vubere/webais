@@ -1,14 +1,13 @@
 -- phpMyAdmin SQL Dump
--- version 4.9.5
+-- version 5.2.0
 -- https://www.phpmyadmin.net/
 --
--- Host: localhost:3306
--- Generation Time: Apr 24, 2023 at 04:32 AM
--- Server version: 10.5.16-MariaDB
--- PHP Version: 7.3.32
+-- Host: 127.0.0.1
+-- Generation Time: Apr 29, 2023 at 12:25 PM
+-- Server version: 10.4.27-MariaDB
+-- PHP Version: 8.2.0
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
-SET AUTOCOMMIT = 0;
 START TRANSACTION;
 SET time_zone = "+00:00";
 
@@ -19,7 +18,7 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8mb4 */;
 
 --
--- Database: `id20585770_webais`
+-- Database: `webais`
 --
 
 -- --------------------------------------------------------
@@ -38,15 +37,16 @@ CREATE TABLE `administrators` (
   `gender` varchar(255) NOT NULL,
   `dob` timestamp NULL DEFAULT NULL,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
-  `password` varchar(255) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+  `password` varchar(255) DEFAULT NULL,
+  `unique_id` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `administrators`
 --
 
-INSERT INTO `administrators` (`id`, `firstName`, `otherNames`, `lastName`, `email`, `phone`, `gender`, `dob`, `created_at`, `password`) VALUES
-('ADMIN-1', 'Jane', 'John', 'Doe', 'janedoe@gmail.com', '07012345678', 'female', '2014-06-02 00:00:00', '2023-03-14 15:59:38', 'admin123');
+INSERT INTO `administrators` (`id`, `firstName`, `otherNames`, `lastName`, `email`, `phone`, `gender`, `dob`, `created_at`, `password`, `unique_id`) VALUES
+('ADMIN-1', 'Jane', 'John', 'Doe', 'janedoe@gmail.com', '07012345678', 'female', '2014-06-02 00:00:00', '2023-03-14 15:59:38', 'admin123', 1);
 
 -- --------------------------------------------------------
 
@@ -63,73 +63,7 @@ CREATE TABLE `announcements` (
   `time` time NOT NULL,
   `date` date NOT NULL,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
--- --------------------------------------------------------
-
---
--- Table structure for table `chat`
---
-
-CREATE TABLE `chat` (
-  `id` int(11) NOT NULL,
-  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
--- --------------------------------------------------------
-
---
--- Table structure for table `courses`
---
-
-CREATE TABLE `courses` (
-  `id` int(255) NOT NULL,
-  `title` varchar(255) NOT NULL,
-  `description` varchar(255) DEFAULT NULL,
-  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
--- --------------------------------------------------------
-
---
--- Table structure for table `course_gradings`
---
-
-CREATE TABLE `course_gradings` (
-  `id` int(11) NOT NULL,
-  `table_name` varchar(255) NOT NULL,
-  `department_course_id` int(11) NOT NULL,
-  `session` varchar(255) NOT NULL,
-  `grading_open` tinyint(1) NOT NULL,
-  `registration_open` tinyint(1) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
--- --------------------------------------------------------
-
---
--- Table structure for table `course_registrations`
---
-
-CREATE TABLE `course_registrations` (
-  `id` int(11) NOT NULL,
-  `department_course_id` int(11) NOT NULL,
-  `student_id` varchar(255) NOT NULL,
-  `semester` int(11) NOT NULL,
-  `session` varchar(255) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
--- --------------------------------------------------------
-
---
--- Table structure for table `departments`
---
-
-CREATE TABLE `departments` (
-  `id` int(11) NOT NULL,
-  `name` varchar(255) NOT NULL,
-  `duration` int(11) NOT NULL,
-  `faculty_id` int(11) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
@@ -144,11 +78,76 @@ CREATE TABLE `assigned_courses` (
   `code` varchar(255) NOT NULL,
   `units` int(11) NOT NULL,
   `semester` int(11) NOT NULL,
-  `session` varchar(255) NOT NULL,
   `level` int(11) NOT NULL,
   `assigned_lecturers` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL CHECK (json_valid(`assigned_lecturers`)),
   `course_id` int(11) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `chat`
+--
+
+CREATE TABLE `chat` (
+  `id` int(11) NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `courses`
+--
+
+CREATE TABLE `courses` (
+  `id` int(255) NOT NULL,
+  `title` varchar(255) NOT NULL,
+  `description` varchar(255) DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `course_gradings`
+--
+
+CREATE TABLE `course_gradings` (
+  `id` int(11) NOT NULL,
+  `table_name` varchar(255) NOT NULL,
+  `department_course_id` int(11) NOT NULL,
+  `session` varchar(255) NOT NULL,
+  `grading_open` tinyint(1) NOT NULL,
+  `registration_open` tinyint(1) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `course_registrations`
+--
+
+CREATE TABLE `course_registrations` (
+  `id` int(11) NOT NULL,
+  `department_course_id` int(11) NOT NULL,
+  `student_id` varchar(255) NOT NULL,
+  `semester` int(11) NOT NULL,
+  `session` varchar(255) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `departments`
+--
+
+CREATE TABLE `departments` (
+  `id` int(11) NOT NULL,
+  `name` varchar(255) NOT NULL,
+  `duration` int(11) NOT NULL,
+  `faculty_id` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
@@ -159,12 +158,11 @@ CREATE TABLE `assigned_courses` (
 CREATE TABLE `department_units_distribution` (
   `id` int(11) NOT NULL,
   `semester` int(11) NOT NULL,
-  `session` varchar(255) NOT NULL,
   `department_id` int(11) NOT NULL,
   `level` int(11) NOT NULL,
   `min_units` int(11) NOT NULL,
   `max_units` int(11) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
@@ -179,8 +177,10 @@ CREATE TABLE `examinations` (
   `duration` varchar(255) NOT NULL,
   `course_id` int(11) NOT NULL,
   `lecturer_id` varchar(255) NOT NULL,
-  `venue` varchar(255) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+  `venue` varchar(255) NOT NULL,
+  `session` varchar(255) NOT NULL,
+  `semester` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
@@ -191,7 +191,7 @@ CREATE TABLE `examinations` (
 CREATE TABLE `faculties` (
   `id` int(11) NOT NULL,
   `name` varchar(255) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
@@ -210,7 +210,7 @@ CREATE TABLE `fees` (
   `fee_status` varchar(255) NOT NULL,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
   `updated_at` timestamp NOT NULL DEFAULT current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
@@ -226,7 +226,7 @@ CREATE TABLE `fees_paid` (
   `confirmation_number` varchar(255) NOT NULL,
   `invoice_no` varchar(255) NOT NULL,
   `date` varchar(255) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
@@ -239,7 +239,7 @@ CREATE TABLE `images` (
   `image` longblob NOT NULL,
   `image_name` varchar(255) NOT NULL,
   `image_type` varchar(255) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
@@ -254,7 +254,7 @@ CREATE TABLE `invoices` (
   `invoice_no` varchar(255) NOT NULL,
   `status` varchar(255) NOT NULL,
   `date` varchar(255) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
@@ -275,8 +275,9 @@ CREATE TABLE `lecturers` (
   `otherNames` varchar(255) NOT NULL,
   `assigned_courses` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL CHECK (json_valid(`assigned_courses`)),
   `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
-  `dob` timestamp NULL DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+  `dob` timestamp NULL DEFAULT NULL,
+  `unique_id` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
@@ -292,7 +293,7 @@ CREATE TABLE `lectures` (
   `course_id` int(11) NOT NULL,
   `lecturer_id` varchar(255) NOT NULL,
   `venue` varchar(255) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
@@ -306,7 +307,7 @@ CREATE TABLE `lecture_schedules` (
   `day` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
   `course_code` varchar(255) NOT NULL,
   `lecturer` varchar(255) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
@@ -322,7 +323,7 @@ CREATE TABLE `messages` (
   `time_sent` timestamp NOT NULL DEFAULT current_timestamp(),
   `image` varchar(2550) DEFAULT NULL,
   `seen` tinyint(1) NOT NULL DEFAULT 0
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
@@ -337,7 +338,7 @@ CREATE TABLE `notifications` (
   `details` varchar(255) NOT NULL,
   `title` varchar(255) NOT NULL,
   `targets` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL CHECK (json_valid(`targets`))
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
@@ -349,7 +350,7 @@ CREATE TABLE `participants` (
   `id` int(11) NOT NULL,
   `user_id` varchar(255) NOT NULL,
   `chat_id` int(11) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
@@ -365,7 +366,7 @@ CREATE TABLE `session` (
   `first_semester_end` bigint(20) NOT NULL,
   `second_semester_start` bigint(20) NOT NULL,
   `second_semester_end` bigint(20) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
@@ -386,10 +387,12 @@ CREATE TABLE `students` (
   `faculty` varchar(255) NOT NULL,
   `department` varchar(255) NOT NULL,
   `level` int(11) NOT NULL,
+  `status` varchar(255) NOT NULL DEFAULT 'undergraduate',
   `entrance_session` varchar(255) NOT NULL,
   `graduation_session` varchar(255) NOT NULL,
-  `created_at` bigint(20) NOT NULL DEFAULT current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+  `created_at` bigint(20) NOT NULL DEFAULT current_timestamp(),
+  `unique_id` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Indexes for dumped tables
@@ -399,13 +402,21 @@ CREATE TABLE `students` (
 -- Indexes for table `administrators`
 --
 ALTER TABLE `administrators`
-  ADD PRIMARY KEY (`id`);
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `identity` (`unique_id`);
 
 --
 -- Indexes for table `announcements`
 --
 ALTER TABLE `announcements`
   ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `assigned_courses`
+--
+ALTER TABLE `assigned_courses`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `code` (`code`);
 
 --
 -- Indexes for table `chat`
@@ -435,12 +446,6 @@ ALTER TABLE `course_registrations`
 -- Indexes for table `departments`
 --
 ALTER TABLE `departments`
-  ADD PRIMARY KEY (`id`);
-
---
--- Indexes for table `assigned_courses`
---
-ALTER TABLE `assigned_courses`
   ADD PRIMARY KEY (`id`);
 
 --
@@ -491,7 +496,8 @@ ALTER TABLE `invoices`
 -- Indexes for table `lecturers`
 --
 ALTER TABLE `lecturers`
-  ADD PRIMARY KEY (`id`);
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `identity` (`unique_id`);
 
 --
 -- Indexes for table `lectures`
@@ -534,17 +540,30 @@ ALTER TABLE `session`
 -- Indexes for table `students`
 --
 ALTER TABLE `students`
-  ADD PRIMARY KEY (`id`);
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `identity` (`unique_id`);
 
 --
 -- AUTO_INCREMENT for dumped tables
 --
 
 --
+-- AUTO_INCREMENT for table `administrators`
+--
+ALTER TABLE `administrators`
+  MODIFY `unique_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+
+--
 -- AUTO_INCREMENT for table `announcements`
 --
 ALTER TABLE `announcements`
   MODIFY `id` int(255) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `assigned_courses`
+--
+ALTER TABLE `assigned_courses`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `chat`
@@ -574,12 +593,6 @@ ALTER TABLE `course_registrations`
 -- AUTO_INCREMENT for table `departments`
 --
 ALTER TABLE `departments`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
-
---
--- AUTO_INCREMENT for table `assigned_courses`
---
-ALTER TABLE `assigned_courses`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
@@ -625,6 +638,12 @@ ALTER TABLE `invoices`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
+-- AUTO_INCREMENT for table `lecturers`
+--
+ALTER TABLE `lecturers`
+  MODIFY `unique_id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
 -- AUTO_INCREMENT for table `lectures`
 --
 ALTER TABLE `lectures`
@@ -659,6 +678,12 @@ ALTER TABLE `participants`
 --
 ALTER TABLE `session`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `students`
+--
+ALTER TABLE `students`
+  MODIFY `unique_id` int(11) NOT NULL AUTO_INCREMENT;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
