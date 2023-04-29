@@ -83,6 +83,7 @@ function Warning() {
               return false
             }
           })
+          setDul(temp)
         }
       })
       .catch(err => {
@@ -110,8 +111,8 @@ function Warning() {
           <h3>No unit load has been assigned to the following departments</h3>
           <div>
             {
-              departments?.map((dep: any) => {
-                return <p>{dep.name}</p>
+              dul?.map((dep: any, i:number) => {
+                return <p>{i+1}.{dep.name}</p>
               })
             }
           </div>
