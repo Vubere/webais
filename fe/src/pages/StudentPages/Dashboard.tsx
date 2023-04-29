@@ -23,8 +23,11 @@ export default function Dashboard() {
   }), [lectures])
   const [performance, setPerformance] = useState<{
     cgpa: number,
+    failed_courses: { number: number, courses: any[] },
+    unmarked_courses: { number: number, courses: any[] },
+    courses: any[]
   }>()
-
+  console.log(performance)
   const fullName = user?.firstName + ' ' + user?.lastName
 
   useEffect(() => {
@@ -52,7 +55,6 @@ export default function Dashboard() {
     }
   }, [user?.id])
 
-  console.log(performance)
 
   useEffect(() => {
     if (user && (user?.length || user?.id)) {
@@ -112,22 +114,21 @@ export default function Dashboard() {
           <div className="py-2">
             {performance && <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
               <div className="bg-[#34783644] p-3 rounded-[10px] max-w-[400px]">
-                <h4 className="font-[500] text-[#346837] text-[18px]">CGPA: {performance?.cgpa.toFixed(2)}</h4></div>
-            </div>}
+                <h4 className="font-[500] text-[#346837] text-[18px]">CGPA: {performance?.cgpa.toFixed(2)} {performance?.unmarked_courses?.number ? <span>(with {performance.unmarked_courses.number} unmarked courses)</span>:null}</h4></div>
+            </div>
+            }
           </div>
-
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
             <div className="bg-[#34783644] p-3 rounded-[10px] max-w-[400px]">
               {notif.map((n: any) => (
                 !!n.count && <div className="flex justify-between items-center" key={n.count}>
                   <h4 className="font-[500] text-[#346837] text-[18px]">{n.count}{' '}{n.message}</h4>
-
                 </div>
               ))}
             </div>
           </div>
 
-          {user&&(user.status=='undergraduate'||user.status=='spill over')?<>
+          {user && (user.status == 'undergraduate' || user.status == 'spill over') ? <>
             <h4 className="font-[500] text-[#346837] text-[18px]">Lectures Today</h4>
             <div className="w-full overflow-y-auto">
 
@@ -162,11 +163,11 @@ export default function Dashboard() {
               ) : <p>No lectures today</p>
               }
             </div>
-          </>: user&&user.status=='graduate'?
-          <div>
+          </> : user && user.status == 'graduate' ?
+            <div>
               <h3 className="text-center p-3 font-[600] text-[18px] text-[#346837]">Congrats you succesfully made it through</h3>
-          </div>:
-          <div className="text-[f44]">{user.status}</div>
+            </div> :
+            <div className="text-[f44]">{user.status}</div>
           }
         </>
       }

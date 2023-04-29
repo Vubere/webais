@@ -46,6 +46,7 @@ class CgpaController
     $total_grade_points = 0;
     $failed_courses = ['number' => 0, 'courses' => []];
     $courses = [];
+    $unmarked_courses = ['number' => 0, 'courses' => []];
     while ($row = $result->fetch_assoc()) {
 
       $course_id = $row['department_course_id'];
@@ -54,6 +55,7 @@ class CgpaController
       $sess = explode('/', $session);
       $result_table_name = $sess[0] . '_' . $sess[1] . '_' . $semester . '_' . $course_id;
       $table_name = 'results_' . $result_table_name;
+
       if (!$this->check_if_result_table_exist($table_name)) {
         continue;
       }
@@ -74,10 +76,22 @@ class CgpaController
       $grade_res = $tn_result->fetch_assoc();
       $grade = $grade_res['grade'];
       if ($grade == 'F') {
+        $here = $this->check_if_passed_failed_course($course_id, $student_id);
+        if($here){
+          $course['grade'] = $grade;
+          $course['grade_point'] = $this->grade_point[$grade];
+          $courses[] = $course;
+          $total_grade_points += $course_unit * $this->grade_point[$grade];
+          continue;
+        }
         $failed_courses['number'] += 1;
         $failed_courses['courses'][] = $course;
       }
       if (!isset($this->grade_point[$grade])) {
+        $unmarked_courses['number'] += 1;
+        $unmarked_courses['courses'][] = $course;
+        $grade_point = $this->grade_point['F'];
+        $total_grade_points += $course_unit * $grade_point;
         continue;
       }
       $grade_point = $this->grade_point[$grade];
@@ -89,7 +103,8 @@ class CgpaController
         'failed_courses' => $failed_courses,
         'total_units' => $total_units,
         'total_grade_points' => $total_grade_points,
-        'courses' => $courses
+        'courses' => $courses,
+        'unmarked_courses' => $unmarked_courses
       ];
     }
     $cgpa = $total_grade_points / $total_units;
@@ -98,7 +113,8 @@ class CgpaController
       'failed_courses' => $failed_courses,
       'total_units' => $total_units,
       'total_grade_points' => $total_grade_points,
-      'courses' => $courses
+      'courses' => $courses,
+      'unmarked_courses' => $unmarked_courses
     ];
   }
   private function check_if_result_table_exist($table_name)
@@ -108,6 +124,50 @@ class CgpaController
     $stmt->execute();
     $result = $stmt->get_result();
     return $result->num_rows > 0;
+  }
+
+  private function check_if_failed_course_was_rewritten($id, $student_id) {
+    $sql = "SELECT * FROM course_registrations where student_id = ? AND department_course_id = ?";
+    $stmt = $this->conn->prepare($sql);
+    $stmt->bind_param('ss', $student_id, $id);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    if($result->num_rows>1){
+      return $result->fetch_all();
+    }else{
+      return false;
+    }
+  }
+
+
+  private function check_if_passed_failed_course($id, $student_id){
+    $s = $this->check_if_failed_course_was_rewritten($id, $student_id);
+    if($s){
+      foreach($s as $r){
+        $session = $r['session'];
+        $semester = $r['semester'];
+        $sess = explode('/', $session);
+        $result_table_name = $sess[0] . '_' . $sess[1] . '_' . $semester . '_' . $id;
+        $table_name = 'results_' . $result_table_name;
+        if (!$this->check_if_result_table_exist($table_name)) {
+          continue;
+        }
+        $sql = "SELECT * FROM $table_name where student_id = ?";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->bind_param('s', $student_id);
+        $stmt->execute();
+        $tn_result = $stmt->get_result();
+        $grade_res = $tn_result->fetch_assoc();
+        $grade = $grade_res['grade'];
+        if($grade != 'F'){
+          return $grade_res;
+        }
+      }
+      return false;
+    }else{
+      return false;
+    }
+
   }
   public function student_performance()
   {
@@ -131,3 +191,12 @@ class CgpaController
     }
   }
 }
+
+
+/* 
+department&level&id&compulsory in assigned courses
+
+department_course_id&student_id in course_registrations
+
+
+*/
