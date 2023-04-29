@@ -127,7 +127,6 @@ export default function Dashboard() {
               ))}
             </div>
           </div>
-
           {user && (user.status == 'undergraduate' || user.status == 'spill over') ? <>
             <h4 className="font-[500] text-[#346837] text-[18px]">Lectures Today</h4>
             <div className="w-full overflow-y-auto">
