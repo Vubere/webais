@@ -117,7 +117,6 @@ export default function AssignCoursesToDepartments() {
       id: '',
       assigned_departments: [],
     })
-    
   }
   const onChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     if (e.target.name == 'units') {

@@ -26,6 +26,26 @@ export default function CreateLectures() {
   const [search, setSearch] = useState('')
   const [searchLect, setSearchLect] = useState('')
   const Session = useContext(SessionContext)
+  const [ses, setSes] = useState({
+    current_semester: '',
+    session: ''
+  })
+  const [sess, setSess] = useState<any>([])
+
+
+  useEffect(() => {
+    fetch(base + '/session')
+      .then(res => res.json())
+      .then(data => {
+        if (data.ok == 1) {
+          setSess(data.data)
+          console.log(data.data)
+        }
+      })
+      .catch(err => {
+
+      })
+  }, [])
 
   useEffect(() => {
     fetch(base + '/lecturers')
@@ -38,6 +58,15 @@ export default function CreateLectures() {
       })
       .catch(err => {})
   }, [])
+
+  useEffect(()=>{
+    if(Session?.session){
+      setSes({
+        current_semester: Session.session.current_semester as string,
+        session: Session.session.session
+      })
+    }
+  },[Session?.session])
 
   const validate = () => {
     let isValid = true
@@ -97,7 +126,12 @@ export default function CreateLectures() {
 
   const onSubmit = (e: any) => {
     e.preventDefault()
-    if (Session?.session) {
+    
+    if(!ses.session||!Number(ses.current_semester)){
+      alert('session and semester must be set')
+      return
+    }
+    if (ses.session&&!!Number(ses.current_semester)) {
 
       const f = new FormData()
       f.append('time', exam.time)
@@ -106,8 +140,8 @@ export default function CreateLectures() {
       f.append('course_id', exam.course_id)
       f.append('lecturer_id', exam.lecturer_id)
       f.append('venue', exam.venue)
-      f.append('session', Session.session.session)
-      f.append('semester', Session.session.current_semester.toString())
+      f.append('session', ses.session)
+      f.append('semester', ses.current_semester.toString())
 
       f.append('method', 'POST')
 
@@ -181,6 +215,26 @@ export default function CreateLectures() {
             <option value="1">1</option>
             <option value="2">2</option>
             <option value="3">3</option>
+          </select>
+        </div>
+        <div className="w-full">
+          <label htmlFor="session">Session</label>
+          <select name="session" id="session" value={ses.session} onChange={({target:{value}})=>setSes({...ses, session: value})} className="w-full h-[40px] rounded-[5px] bg-transparent border border-[#347836] flex items-center focus:outline-none px-2">
+            <option value="">Select Session</option>
+            {
+              sess.map((s:any)=>{
+                return <option key={s.session} value={s.session}>{s.session}</option>
+              })
+            }
+            
+          </select>
+        </div>
+        <div className="w-full">
+          <label htmlFor="current_semester">Semester</label>
+          <select name="current_semester" id="current_semester" value={ses.current_semester} onChange={({target:{value}})=>setSes({...ses, current_semester: value})} className="w-full h-[40px] rounded-[5px] bg-transparent border border-[#347836] flex items-center focus:outline-none px-2">
+            <option value="0">Select Semester</option>
+            <option value="1">First Semester</option>
+            <option value="2">Second Semester</option>
           </select>
         </div>
         <div className="w-full">

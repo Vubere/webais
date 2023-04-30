@@ -50,8 +50,8 @@ export default function Dashboard() {
 
 function Warning() {
   const { departments, population, faculties } = useFacultiesAndDepartments()
-  const [sess, setSes] = useState<any>([])
   const [dul, setDul] = useState<any>([])
+  const [sess, setSes] = useState<any>([])
 
 
   useEffect(() => {
