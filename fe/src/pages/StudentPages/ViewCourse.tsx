@@ -90,7 +90,7 @@ export default function ViewSingleCourse() {
               <p>
                 {courseDetails.units} unit(s) ({courseDetails.type})
               </p>
-              <p>{courseDetails.description}</p>
+              <p className="max-w-[400px]">{courseDetails.description}</p>
               <h4 className="font-[700] text-[#347836] text-[22px]">Departments</h4>
               <ul>{courseDetails.departments.map((item:string) => {
                 const name = departments.find(dept => dept.id == item)?.name

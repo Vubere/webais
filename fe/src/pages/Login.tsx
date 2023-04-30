@@ -51,6 +51,7 @@ export default function Login({ title, src }: { title: string, src: string }) {
 
         if (data?.authenticated) {
           sessionStorage.setItem('user', JSON.stringify(data.user))
+          if(setUser)
           setUser(data.user)
           setLoading(false)
           if (title.toLowerCase() == 'student') {

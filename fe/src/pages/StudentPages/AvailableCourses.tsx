@@ -25,8 +25,6 @@ export default function AvailableCourses() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
   const Session = useContext(SessionContext)
-  const [session, setSession] = useState<string>('')
-  const [current_semester, setCurrentSemester] = useState<string | number>('')
   const { user } = useContext(UserContext)
   const [registeredCourses, setRegisteredCourses] = useState<Course[]>([])
 
@@ -35,29 +33,12 @@ export default function AvailableCourses() {
 
   const [markedCourse, setMarkedCourse] = useState<{ id: number | string, reg: boolean }[]>([])
   const [unmarkedRegCourse, setUnmarkedRegCourse] = useState<{ id: number | string, reg: boolean }[]>([])
-
-  const [ses, setSes] = useState<session_row[]>()
-  const [ses_loading, set_ses_loading] = useState(true)
+  
   const registered_counter = useRef<number>(0)
   const unregister_counter = useRef<number>(0)
-
-  useEffect(() => {
-    fetch(base + '/session')
-      .then(res => res.json())
-      .then(data => {
-        if (data.ok == 1) {
-          set_ses_loading(false)
-          setSes(data.data)
-
-        } else {
-          throw new Error(data.message || 'something went wrong')
-        }
-      })
-      .catch(err => {
-        alert(err.message || 'something went wrong')
-        setLoading(false)
-      })
-  }, [])
+  const [session, setSession] = useState<string>('')
+  const [current_semester, setCurrentSemester] = useState<string | number>('')
+ 
 
 
   useEffect(() => {
@@ -356,28 +337,7 @@ export default function AvailableCourses() {
       <div>
 
       </div>
-      <div className="flex justify-between items-center">
-        <div className="flex flex-col">
-          <label htmlFor="session">Session</label>
-          <select name="session" value={session} id="session" className="border border-[#347836] rounded-md p-2" onChange={e => setSession(e.target.value)}>
-            <option value="">Select Session</option>
-
-            {ses && ses.map((s) => {
-              return (
-                <option key={s.session} value={s.session}>{s.session}</option>
-              )
-            })}
-          </select>
-        </div>
-        <div className="flex  flex-col">
-          <label htmlFor="semester">Semester</label>
-          <select name="semester" value={current_semester} id="semester" className="border border-[#347836] rounded-md p-2" onChange={e => setCurrentSemester(parseInt(e.target.value))}>
-            <option value="">Select Semester</option>
-            <option value={1}>First Semester</option>
-            <option value={2}>Second Semester</option>
-          </select>
-        </div>
-      </div>
+   
       {loading && <p>Loading...</p>}
       {error && <p>{error}</p>}
 
